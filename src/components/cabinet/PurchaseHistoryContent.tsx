@@ -1,30 +1,151 @@
-import { useState } from "react";
+import { useState, useEffect, useRef } from "react";
 import { toast } from "sonner";
 import svgPaths from "../ui/icons/svgIconPaths";
-import { Table, TableColumn, TextCell, ActionCell, EmptyCell, TableCell } from "./TableComponents";
+import { Table, TextCell, EmptyCell, TableCell } from "./TableComponents";
+import { Skeleton } from "../ui/skeleton";
+import { apiService } from "../../services/api";
+import { Order, BoughtScenariosContentProps, Product } from "../../types";
 
-interface Order {
-  name: string;
-  date: string;
-}
-
-export function PurchaseHistoryContent() {
+export function PurchaseHistoryContent({
+  onBack,
+  products = []
+}: BoughtScenariosContentProps) {
   const [showReviewScreen, setShowReviewScreen] = useState(false);
   const [selectedOrder, setSelectedOrder] = useState<Order | null>(null);
   const [reviewedOrders, setReviewedOrders] = useState<Set<string>>(new Set());
+  const [boughtProductIds, setBoughtProductIds] = useState<number[]>([]);
+  const [isLoading, setIsLoading] = useState(true);
+  const [productsLoading, setProductsLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
+  const [tableHeight, setTableHeight] = useState<number>(0);
+  const tableContainerRef = useRef<HTMLDivElement>(null);
 
-  const orders: Order[] = [
-    { name: "1 Вересня – Побувайте на святі, що в новому форматі", date: "01.12.2025" },
-    { name: "Авторський квест «Подорож країнами світу». Для літнього табору.", date: "03.11.2025" },
-    { name: "День Вишиванки", date: "12.09.2025" },
-    { name: "День матері", date: "07.08.2025" },
-  ];
+  // Define formatDate function before using it
+  const formatDate = (dateString: string): string => {
+    if (!dateString) return 'Невідома дата';
+    
+    try {
+      const date = new Date(dateString);
+      return date.toLocaleDateString('uk-UA', {
+        day: '2-digit',
+        month: '2-digit',
+        year: 'numeric'
+      });
+    } catch (e) {
+      return dateString;
+    }
+  };
+
+  // Load bought product IDs from API
+  useEffect(() => {
+    const loadBoughtProducts = async () => {
+      try {
+        setIsLoading(true);
+        setError(null);
+        
+        const boughtIds = await apiService.getBoughtProducts();
+        setBoughtProductIds(boughtIds);
+      } catch (error) {
+        console.error('Error loading bought products:', error);
+        setError('Не вдалося завантажити історію покупок');
+        toast.error('Помилка завантаження історії покупок');
+      } finally {
+        setIsLoading(false);
+      }
+    };
+
+    loadBoughtProducts();
+  }, []);
+
+  // Monitor when products are loaded
+  useEffect(() => {
+    setProductsLoading(false);
+  }, [products]);
+
+  // Load reviewed orders from localStorage
+  useEffect(() => {
+    const loadReviewedOrders = () => {
+      try {
+        const savedReviews = localStorage.getItem('reviewedOrders');
+        if (savedReviews) {
+          setReviewedOrders(new Set(JSON.parse(savedReviews)));
+        }
+      } catch (error) {
+        console.error('Error loading reviewed orders:', error);
+      }
+    };
+
+    loadReviewedOrders();
+  }, []);
+
+  // Calculate table height for empty rows
+  useEffect(() => {
+    const updateTableHeight = () => {
+      if (tableContainerRef.current) {
+        // Get the height of the table container minus any padding/margins
+        const container = tableContainerRef.current;
+        const style = window.getComputedStyle(container);
+        const paddingTop = parseFloat(style.paddingTop);
+        const paddingBottom = parseFloat(style.paddingBottom);
+        const height = container.clientHeight - paddingTop - paddingBottom;
+        
+        setTableHeight(height);
+      }
+    }; 
+
+    updateTableHeight();
+    window.addEventListener('resize', updateTableHeight);
+
+    return () => window.removeEventListener('resize', updateTableHeight);
+  }, []);
+
+  // Filter products to show only bought ones
+  const boughtMaterials = products.filter(p => {
+    const productId = typeof p.id === 'string' ? parseInt(p.id, 10) : Number(p.id);
+    return boughtProductIds.includes(productId);
+  });
+
+  // Transform bought materials to orders format
+  const orders: Order[] = boughtMaterials.map(material => ({
+    id: Number(material.id),
+    name: material.title || 'Невідомий матеріал',
+    date: formatDate(material.bought_at || material.orderDate || material.createdAt || new Date().toISOString()),
+    materialType: material.type || 'Не вказано'
+  }));
 
   const getOrderKey = (name: string, date: string) => `${name}:${date}`;
 
+  const getRowBg = (index: number) => index % 2 === 0 ? '#f2f2f2' : '#e6e6e6';
+
+  const getEmptyRowsCount = () => {
+    if (orders.length === 0) return 0;
+    
+    const rowHeight = 40;
+    
+    if (tableHeight > 0) {
+      const availableHeight = tableHeight - rowHeight;
+      const rowsThatFit = Math.floor(availableHeight / rowHeight);
+      const emptyRowsNeeded = Math.max(0, rowsThatFit - orders.length);
+      
+      return emptyRowsNeeded;
+    }
+    
+    return Math.max(0, 13 - orders.length);
+  };
+
+  const emptyRowsCount = getEmptyRowsCount();
+
   const handleResendMaterial = async (materialName: string, purchaseDate: string) => {
     try {
-      toast.success(`Матеріал "${materialName}" буде відправлено на вашу email адресу`);
+      const order = orders.find(o => o.name === materialName && o.date === purchaseDate);
+      
+      if (order) {
+        // TODO: resend functionality 
+        // await apiService.resendMaterial(order.productId);
+        toast.success(`Матеріал "${materialName}" буде відправлено на вашу email адресу`);
+      } else {
+        toast.error('Не вдалося знайти замовлення');
+      }
     } catch (error) {
       console.error('Error resending material:', error);
       toast.error('Помилка при відправці матеріалу');
@@ -51,13 +172,24 @@ export function PurchaseHistoryContent() {
 
   const handleSubmitReview = async (rating: number, reviewText: string) => {
     try {
-      console.log('Submitting review:', { rating, reviewText, material: selectedOrder?.name });
+      if (!selectedOrder) return;
+      
+      // TODO: review functionality 
+      // await apiService.submitReview({
+      //   productId: selectedOrder.productId,
+      //   orderId: selectedOrder.id,
+      //   rating,
+      //   comment: reviewText,
+      //   productName: selectedOrder.name
+      // });
+      
       toast.success('Відгук успішно надіслано!');
       
-      if (selectedOrder) {
-        const orderKey = getOrderKey(selectedOrder.name, selectedOrder.date);
-        setReviewedOrders(prev => new Set(prev).add(orderKey));
-      }
+      const orderKey = getOrderKey(selectedOrder.name, selectedOrder.date);
+      const updatedReviews = new Set(reviewedOrders).add(orderKey);
+      setReviewedOrders(updatedReviews);
+      
+      localStorage.setItem('reviewedOrders', JSON.stringify(Array.from(updatedReviews)));
       
       handleCloseReview();
     } catch (error) {
@@ -66,56 +198,87 @@ export function PurchaseHistoryContent() {
     }
   };
 
-  // Generate table data
-  const tableColumns = [
+  // Generate table data only when we have orders and not loading
+  const tableColumns = orders.length > 0 && !isLoading && !productsLoading ? [
     {
       header: "Назва матеріалу",
-      width: "60%",
+      width: "50%",
       minWidth: "200px",
       cells: [
         ...orders.map((order, index) => (
           <TextCell 
-            key={index}
+            key={`name-${order.id || index}`}
             text={order.name}
-            bg={index % 2 === 0 ? '#f2f2f2' : '#e6e6e6'}
+            bg={getRowBg(index)}
           />
         )),
-        ...Array.from({ length: 17 }, (_, index) => (
-          <EmptyCell key={`empty-${index}`} bg={index % 2 === 0 ? '#f2f2f2' : '#e6e6e6'} />
-        ))
+        ...(emptyRowsCount > 0 ? Array.from({ length: emptyRowsCount }, (_, index) => (
+          <EmptyCell 
+            key={`empty-name-${index}`} 
+            bg={getRowBg(orders.length + index)}
+          />
+        )) : [])
+      ]
+    },
+    {
+      header: "Тип матеріалу",
+      width: "25%",
+      minWidth: "100px",
+      cells: [
+        ...orders.map((order, index) => (
+          <TextCell 
+            key={`type-${order.id || index}`}
+            text={order.materialType || 'Не вказано'}
+            bg={getRowBg(index)}
+            color="#4d4d4d"
+          />
+        )),
+        ...(emptyRowsCount > 0 ? Array.from({ length: emptyRowsCount }, (_, index) => (
+          <EmptyCell 
+            key={`empty-type-${index}`} 
+            bg={getRowBg(orders.length + index)}
+          />
+        )) : [])
       ]
     },
     {
       header: "Дата покупки",
-      width: "20%",
-      minWidth: "120px",
+      width: "15%",
+      minWidth: "100px",
       cells: [
         ...orders.map((order, index) => (
           <TextCell 
-            key={index}
+            key={`date-${order.id || index}`}
             text={order.date}
-            bg={index % 2 === 0 ? '#f2f2f2' : '#e6e6e6'}
+            bg={getRowBg(index)}
             color="#4d4d4d"
           />
         )),
-        ...Array.from({ length: 17 }, (_, index) => (
-          <EmptyCell key={`empty-${index}`} bg={index % 2 === 0 ? '#f2f2f2' : '#e6e6e6'} />
-        ))
+        ...(emptyRowsCount > 0 ? Array.from({ length: emptyRowsCount }, (_, index) => (
+          <EmptyCell 
+            key={`empty-date-${index}`} 
+            bg={getRowBg(orders.length + index)}
+          />
+        )) : [])
       ]
     },
     {
       header: "Дії",
-      width: "20%",
+      width: "10%",
       minWidth: "100px",
       cells: [
         ...orders.map((order, index) => (
-          <TableCell key={index} bg={index % 2 === 0 ? '#f2f2f2' : '#e6e6e6'}>
+          <TableCell 
+            key={`actions-${order.id || index}`} 
+            bg={getRowBg(index)}
+          >
             <div className="flex flex-row items-center size-full">
               <div className="box-border content-stretch flex gap-[16px] h-[40px] items-center px-[16px] py-[10px] relative w-full">
                 <div 
                   onClick={() => handleResendMaterial(order.name, order.date)}
                   className="relative shrink-0 size-[24px] cursor-pointer hover:opacity-70 transition-opacity" 
                   data-name="icon download"
+                  title="Повторно надіслати матеріал"
                 >
                   <div className="absolute inset-[16.667%] mask-alpha mask-intersect mask-no-clip mask-no-repeat mask-position-[-4px] mask-size-[24px_24px]" data-name="download">
                     <svg className="block size-full" fill="none" preserveAspectRatio="none" viewBox="0 0 16 16">
@@ -131,6 +294,7 @@ export function PurchaseHistoryContent() {
                       : 'cursor-pointer hover:opacity-70'
                   }`}
                   data-name="comment"
+                  title={reviewedOrders.has(getOrderKey(order.name, order.date)) ? "Ви вже залишили відгук" : "Залишити відгук"}
                 >
                   <div className="absolute inset-[8.333%] mask-alpha mask-intersect mask-no-clip mask-no-repeat mask-position-[-2px] mask-size-[24px_24px]" data-name="comment">
                     <svg className="block size-full" fill="none" preserveAspectRatio="none" viewBox="0 0 20 20">
@@ -142,22 +306,94 @@ export function PurchaseHistoryContent() {
             </div>
           </TableCell>
         )),
-        ...Array.from({ length: 17 }, (_, index) => (
-          <EmptyCell key={`empty-${index}`} bg={index % 2 === 0 ? '#f2f2f2' : '#e6e6e6'} />
-        ))
+        ...(emptyRowsCount > 0 ? Array.from({ length: emptyRowsCount }, (_, index) => (
+          <EmptyCell 
+            key={`empty-actions-${index}`} 
+            bg={getRowBg(orders.length + index)}
+          />
+        )) : [])
       ]
     }
-  ];
+  ] : null;
+
+  // Show loading if products are still loading
+  if (productsLoading && products.length === 0 && boughtProductIds.length > 0) {
+    return (
+      <div className="basis-0 bg-[#f2f2f2] grow h-full min-h-px min-w-px relative rounded-[16px] shrink-0" data-name="Right Side">
+        <div className="flex items-center justify-center h-full">
+          <div className="text-lg">Завантаження даних продуктів...</div>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="basis-0 content-stretch flex flex-col gap-[10px] grow h-full items-start min-h-px min-w-px relative rounded-[16px] shrink-0" data-name="Right Side">
-      <div className="bg-[#f2f2f2] box-border content-stretch flex gap-[12px] grow h-full w-full items-start overflow-clip px-[24px] relative rounded-[16px] shrink-0 px-[20px] py-[16px]" data-name="Scrolling Table">
-        <div className="basis-0 grow h-full min-h-px min-w-px relative rounded-[12px] shrink-0 overflow-hidden w-full" data-name="Table">
-          <div className="content-stretch flex gap-[2px] items-start overflow-x-clip overflow-y-auto relative size-full rounded-[12px] w-full">
-            <Table columns={tableColumns} />
+      <div 
+        ref={tableContainerRef}
+        className="bg-[#f2f2f2] box-border content-stretch flex gap-[12px] grow h-full w-full items-start overflow-clip px-[24px] relative rounded-[16px] shrink-0 px-[20px] py-[16px]" 
+        data-name="Scrolling Table"
+      >
+        {isLoading ? (
+          // Loading state - show skeletons
+          <div className="basis-0 grow h-full min-h-px min-w-px relative rounded-[12px] shrink-0 overflow-hidden w-full flex items-center justify-center">
+            <div className="flex flex-col items-center justify-center w-full h-full gap-4">
+              <div className="text-lg">Завантаження історії покупок...</div>
+              <div className="space-y-4 w-full max-w-2xl">
+                {[1, 2, 3, 4].map(i => (
+                  <Skeleton key={i} className="h-16 w-full rounded-[12px]" />
+                ))}
+              </div>
+            </div>
           </div>
-          <div aria-hidden="true" className="absolute border border-solid border-white inset-0 pointer-events-none rounded-[12px]" />
-        </div>
+        ) : error ? (
+          // Error state
+          <div className="basis-0 grow h-full min-h-px min-w-px relative rounded-[12px] shrink-0 overflow-hidden w-full flex items-center justify-center">
+            <div className="flex flex-col items-center justify-center w-full h-full gap-4 py-12">
+              <div className="flex flex-col font-['Atkinson_Hyperlegible:Regular','Noto_Sans:Regular',sans-serif] justify-end leading-[0] relative text-[#4d4d4d] text-[18px] text-center" style={{ fontVariationSettings: "'CTGR' 0, 'wdth' 100, 'wght' 400" }}>
+                <p className="leading-[normal]">
+                  {error}
+                </p>
+              </div>
+            </div>
+          </div>
+        ) : boughtProductIds.length === 0 ? (
+          // Empty state - no purchase history
+          <div className="basis-0 grow h-full min-h-px min-w-px relative rounded-[12px] shrink-0 overflow-hidden w-full flex items-center justify-center">
+            <div className="flex flex-col items-center justify-center w-full h-full gap-4 py-12">
+              <div className="flex flex-col font-['Atkinson_Hyperlegible:Regular','Noto_Sans:Regular',sans-serif] justify-end leading-[0] relative text-[#4d4d4d] text-[18px] text-center" style={{ fontVariationSettings: "'CTGR' 0, 'wdth' 100, 'wght' 400" }}>
+                <p className="leading-[normal]">
+                  Ви ще не здійснили жодної покупки
+                </p>
+              </div>
+            </div>
+          </div>
+        ) : orders.length === 0 ? (
+          // Edge case: bought products exist but not found in available products
+          <div className="basis-0 grow h-full min-h-px min-w-px relative rounded-[12px] shrink-0 overflow-hidden w-full flex items-center justify-center">
+            <div className="flex flex-col items-center justify-center w-full h-full gap-4 py-12">
+              <div className="flex flex-col font-['Atkinson_Hyperlegible:Regular','Noto_Sans:Regular',sans-serif] justify-end leading-[0] relative text-[#4d4d4d] text-[18px] text-center" style={{ fontVariationSettings: "'CTGR' 0, 'wdth' 100, 'wght' 400" }}>
+                <p className="leading-[normal]">
+                  Куплені матеріали не знайдені серед доступних продуктів
+                </p>
+              </div>
+              {boughtProductIds.length > 0 && products.length > 0 && (
+                <div className="text-sm text-gray-500 text-center">
+                  <div>Куплені ID: {boughtProductIds.join(', ')}</div>
+                  <div>Доступні ID: {products.map(p => p.id).join(', ')}</div>
+                </div>
+              )}
+            </div>
+          </div>
+        ) : (
+          // Show table only when we have orders and not loading
+          <div className="basis-0 grow h-full min-h-px min-w-px relative rounded-[12px] shrink-0 overflow-hidden w-full" data-name="Table">
+            <div className="content-stretch flex gap-[2px] items-start overflow-x-clip overflow-y-auto relative size-full rounded-[12px] w-full">
+              {tableColumns && <Table columns={tableColumns} />}
+            </div>
+            <div aria-hidden="true" className="absolute border border-solid border-white inset-0 pointer-events-none rounded-[12px]" />
+          </div>
+        )}
       </div>
     </div>
   );

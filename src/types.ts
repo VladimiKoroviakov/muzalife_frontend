@@ -36,6 +36,28 @@ export type ProductCardProps = {
   onDeleteClick?: () => void;
 };
 
+export interface SavedScenariosContentProps {
+  onBack: () => void;
+  addToCart?: (productId: number) => void;
+  products?: any[];
+  onBookmarkedProductsChange?: (products: number[]) => void;
+}
+
+export interface BoughtScenariosContentProps {
+  onBack: () => void;
+  products?: any[];
+}
+
+
+export interface Order {
+  id: number; 
+  name: string;
+  date: string;
+  orderDate?: string; 
+  formattedDate?: string; 
+  materialType?: string;
+}
+
 export type AuthUser = {
   id: number;
   email: string;

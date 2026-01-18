@@ -4,18 +4,12 @@ import { Skeleton } from "../ui/skeleton";
 import ProductCard from "../ui/ProductCard";
 import { apiService } from "../../services/api";
 import { useNavigate } from "react-router-dom";
-
-interface SavedScenariosContentProps {
-  onBack: () => void;
-  addToCart?: (productId: number) => void;
-  products?: any[];
-  onBookmarkedProductsChange?: (products: number[]) => void;
-}
+import { SavedScenariosContentProps } from "../../types";
 
 export function SavedScenariosContent({ 
   onBack, 
   addToCart, 
-  products, 
+  products = [], 
   onBookmarkedProductsChange 
 }: SavedScenariosContentProps) {
   const [itemToRemove, setItemToRemove] = useState<number | null>(null);

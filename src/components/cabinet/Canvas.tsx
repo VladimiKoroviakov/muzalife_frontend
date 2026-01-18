@@ -29,7 +29,10 @@ export function Canvas({
   const renderContent = () => {
     switch (activeSection) {
       case 'history':
-        return <PurchaseHistoryContent />;
+        return <PurchaseHistoryContent
+          onBack={() => onSectionChange('main')} 
+          products={products}
+         />;
       case 'saved':
         return (
           <SavedScenariosContent 

@@ -9,7 +9,7 @@ export function Tabs({ activeSection, onSectionChange }: TabsProps) {
   const tabs = [
     { id: 'main', label: 'Головна', icon: 'home' },
     { id: 'history', label: 'Історія замовлень', icon: 'work_history' },
-    { id: 'saved', label: 'Збережені', icon: 'bookmarks' },
+    { id: 'saved', label: 'Збережені матеріали', icon: 'bookmarks' },
     { id: 'orders', label: 'Персональні замовлення', icon: 'contract_edit' },
     { id: 'questionnaires', label: 'Опитування', icon: 'bar_chart' },
     { id: 'settings', label: 'Налаштування', icon: 'manufacturing' },

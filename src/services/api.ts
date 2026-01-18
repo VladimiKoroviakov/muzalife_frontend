@@ -339,6 +339,21 @@ class ApiService {
     }
     return null;
   }
+  
+  private getCachedBoughtProducts(): number[] | null {
+    try {
+      const cached = localStorage.getItem('boughtProducts');
+      if (cached) {
+        const parsed = JSON.parse(cached);
+        if (Array.isArray(parsed) && parsed.every(item => typeof item === 'number')) {
+          return parsed;
+        }
+      }
+    } catch (error) {
+      console.error('Error reading cached bought products:', error);
+    }
+    return null;
+  }
 
   // Saved products methods with localStorage caching
   async getSavedProducts(): Promise<number[]> {
@@ -417,8 +432,70 @@ class ApiService {
     }
   }
 
+  // Bought products methods with localStorage caching
+  async getBoughtProducts(): Promise<number[]> {
+    try {
+      const cached = this.getCachedBoughtProducts();
+      if (cached) {
+        console.log('Using cached bought products');
+        return cached;
+      }
+
+      const response = await this.request('/bought-products/ids');
+      if (response.success && Array.isArray(response.data)) {
+        this.setCachedBoughtProducts(response.data);
+        return response.data;
+      }
+      
+      console.error('Unexpected response format:', response);
+      return [];
+    } catch (error) {
+      console.error('Error fetching bought products:', error);
+      return this.getCachedBoughtProducts() || [];
+    }
+  }
+
+  async buyProduct(productId: number): Promise<void> {
+    const response = await this.request('/bought-products', {
+      method: 'POST',
+      body: JSON.stringify({ productId })
+    });
+    
+    if (!response.success) {
+      throw new Error(response.error || 'Failed to save product');
+    }
+
+    this.addToCachedBoughtProducts(productId);
+  }
+
+  private setCachedBoughtProducts(productIds: number[]): void {
+    try {
+      localStorage.setItem('boughtProducts', JSON.stringify(productIds));
+    } catch (error) {
+      console.error('Error caching bought products:', error);
+    }
+  }
+
+  private addToCachedBoughtProducts(productId: number): void {
+    const current = this.getCachedBoughtProducts() || [];
+    if (!current.includes(productId)) {
+      this.setCachedBoughtProducts([...current, productId]);
+    }
+  }
+
+  clearBoughtProductsCache(): void {
+    try {
+      localStorage.removeItem('boughtProducts');
+      localStorage.removeItem('boughtProducts_timestamp');
+    } catch (error) {
+      console.error('Error clearing bought products cache:', error);
+    }
+  }
+
+  // Clear all user-related data on logout
   private clearUserData(): void {
     this.clearSavedProductsCache();
+    this.clearBoughtProductsCache();
     this.clearUserDataCache();
     this.setToken(null);
   }
@@ -427,6 +504,7 @@ class ApiService {
     try {
       const allKeys = Object.keys(localStorage);
       const userDataKeys = allKeys.filter(key => 
+        key.startsWith('boughtProducts_') || 
         key.startsWith('savedProducts_') ||
         key.startsWith('userProfile_') ||
         key.startsWith('userPreferences_') ||
