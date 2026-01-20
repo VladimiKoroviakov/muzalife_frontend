@@ -1,5 +1,5 @@
 const API_BASE_URL = import.meta.env.VITE_API_URL || 'http://localhost:5001/api';
-import { Product, Review, AuthUser } from '../types';
+import { Product, PersonalOrder, CreatePersonalOrderData, UpdatePersonalOrderData, Review, AuthUser } from '../types';
 
 class ApiService {
   private token: string | null;
@@ -490,6 +490,187 @@ class ApiService {
     } catch (error) {
       console.error('Error clearing bought products cache:', error);
     }
+  }
+
+  // Personal orders methods
+  async getPersonalOrders(): Promise<PersonalOrder[]> {
+    try {
+      const response = await this.request('/personal-orders');
+      
+      if (response.success && Array.isArray(response.personalOrders)) {
+        return response.personalOrders;
+      } else {
+        console.error('Unexpected response format for personal orders:', response);
+        throw new Error('Failed to fetch personal orders: Invalid response format');
+      }
+    } catch (error: any) {
+      if (error.status === 403) {
+        console.log('Access denied - user may not be authenticated');
+        throw new Error('Authentication required to view personal orders');
+      }
+      console.error('Error fetching personal orders:', error);
+      throw error;
+    }
+  }
+
+  async getAllPersonalOrders(): Promise<PersonalOrder[]> {
+    try {
+      const response = await this.request('/personal-orders/all');
+      
+      if (response.success && Array.isArray(response.personalOrders)) {
+        return response.personalOrders;
+      } else {
+        console.error('Unexpected response format for all personal orders:', response);
+        throw new Error('Failed to fetch all personal orders: Invalid response format');
+      }
+    } catch (error: any) {
+      if (error.status === 403) {
+        console.log('Access denied - admin access required');
+        throw new Error('Admin access required to view all personal orders');
+      }
+      console.error('Error fetching all personal orders:', error);
+      throw error;
+    }
+  }
+
+  async getPersonalOrderById(orderId: number): Promise<PersonalOrder> {
+    try {
+      const response = await this.request(`/personal-orders/${orderId}`);
+      
+      if (response.success && response.personalOrder) {
+        return response.personalOrder;
+      } else {
+        console.error('Unexpected response format for personal order:', response);
+        throw new Error('Failed to fetch personal order: Invalid response format');
+      }
+    } catch (error: any) {
+      if (error.status === 404) {
+        throw new Error('Order not found');
+      }
+      console.error('Error fetching personal order:', error);
+      throw error;
+    }
+  }
+
+  async createPersonalOrder(orderData: CreatePersonalOrderData): Promise<PersonalOrder> {
+    try {
+      // Set defaults if not provided
+      const dataToSend = {
+        orderTitle: orderData.orderTitle,
+        orderDescription: orderData.orderDescription,
+        orderStatus: orderData.orderStatus || 'pending',
+        orderPrice: orderData.orderPrice || 0,
+        orderMaterialType: orderData.orderMaterialType,
+        orderMaterialAgeCategory: orderData.orderMaterialAgeCategory,
+        orderDeadline: orderData.orderDeadline || null
+      };
+
+      const response = await this.request('/personal-orders', {
+        method: 'POST',
+        body: JSON.stringify(dataToSend),
+      });
+      
+      if (response.success && response.personalOrder) {
+        return response.personalOrder;
+      } else {
+        console.error('Unexpected response format for creating personal order:', response);
+        throw new Error('Failed to create personal order: Invalid response format');
+      }
+    } catch (error: any) {
+      console.error('Error creating personal order:', error);
+      throw error;
+    }
+  }
+
+  async updatePersonalOrder(
+    orderId: number, 
+    updateData: UpdatePersonalOrderData
+  ): Promise<PersonalOrder> {
+    try {
+      const response = await this.request(`/personal-orders/${orderId}`, {
+        method: 'PUT',
+        body: JSON.stringify(updateData),
+      });
+      
+      if (response.success && response.personalOrder) {
+        return response.personalOrder;
+      } else {
+        console.error('Unexpected response format for updating personal order:', response);
+        throw new Error('Failed to update personal order: Invalid response format');
+      }
+    } catch (error: any) {
+      if (error.status === 404) {
+        throw new Error('Order not found');
+      } else if (error.status === 403) {
+        throw new Error('Not authorized to update this order');
+      } else if (error.status === 400) {
+        throw new Error('Invalid update data provided');
+      }
+      console.error('Error updating personal order:', error);
+      throw error;
+    }
+  }
+
+  async deletePersonalOrder(orderId: number): Promise<void> {
+    try {
+      const response = await this.request(`/personal-orders/${orderId}`, {
+        method: 'DELETE',
+      });
+      
+      if (!response.success) {
+        throw new Error(response.error || 'Failed to delete personal order');
+      }
+    } catch (error: any) {
+      if (error.status === 404) {
+        throw new Error('Order not found');
+      } else if (error.status === 403) {
+        throw new Error('Not authorized to delete this order');
+      }
+      console.error('Error deleting personal order:', error);
+      throw error;
+    }
+  }
+
+  // Helper method to format deadline date for display
+  formatOrderDeadline(deadline: string | null): string {
+    if (!deadline) return 'No deadline set';
+    
+    const date = new Date(deadline);
+    return date.toLocaleDateString('en-US', {
+      year: 'numeric',
+      month: 'long',
+      day: 'numeric',
+      hour: '2-digit',
+      minute: '2-digit'
+    });
+  }
+
+  // Helper method to get status color
+  getOrderStatusColor(status: string): string {
+    const statusColors: Record<string, string> = {
+      'pending': 'text-yellow-600',
+      'in_progress': 'text-blue-600',
+      'completed': 'text-green-600',
+      'cancelled': 'text-red-600',
+      'approved': 'text-green-700',
+      'rejected': 'text-red-700'
+    };
+    
+    return statusColors[status.toLowerCase()] || 'text-gray-600';
+  }
+
+  // Helper method to get status display text
+  getOrderStatusText(status: string): string {
+    const statusMap: Record<string, string> = {
+      'pending': 'Pending',
+      'in_progress': 'In Progress',
+      'completed': 'Completed',
+      'cancelled': 'Cancelled',
+      'approved': 'Approved',
+      'rejected': 'Rejected'
+    };
+    
+    return statusMap[status.toLowerCase()] || status;
   }
 
   // Clear all user-related data on logout

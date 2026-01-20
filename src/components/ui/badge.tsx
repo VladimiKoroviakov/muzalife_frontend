@@ -5,7 +5,7 @@ export default function Badge({ text, color }: { text: string; color?: string })
       case "Квест": return "#9747ff";
       case "Поезія": return "#FF920D";
       case "Інше": return "#448620";
-      case "Безкоштовні матеріали": return "#E53935";
+      case "Безкоштовний матеріал": return "#E53935";
       default: return "#5e89e8";
     }
   };

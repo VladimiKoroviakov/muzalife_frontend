@@ -1,194 +1,580 @@
-import { useState, useEffect, useCallback } from "react";
+import { useState, useEffect, useCallback, useRef } from "react";
 import svgPaths from "../ui/icons/svgIconPaths";
-import { Table, TableColumn, TextCell, ActionCell, EmptyCell } from "./TableComponents";
+import { Table, TableColumn, TextCell, EmptyCell, TableCell } from "./TableComponents";
+import { apiService } from "../../services/api";
+import { PersonalOrder } from "../../types";
 
-
-// Sample data
-const ordersData = [
-  { name: "Авторський квест «Подорож країнами світу». Для літнього табору.", status: "В обробці", date: "03.11.2025", price: "850 грн", action: "Переглянути" },
-  { name: "1 Вересня – Побувайте на святі, що в новому форматі", status: "Не підтверджено", date: "01.12.2025", price: "1000 грн", action: "Підтвердити", actionColor: "#ff7b00", boldAction: true },
-  { name: "Авторський квест «Подорож країнами світу». Для літнього табору.", status: "Розробляється", date: "03.11.2025", price: "850 грн", action: "Переглянути" },
-  { name: "День Вишиванки", status: "Відхилено", date: "12.09.2025", price: "-", action: "Переглянути" },
-  { name: "День матері", status: "Виконано", date: "07.08.2025", price: "500 грн", action: "Переглянути" },
-];
+// Local storage keys
+const PERSONAL_ORDERS_CACHE_KEY = 'cachedPersonalOrders';
+const PERSONAL_ORDERS_TIMESTAMP_KEY = 'cachedPersonalOrders_timestamp';
+// Cache validity duration (5 minutes)
+const CACHE_VALIDITY_DURATION = 5 * 60 * 1000; // 300000 ms
 
 export function PersonalOrdersContent() {
-  const [columnWidths, setColumnWidths] = useState([400, 180, 180, 140, 160]);
-  const [resizingColumn, setResizingColumn] = useState<number | null>(null);
-  const [startX, setStartX] = useState(0);
-  const [startWidth, setStartWidth] = useState(0);
+  const [orders, setOrders] = useState<PersonalOrder[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
+  const [tableHeight, setTableHeight] = useState<number>(0);
+  const tableContainerRef = useRef<HTMLDivElement>(null);
 
-  const handleMouseDown = (e: React.MouseEvent, columnIndex: number) => {
-    e.preventDefault();
-    setResizingColumn(columnIndex);
-    setStartX(e.clientX);
-    setStartWidth(columnWidths[columnIndex]);
-  };
-
-  const handleMouseMove = useCallback((e: MouseEvent) => {
-    if (resizingColumn !== null) {
-      const diff = e.clientX - startX;
-      const newWidth = Math.max(100, startWidth + diff);
-      const newWidths = [...columnWidths];
-      newWidths[resizingColumn] = newWidth;
-      setColumnWidths(newWidths);
+  // Cache management functions
+  const getCachedOrders = useCallback((): PersonalOrder[] | null => {
+    try {
+      const cached = localStorage.getItem(PERSONAL_ORDERS_CACHE_KEY);
+      if (cached) {
+        const parsed = JSON.parse(cached);
+        if (Array.isArray(parsed)) {
+          console.log('📦 Retrieved personal orders from cache');
+          return parsed;
+        }
+      }
+    } catch (error) {
+      console.error('Error reading cached personal orders:', error);
     }
-  }, [resizingColumn, startX, startWidth, columnWidths]);
-
-  const handleMouseUp = useCallback(() => {
-    setResizingColumn(null);
+    return null;
   }, []);
 
-  useEffect(() => {
-    if (resizingColumn !== null) {
-      document.addEventListener('mousemove', handleMouseMove);
-      document.addEventListener('mouseup', handleMouseUp);
-      return () => {
-        document.removeEventListener('mousemove', handleMouseMove);
-        document.removeEventListener('mouseup', handleMouseUp);
-      };
+  const setCachedOrders = useCallback((orders: PersonalOrder[]): void => {
+    try {
+      const cachedOrders = orders.map(order => ({
+        order_id: order.order_id,
+        order_title: order.order_title,
+        order_description: order.order_description,
+        order_status: order.order_status,
+        order_price: order.order_price,
+        order_deadline: order.order_deadline,
+        order_created_at: order.order_created_at
+      }));
+      
+      localStorage.setItem(PERSONAL_ORDERS_CACHE_KEY, JSON.stringify(cachedOrders));
+      localStorage.setItem(PERSONAL_ORDERS_TIMESTAMP_KEY, Date.now().toString());
+      console.log('💾 Saved personal orders to cache (minimal fields)');
+    } catch (error) {
+      console.error('Error caching personal orders:', error);
     }
-  }, [resizingColumn, handleMouseMove, handleMouseUp]);
+  }, []);
 
-  // Generate table data dynamically
-  const generateTableData = () => {
-    const emptyRows = 17;
+  const isOrdersCacheValid = useCallback((): boolean => {
+    try {
+      const timestamp = localStorage.getItem(PERSONAL_ORDERS_TIMESTAMP_KEY);
+      if (!timestamp) return false;
+      
+      const cacheTime = parseInt(timestamp, 10);
+      const currentTime = Date.now();
+      const cacheAge = currentTime - cacheTime;
+      
+      // Check if cache is still valid
+      return cacheAge < CACHE_VALIDITY_DURATION;
+    } catch (error) {
+      return false;
+    }
+  }, []);
+
+  const clearOrdersCache = useCallback((): void => {
+    try {
+      localStorage.removeItem(PERSONAL_ORDERS_CACHE_KEY);
+      localStorage.removeItem(PERSONAL_ORDERS_TIMESTAMP_KEY);
+      console.log('🧹 Personal orders cache cleared');
+    } catch (error) {
+      console.error('Error clearing personal orders cache:', error);
+    }
+  }, []);
+
+  // Load personal orders from API with caching
+  const loadPersonalOrders = useCallback(async (forceRefresh: boolean = false) => {
+    try {
+      setLoading(true);
+      setError(null);
+
+      // Check cache first (unless forcing refresh)
+      if (!forceRefresh) {
+        const cachedOrders = getCachedOrders();
+        const isCacheValid = isOrdersCacheValid();
+        
+        if (cachedOrders && isCacheValid) {
+          console.log('🔄 Using cached personal orders');
+          setOrders(cachedOrders);
+          setLoading(false);
+          return;
+        }
+      }
+
+      console.log('🔄 Fetching fresh personal orders from API');
+      const personalOrders = await apiService.getPersonalOrders();
+      
+      // Cache the fresh orders
+      setCachedOrders(personalOrders);
+      
+      // Update state
+      setOrders(personalOrders);
+    } catch (err: any) {
+      console.error('Failed to fetch personal orders:', err);
+      
+      // Try to fallback to cached orders even if expired
+      const cachedOrders = getCachedOrders();
+      if (cachedOrders) {
+        console.log('📦 Falling back to cached personal orders (API failed)');
+        setOrders(cachedOrders);
+        setError('Не вдалося завантажити нові дані. Показано закешовані замовлення.');
+      } else {
+        setError(err.message || 'Не вдалося завантажити замовлення');
+        setOrders([]);
+      }
+    } finally {
+      setLoading(false);
+    }
+  }, [getCachedOrders, isOrdersCacheValid, setCachedOrders]);
+
+  // Force refresh function
+  const forceRefreshOrders = useCallback(() => {
+    clearOrdersCache();
+    loadPersonalOrders(true);
+  }, [clearOrdersCache, loadPersonalOrders]);
+
+  // Initial load
+  useEffect(() => {
+    loadPersonalOrders();
+  }, [loadPersonalOrders]);
+
+  // Update cache when orders change (e.g., after confirming an order)
+  useEffect(() => {
+    if (orders.length > 0 && !loading && !error) {
+      setCachedOrders(orders);
+    }
+  }, [orders, loading, error, setCachedOrders]);
+
+  // Calculate table height for empty rows
+  useEffect(() => {
+    const updateTableHeight = () => {
+      if (tableContainerRef.current) {
+        const container = tableContainerRef.current;
+        const style = window.getComputedStyle(container);
+        const paddingTop = parseFloat(style.paddingTop);
+        const paddingBottom = parseFloat(style.paddingBottom);
+        const height = container.clientHeight - paddingTop - paddingBottom;
+        setTableHeight(height);
+      }
+    };
+
+    updateTableHeight();
+    window.addEventListener('resize', updateTableHeight);
+    return () => window.removeEventListener('resize', updateTableHeight);
+  }, []);
+
+  // Map order status to Ukrainian
+  const getStatusText = (status: string): string => {
+    const statusMap: Record<string, string> = {
+      'pending': 'В обробці',
+      'in_progress': 'Розробляється',
+      'completed': 'Виконано',
+      'cancelled': 'Відхилено',
+      'approved': 'Підтверджено',
+      'rejected': 'Не підтверджено'
+    };
+    return statusMap[status.toLowerCase()] || status;
+  };
+
+  // Map order status to color
+  const getStatusColor = (status: string): string => {
+    const colorMap: Record<string, string> = {
+      'pending': '#4d4d4d',
+      'in_progress': '#0066cc',
+      'completed': '#008000',
+      'cancelled': '#cc0000',
+      'approved': '#008000',
+      'rejected': '#cc0000'
+    };
+    return colorMap[status.toLowerCase()] || '#4d4d4d';
+  };
+
+  // Determine action text and color based on status
+  const getActionText = (status: string): string => {
+    const actionMap: Record<string, string> = {
+      'pending': 'Переглянути',
+      'in_progress': 'Переглянути',
+      'completed': 'Переглянути',
+      'cancelled': 'Переглянути',
+      'approved': 'Підтвердити',
+      'rejected': 'Переглянути'
+    };
+    return actionMap[status.toLowerCase()] || 'Переглянути';
+  };
+
+  const getActionColor = (status: string): string | undefined => {
+    if (status.toLowerCase() === 'approved') {
+      return '#ff7b00';
+    }
+    return undefined;
+  };
+
+  const isActionBold = (status: string): boolean => {
+    return status.toLowerCase() === 'approved';
+  };
+
+  // Format date for display
+  const formatDate = (dateString: string): string => {
+    try {
+      const date = new Date(dateString);
+      return date.toLocaleDateString('uk-UA', {
+        day: '2-digit',
+        month: '2-digit',
+        year: 'numeric'
+      });
+    } catch (error) {
+      return dateString;
+    }
+  };
+
+  // Format price for display
+  const formatPrice = (price: any): string => {
+    if (price === null || price === undefined || price === "") {
+      return "-";
+    }
     
+    const priceNumber = typeof price === 'string' ? parseFloat(price) : price;
+    
+    if (typeof priceNumber !== 'number' || isNaN(priceNumber)) {
+      return "-";
+    }
+    
+    if (priceNumber <= 0) {
+      return "-";
+    }
+    
+    return `${priceNumber.toFixed(2)} грн`;
+  };
+
+  // Handle order action click
+  const handleOrderAction = async (order: PersonalOrder) => {
+    console.log('Order action clicked:', order);
+    
+    if (order.order_status.toLowerCase() === 'approved') {
+      if (window.confirm('Підтвердити це замовлення?')) {
+        try {
+          await apiService.updatePersonalOrder(order.order_id, {
+            orderStatus: 'in_progress'
+          });
+          
+          alert('Замовлення підтверджено');
+          // Force refresh to get updated data and clear cache
+          forceRefreshOrders();
+        } catch (error) {
+          console.error('Failed to confirm order:', error);
+          alert('Не вдалося підтвердити замовлення');
+        }
+      }
+    } else {
+      console.log('Viewing order details for:', order.order_id);
+      // window.open(`/personal-orders/${order.order_id}`, '_blank');
+    }
+  };
+
+  const handleCreateNewOrder = () => {
+    console.log('Creating new order');
+    // Clear cache when creating new order to ensure fresh data next time
+    clearOrdersCache();
+    // window.open('/personal-orders/new', '_blank');
+  };
+
+  const handleTermsClick = () => {
+    console.log('Opening terms and policy');
+    // window.open('/terms-and-policy', '_blank');
+  };
+
+  const handleRefreshClick = () => {
+    forceRefreshOrders();
+  };
+
+  const getRowBg = (index: number) => index % 2 === 0 ? '#f2f2f2' : '#e6e6e6';
+
+  const getEmptyRowsCount = () => {
+    if (orders.length === 0) return 0;
+    
+    const rowHeight = 40;
+    
+    if (tableHeight > 0) {
+      const availableHeight = tableHeight - rowHeight;
+      const rowsThatFit = Math.floor(availableHeight / rowHeight);
+      const emptyRowsNeeded = Math.max(0, rowsThatFit - orders.length);
+      return emptyRowsNeeded;
+    }
+    
+    return Math.max(0, 14 - orders.length);
+  };
+
+  const emptyRowsCount = getEmptyRowsCount();
+
+  // Generate table data
+  const generateTableData = () => {
     return [
       {
         header: "Назва Замовлення",
-        width: columnWidths[0],
+        width: "38%",
         minWidth: "200px",
         cells: [
-          ...ordersData.map((order, index) => (
+          ...orders.map((order, index) => (
             <TextCell 
-              key={`name-${index}`}
-              text={order.name}
-              bg={index % 2 === 0 ? '#e6e6e6' : '#f2f2f2'}
+              key={`name-${order.order_id}`}
+              text={order.order_title}
+              bg={getRowBg(index)}
             />
           )),
-          ...Array.from({ length: emptyRows }, (_, index) => (
+          ...(emptyRowsCount > 0 ? Array.from({ length: emptyRowsCount }, (_, index) => (
             <EmptyCell 
               key={`empty-name-${index}`} 
-              bg={(index + ordersData.length) % 2 === 0 ? '#f2f2f2' : '#e6e6e6'} 
+              bg={getRowBg(orders.length + index)}
             />
-          ))
+          )) : [])
         ]
       },
       {
         header: "Статус",
-        width: columnWidths[1],
+        width: "20%",
         minWidth: "120px",
         cells: [
-          ...ordersData.map((order, index) => (
+          ...orders.map((order, index) => (
             <TextCell 
-              key={`status-${index}`}
-              text={order.status}
-              bg={index % 2 === 0 ? '#e6e6e6' : '#f2f2f2'}
-              bold={order.boldAction}
-              color={order.actionColor}
+              key={`status-${order.order_id}`}
+              text={getStatusText(order.order_status)}
+              bg={getRowBg(index)}
+              bold={isActionBold(order.order_status)}
+              color={getStatusColor(order.order_status)}
             />
           )),
-          ...Array.from({ length: emptyRows }, (_, index) => (
+          ...(emptyRowsCount > 0 ? Array.from({ length: emptyRowsCount }, (_, index) => (
             <EmptyCell 
               key={`empty-status-${index}`} 
-              bg={(index + ordersData.length) % 2 === 0 ? '#f2f2f2' : '#e6e6e6'} 
+              bg={getRowBg(orders.length + index)}
             />
-          ))
+          )) : [])
         ]
       },
       {
         header: "Дата Замовлення",
-        width: columnWidths[2],
+        width: "20%",
         minWidth: "190px",
         cells: [
-          ...ordersData.map((order, index) => (
+          ...orders.map((order, index) => (
             <TextCell 
-              key={`date-${index}`}
-              text={order.date}
-              bg={index % 2 === 0 ? '#e6e6e6' : '#f2f2f2'}
+              key={`date-${order.order_id}`}
+              text={formatDate(order.order_created_at)}
+              bg={getRowBg(index)}
             />
           )),
-          ...Array.from({ length: emptyRows }, (_, index) => (
+          ...(emptyRowsCount > 0 ? Array.from({ length: emptyRowsCount }, (_, index) => (
             <EmptyCell 
               key={`empty-date-${index}`} 
-              bg={(index + ordersData.length) % 2 === 0 ? '#f2f2f2' : '#e6e6e6'} 
+              bg={getRowBg(orders.length + index)}
             />
-          ))
+          )) : [])
         ]
       },
       {
         header: "Ціна",
-        width: columnWidths[3],
+        width: "12%",
         minWidth: "100px",
         cells: [
-          ...ordersData.map((order, index) => (
+          ...orders.map((order, index) => (
             <TextCell 
-              key={`price-${index}`}
-              text={order.price}
-              bg={index % 2 === 0 ? '#e6e6e6' : '#f2f2f2'}
-              centered={order.price === "-"}
+              key={`price-${order.order_id}`}
+              text={formatPrice(order.order_price)}
+              bg={getRowBg(index)}
             />
           )),
-          ...Array.from({ length: emptyRows }, (_, index) => (
+          ...(emptyRowsCount > 0 ? Array.from({ length: emptyRowsCount }, (_, index) => (
             <EmptyCell 
               key={`empty-price-${index}`} 
-              bg={(index + ordersData.length) % 2 === 0 ? '#f2f2f2' : '#e6e6e6'} 
+              bg={getRowBg(orders.length + index)}
             />
-          ))
+          )) : [])
         ]
       },
       {
         header: "Дії",
-        width: columnWidths[4],
+        width: "10%",
         minWidth: "120px",
         cells: [
-          ...ordersData.map((order, index) => (
-            <ActionCell 
-              key={`action-${index}`}
-              text={order.action}
-              bg={index % 2 === 0 ? '#e6e6e6' : '#f2f2f2'}
-              bold={order.boldAction}
-              color={order.actionColor}
-              onClick={() => console.log(`Action clicked: ${order.action} for ${order.name}`)}
-            />
+          ...orders.map((order, index) => (
+            <TableCell 
+              key={`actions-${order.order_id}`} 
+              bg={getRowBg(index)}
+            >
+              <div className="flex flex-row items-center size-full">
+                <div className="box-border content-stretch flex h-[40px] items-center px-[16px] py-[10px] relative w-full justify-center">
+                  <div 
+                    onClick={() => handleOrderAction(order)}
+                    className="flex items-center justify-center cursor-pointer hover:opacity-70 transition-opacity"
+                  >
+                    <span 
+                      className={`${isActionBold(order.order_status) ? 'font-bold' : ''}`}
+                      style={{ color: getActionColor(order.order_status) || '#4d4d4d' }}
+                    >
+                      {getActionText(order.order_status)}
+                    </span>
+                  </div>
+                </div>
+              </div>
+            </TableCell>
           )),
-          ...Array.from({ length: emptyRows }, (_, index) => (
+          ...(emptyRowsCount > 0 ? Array.from({ length: emptyRowsCount }, (_, index) => (
             <EmptyCell 
               key={`empty-action-${index}`} 
-              bg={(index + ordersData.length) % 2 === 0 ? '#f2f2f2' : '#e6e6e6'} 
+              bg={getRowBg(orders.length + index)}
             />
-          ))
+          )) : [])
         ]
       }
     ];
   };
 
+  // Loading state
+  if (loading) {
+    return (
+      <div className="basis-0 bg-[#f2f2f2] grow h-full min-h-px min-w-px relative rounded-[16px] shrink-0" data-name="Right Side">
+        <div className="size-full">
+          <div className="box-border content-stretch flex flex-col gap-[20px] items-start relative size-full overflow-hidden px-[24px] px-[20px] py-[16px]">
+            {/* Scrolling Table */}
+            <div className="basis-0 bg-[#f2f2f2] content-stretch flex gap-[8px] grow items-start min-h-px min-w-px overflow-clip relative shrink-0 w-full" data-name="Scrolling Table">
+              {/* Table */}
+              <div className="basis-0 grow h-full min-h-px min-w-px relative rounded-[12px] shrink-0 overflow-auto" data-name="Table">
+                <div className="flex items-center justify-center h-full">
+                  <div className="text-[#4d4d4d] text-[18px]">Завантаження замовлень...</div>
+                </div>
+                <div aria-hidden="true" className="absolute border border-solid border-white inset-0 pointer-events-none rounded-[12px]" />
+              </div>
+            </div>
+            
+            {/* Bottom Row - Keep this */}
+            <div className="content-stretch flex gap-[10px] items-center justify-end relative shrink-0 w-full" data-name="row">
+              <p className="[text-underline-position:from-font] [white-space-collapse:collapse] basis-0 decoration-solid font-['Atkinson_Hyperlegible:Regular','Noto_Sans:Regular',sans-serif] grow leading-[normal] min-h-px min-w-px overflow-ellipsis overflow-hidden relative shrink-0 text-[#4d4d4d] text-[16px] text-nowrap underline cursor-pointer hover:text-[#5e89e8] transition-colors" style={{ fontVariationSettings: "'CTGR' 0, 'wdth' 100, 'wght' 400" }}>
+                Умови та Політика Використання
+              </p>
+              {/* Refresh button */}
+              <button 
+                onClick={handleRefreshClick}
+                className="bg-white box-border content-stretch flex gap-[8px] h-[44px] items-center justify-center px-[24px] py-[12px] relative rounded-[12px] shrink-0 cursor-pointer hover:bg-[#f2f2f2] transition-colors"
+              >
+                <div className="flex flex-col font-['Atkinson_Hyperlegible:Regular','Noto_Sans:Regular',sans-serif] justify-end leading-[0] relative shrink-0 text-[#0d0d0d] text-[16px] text-nowrap" style={{ fontVariationSettings: "'CTGR' 0, 'wdth' 100, 'wght' 400" }}>
+                  <p className="leading-[normal] whitespace-pre">Оновити</p>
+                </div>
+              </button>
+              <div className="bg-white box-border content-stretch flex gap-[8px] h-[44px] items-center justify-center px-[24px] py-[12px] relative rounded-[12px] shrink-0 cursor-pointer hover:bg-[#f2f2f2] transition-colors" data-name="Button">
+                <div aria-hidden="true" className="absolute border border-[#4d4d4d] border-solid inset-0 pointer-events-none rounded-[12px]" />
+                <div className="relative shrink-0 size-[20px]" data-name="icon order">
+                  <div className="absolute inset-[8.33%_4.17%_8.33%_12.5%] mask-alpha mask-intersect mask-no-clip mask-no-repeat mask-position-[-3px_-2px] mask-size-[24px_24px]" data-name="contract_edit">
+                    <svg className="block size-full" fill="none" preserveAspectRatio="none" viewBox="0 0 17 17">
+                      <path d={svgPaths.p7a22000} fill="var(--fill-0, #0D0D0D)" id="contract_edit" />
+                    </svg>
+                  </div>
+                </div>
+                <div className="flex flex-col font-['Atkinson_Hyperlegible:Regular','Noto_Sans:Regular',sans-serif] justify-end leading-[0] relative shrink-0 text-[#0d0d0d] text-[16px] text-nowrap" style={{ fontVariationSettings: "'CTGR' 0, 'wdth' 100, 'wght' 400" }}>
+                  <p className="leading-[normal] whitespace-pre">Зробити нове замовлення</p>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    );
+  }
+
+  // Error state
+  if (error) {
+    return (
+      <div className="basis-0 bg-[#f2f2f2] grow h-full min-h-px min-w-px relative rounded-[16px] shrink-0" data-name="Right Side">
+        <div className="size-full">
+          <div className="box-border content-stretch flex flex-col gap-[20px] items-start relative size-full overflow-hidden px-[24px] px-[20px] py-[16px]">
+            {/* Scrolling Table */}
+            <div className="basis-0 bg-[#f2f2f2] content-stretch flex gap-[8px] grow items-start min-h-px min-w-px overflow-clip relative shrink-0 w-full" data-name="Scrolling Table">
+              {/* Table */}
+              <div className="basis-0 grow h-full min-h-px min-w-px relative rounded-[12px] shrink-0 overflow-auto" data-name="Table">
+                <div className="flex items-center justify-center h-full flex-col gap-2">
+                  <div className="text-[#cc0000] text-[18px] text-center">{error}</div>
+                  <button 
+                    onClick={() => loadPersonalOrders(true)}
+                    className="bg-white px-4 py-2 rounded-md border border-[#4d4d4d] hover:bg-[#f2f2f2] transition-colors"
+                  >
+                    Спробувати знову
+                  </button>
+                </div>
+                <div aria-hidden="true" className="absolute border border-solid border-white inset-0 pointer-events-none rounded-[12px]" />
+              </div>
+            </div>
+            
+            {/* Bottom Row - Keep this */}
+            <div className="content-stretch flex gap-[10px] items-center justify-end relative shrink-0 w-full" data-name="row">
+              <p className="[text-underline-position:from-font] [white-space-collapse:collapse] basis-0 decoration-solid font-['Atkinson_Hyperlegible:Regular','Noto_Sans:Regular',sans-serif] grow leading-[normal] min-h-px min-w-px overflow-ellipsis overflow-hidden relative shrink-0 text-[#4d4d4d] text-[16px] text-nowrap underline cursor-pointer hover:text-[#5e89e8] transition-colors" style={{ fontVariationSettings: "'CTGR' 0, 'wdth' 100, 'wght' 400" }}>
+                Умови та Політика Використання
+              </p>
+              <div className="bg-white box-border content-stretch flex gap-[8px] h-[44px] items-center justify-center px-[24px] py-[12px] relative rounded-[12px] shrink-0 cursor-pointer hover:bg-[#f2f2f2] transition-colors" data-name="Button">
+                <div aria-hidden="true" className="absolute border border-[#4d4d4d] border-solid inset-0 pointer-events-none rounded-[12px]" />
+                <div className="relative shrink-0 size-[20px]" data-name="icon order">
+                  <div className="absolute inset-[8.33%_4.17%_8.33%_12.5%] mask-alpha mask-intersect mask-no-clip mask-no-repeat mask-position-[-3px_-2px] mask-size-[24px_24px]" data-name="contract_edit">
+                    <svg className="block size-full" fill="none" preserveAspectRatio="none" viewBox="0 0 17 17">
+                      <path d={svgPaths.p7a22000} fill="var(--fill-0, #0D0D0D)" id="contract_edit" />
+                    </svg>
+                  </div>
+                </div>
+                <div className="flex flex-col font-['Atkinson_Hyperlegible:Regular','Noto_Sans:Regular',sans-serif] justify-end leading-[0] relative shrink-0 text-[#0d0d0d] text-[16px] text-nowrap" style={{ fontVariationSettings: "'CTGR' 0, 'wdth' 100, 'wght' 400" }}>
+                  <p className="leading-[normal] whitespace-pre">Зробити нове замовлення</p>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    );
+  }
+
+  // Main return with proper layout
   return (
     <div className="basis-0 bg-[#f2f2f2] grow h-full min-h-px min-w-px relative rounded-[16px] shrink-0" data-name="Right Side">
       <div className="size-full">
         <div className="box-border content-stretch flex flex-col gap-[20px] items-start relative size-full overflow-hidden px-[24px] px-[20px] py-[16px]">
-          {/* Scrolling Table */}
-          <div className="basis-0 bg-[#f2f2f2] content-stretch flex gap-[8px] grow items-start min-h-px min-w-px overflow-clip relative shrink-0 w-full" data-name="Scrolling Table">
-            {/* Table */}
+          {/* Scrolling Table - Keep original structure but update content */}
+          <div 
+            ref={tableContainerRef}
+            className="basis-0 bg-[#f2f2f2] content-stretch flex gap-[8px] grow items-start min-h-px min-w-px overflow-clip relative shrink-0 w-full" 
+            data-name="Scrolling Table"
+          >
+            {/* Table - Updated to match purchase history style */}
             <div className="basis-0 grow h-full min-h-px min-w-px relative rounded-[12px] shrink-0 overflow-auto" data-name="Table">
-              <Table 
-                columns={generateTableData()} 
-                onColumnResize={(columnIndex, newWidth) => {
-                  // Handle column resize if needed
-                  console.log(`Resize column ${columnIndex} to ${newWidth}`);
-                }}
-              />
+              <div className="content-stretch flex gap-[2px] items-start overflow-x-clip overflow-y-auto relative size-full rounded-[12px] w-full">
+                {orders.length > 0 ? (
+                  <Table columns={generateTableData()} />
+                ) : (
+                  <div className="flex items-center justify-center h-full w-full">
+                    <div className="text-[#4d4d4d] text-[18px] text-center">У вас ще немає замовлень</div>
+                  </div>
+                )}
+              </div>
               <div aria-hidden="true" className="absolute border border-solid border-white inset-0 pointer-events-none rounded-[12px]" />
             </div>
           </div>
           
-          {/* Bottom Row */}
+          {/* Bottom Row - Keep original structure */}
           <div className="content-stretch flex gap-[10px] items-center justify-end relative shrink-0 w-full" data-name="row">
-            <p className="[text-underline-position:from-font] [white-space-collapse:collapse] basis-0 decoration-solid font-['Atkinson_Hyperlegible:Regular','Noto_Sans:Regular',sans-serif] grow leading-[normal] min-h-px min-w-px overflow-ellipsis overflow-hidden relative shrink-0 text-[#4d4d4d] text-[16px] text-nowrap underline cursor-pointer hover:text-[#5e89e8] transition-colors" style={{ fontVariationSettings: "'CTGR' 0, 'wdth' 100, 'wght' 400" }}>
+            <p 
+              onClick={handleTermsClick}
+              className="[text-underline-position:from-font] [white-space-collapse:collapse] basis-0 decoration-solid font-['Atkinson_Hyperlegible:Regular','Noto_Sans:Regular',sans-serif] grow leading-[normal] min-h-px min-w-px overflow-ellipsis overflow-hidden relative shrink-0 text-[#4d4d4d] text-[16px] text-nowrap underline cursor-pointer hover:text-[#5e89e8] transition-colors" 
+              style={{ fontVariationSettings: "'CTGR' 0, 'wdth' 100, 'wght' 400" }}
+            >
               Умови та Політика Використання
             </p>
-            <div className="bg-white box-border content-stretch flex gap-[8px] h-[44px] items-center justify-center px-[24px] py-[12px] relative rounded-[12px] shrink-0 cursor-pointer hover:bg-[#f2f2f2] transition-colors" data-name="Button">
+            {/* Refresh button */}
+            <button 
+              onClick={handleRefreshClick}
+              className="bg-white box-border content-stretch flex gap-[8px] h-[44px] items-center justify-center px-[24px] py-[12px] relative rounded-[12px] shrink-0 cursor-pointer hover:bg-[#f2f2f2] transition-colors border border-[#4d4d4d]"
+            >
+              <div className="flex flex-col font-['Atkinson_Hyperlegible:Regular','Noto_Sans:Regular',sans-serif] justify-end leading-[0] relative shrink-0 text-[#0d0d0d] text-[16px] text-nowrap" style={{ fontVariationSettings: "'CTGR' 0, 'wdth' 100, 'wght' 400" }}>
+                <p className="leading-[normal] whitespace-pre">Оновити</p>
+              </div>
+            </button>
+            <div 
+              onClick={handleCreateNewOrder}
+              className="bg-white box-border content-stretch flex gap-[8px] h-[44px] items-center justify-center px-[24px] py-[12px] relative rounded-[12px] shrink-0 cursor-pointer hover:bg-[#f2f2f2] transition-colors" 
+              data-name="Button"
+            >
               <div aria-hidden="true" className="absolute border border-[#4d4d4d] border-solid inset-0 pointer-events-none rounded-[12px]" />
               <div className="relative shrink-0 size-[20px]" data-name="icon order">
                 <div className="absolute inset-[8.33%_4.17%_8.33%_12.5%] mask-alpha mask-intersect mask-no-clip mask-no-repeat mask-position-[-3px_-2px] mask-size-[24px_24px]" data-name="contract_edit">

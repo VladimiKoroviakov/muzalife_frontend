@@ -274,7 +274,7 @@ export default function HomePage() {
     if (activeTab === "scenarios" && product.type !== "Сценарій") return false;
     if (activeTab === "quests" && product.type !== "Квест") return false;
     if (activeTab === "poetry" && product.type !== "Поезія") return false;
-    if (activeTab === "free" && product.type !== "Безкоштовні матеріали") return false;
+    if (activeTab === "free" && product.type !== "Безкоштовний матеріал") return false;
     if (activeTab === "other" && product.type !== "Інше") return false;
 
     if (selectedAgeCategory) {
