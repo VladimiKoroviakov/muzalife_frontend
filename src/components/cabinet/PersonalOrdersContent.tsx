@@ -175,41 +175,77 @@ export function PersonalOrdersContent() {
   };
 
   // Map order status to color
-  const getStatusColor = (status: string): string => {
-    const colorMap: Record<string, string> = {
-      'pending': '#4d4d4d',
-      'in_progress': '#0066cc',
-      'completed': '#008000',
-      'cancelled': '#cc0000',
-      'approved': '#008000',
-      'rejected': '#cc0000'
-    };
-    return colorMap[status.toLowerCase()] || '#4d4d4d';
+const getStatusColor = (status: string): string => {
+  const colorMap: Record<string, string> = {
+    'чернетка': '#a8a8a8',
+    'нове замовлення': '#4d4d4d',
+    'очікує оплату': '#ff9900',
+    'оплачено': '#0066cc',
+    'прийнято': '#008000',
+    'в черзі': '#4d4d4d',
+    'в розробці': '#0066cc',
+    'очікує підтвердження': '#ff9900',
+    'призупинено': '#cc0000',
+    'на перевірці': '#ff9900',
+    'виконано': '#008000',
+    'скасовано клієнтом': '#cc0000',
+    'скасовано системою': '#cc0000',
+    'відхилено': '#cc0000',
+    'повернення коштів': '#cc0000',
+    'повернено': '#cc0000',
+    'архівовано': '#a8a8a8'
   };
+  
+  return colorMap[status.toLowerCase()] || '#4d4d4d';
+};
 
-  // Determine action text and color based on status
-  const getActionText = (status: string): string => {
-    const actionMap: Record<string, string> = {
-      'pending': 'Переглянути',
-      'in_progress': 'Переглянути',
-      'completed': 'Переглянути',
-      'cancelled': 'Переглянути',
-      'approved': 'Підтвердити',
-      'rejected': 'Переглянути'
-    };
-    return actionMap[status.toLowerCase()] || 'Переглянути';
+// Determine action text based on status
+const getActionText = (status: string): string => {
+  const actionMap: Record<string, string> = {
+    'чернетка': 'Редагувати',
+    'нове замовлення': 'Переглянути',
+    'очікує оплату': 'Переглянути',
+    'оплачено': 'Переглянути',
+    'прийнято': 'Переглянути',
+    'в черзі': 'Переглянути',
+    'в розробці': 'Переглянути',
+    'очікує підтвердження': 'Підтвердити',
+    'призупинено': 'Переглянути',
+    'на перевірці': 'Перевірити',
+    'виконано': 'Переглянути',
+    'скасовано клієнтом': 'Переглянути',
+    'скасовано системою': 'Переглянути',
+    'відхилено': 'Переглянути',
+    'повернення коштів': 'Переглянути',
+    'повернено': 'Переглянути',
+    'архівовано': 'Переглянути'
   };
+  
+  return actionMap[status.toLowerCase()] || 'Переглянути';
+};
 
-  const getActionColor = (status: string): string | undefined => {
-    if (status.toLowerCase() === 'approved') {
-      return '#ff7b00';
-    }
-    return undefined;
-  };
+// Determine action button color based on status
+const getActionColor = (status: string): string | undefined => {
+  const statusLower = status.toLowerCase();
+  
+  // Highlight actions that require attention
+  if (statusLower === 'очікує підтвердження' || 
+      statusLower === 'на перевірці' ||
+      statusLower === 'очікує оплату') {
+    return '#ff7b00';
+  }
+  
+  return undefined;
+};
 
-  const isActionBold = (status: string): boolean => {
-    return status.toLowerCase() === 'approved';
-  };
+// Make action button bold for statuses requiring attention
+const isActionBold = (status: string): boolean => {
+  const statusLower = status.toLowerCase();
+  
+  return statusLower === 'очікує підтвердження' || 
+         statusLower === 'на перевірці' ||
+         statusLower === 'очікує оплату';
+};
 
   // Format date for display
   const formatDate = (dateString: string): string => {
