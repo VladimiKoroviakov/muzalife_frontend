@@ -87,28 +87,29 @@ function ReviewCard({ review }: { review: Review }) {
       <div className="flex flex-col justify-center size-full">
         <div className="box-border content-stretch flex flex-col gap-[20px] items-start justify-center px-[24px] py-[20px] relative w-full">
           <ReviewStars count={review.rating} />
-          <div className="flex flex-col font-['Atkinson_Hyperlegible:Regular','Noto_Sans:Regular',sans-serif] justify-end leading-[0] min-w-full relative shrink-0 text-[#0d0d0d] text-[16px] w-[min-content]" style={{ fontVariationSettings: "'CTGR' 0, 'wdth' 100, 'wght' 400" }}>
+          <div className="flex flex-col justify-end leading-[0] min-w-full relative shrink-0 text-[#0d0d0d] text-[16px] w-[min-content]" style={{ fontVariationSettings: "'CTGR' 0, 'wdth' 100, 'wght' 400" }}>
             <p className="leading-[28px]">{review.comment}</p>
           </div>
           <div className="content-stretch flex gap-[12px] items-center relative shrink-0" data-name="Person">
             <div className="bg-[#e6e6e6] content-stretch flex gap-[8px] items-center justify-center relative rounded-[48px] shrink-0 size-[48px]" data-name="Image">
-              <div
-                className="flex flex-col justify-end leading-[0] relative shrink-0 text-[16px] text-black text-justify text-nowrap"
-                style={{ fontVariationSettings: "'CTGR' 0, 'wdth' 100, 'wght' 400" }}
-              >
                 {review.userAvatar ? (
                   <img
                     src={review.userAvatar}
                     alt={review.userName || "User avatar"}
-                    className="w-10 h-10 rounded-full object-cover"
+                    className="w-full h-full rounded-full object-cover"
                   />
                 ) : (
-                  <p className="leading-[normal] whitespace-pre">
-                    {review.userName?.split(' ').slice(0, 2).map(word => word.charAt(0).toUpperCase()).join('')}
-                  </p>
+                  <div
+                    className="flex flex-col justify-end leading-[0] relative shrink-0 text-[16px] text-black text-justify text-nowrap"
+                    style={{ fontVariationSettings: "'CTGR' 0, 'wdth' 100, 'wght' 400" }}
+                  >
+                    <p className="leading-[normal] whitespace-pre">
+                      {review.userName?.split(' ').slice(0, 2).map(word => word.charAt(0).toUpperCase()).join('')}
+                    </p>
+                  </div>
                 )}
               </div>
-            </div>
+            
             <div className="content-stretch flex flex-col gap-[8px] items-start justify-center leading-[0] relative shrink-0 text-[#4d4d4d] text-[16px] text-justify" data-name="Sign">
               <div className="flex flex-col font-['Atkinson_Hyperlegible:Bold','Noto_Sans:Bold',sans-serif] h-[15px] justify-end relative shrink-0 w-[222px]" style={{ fontVariationSettings: "'CTGR' 0, 'wdth' 100, 'wght' 700" }}>
                 <p className="leading-[normal]">{review.userName}</p>

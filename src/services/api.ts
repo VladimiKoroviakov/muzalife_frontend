@@ -295,7 +295,6 @@ class ApiService {
     }
   }
 
-  // Add method to clear products cache if needed
   clearProductsCache(): void {
     try {
       localStorage.removeItem('cachedProducts');
@@ -306,7 +305,6 @@ class ApiService {
     }
   }
 
-  // Update the clearUserDataCache method to include products cache
   clearUserDataCache(): void {
     try {
       const userKeys = [
@@ -707,20 +705,61 @@ class ApiService {
   }
 
   // Review methods
-  async submitReview(materialName: string, purchaseDate: string, rating: number, reviewText: string) {
-    return this.request('/reviews', {
-      method: 'POST',
-      body: JSON.stringify({ materialName, purchaseDate, rating, reviewText }),
-    });
-  }
-
-  async getReviewsByProductId(productId: string): Promise<Review[]> {
+  async getReviewsByProductId(productId: number): Promise<Review[]> {
     try {
       return await this.request(`/reviews/product/${productId}`);
     } catch (error) {
-      console.log('Reviews endpoint not available yet, using empty array');
-      return [];
+      console.error(`Error fetching reviews for product ${productId}:`, error);
+      throw error;
     }
+  }
+
+  async getReviewById(reviewId: number): Promise<Review> {
+    return this.request(`/reviews/${reviewId}`);
+  }
+
+  async submitReview(productId: number, rating: number, comment: string): Promise<Review> {
+    try {
+      const response = await this.request('/reviews', {
+        method: 'POST',
+        body: JSON.stringify({ productId, rating, comment }),
+      });
+      
+      // Clear product cache when a new review is submitted
+      this.clearProductsCache();
+      
+      return response;
+    } catch (error: any) {
+      if (error.status === 409) {
+        throw new Error('Ви вже залишили відгук на цей продукт');
+      }
+      throw error;
+    }
+  }
+
+  async updateReview(reviewId: number, rating?: number, comment?: string): Promise<Review> {
+    const updateData: any = {};
+    if (rating !== undefined) updateData.rating = rating;
+    if (comment !== undefined) updateData.comment = comment;
+    
+    const response = await this.request(`/reviews/${reviewId}`, {
+      method: 'PUT',
+      body: JSON.stringify(updateData),
+    });
+    
+    // Clear product cache when a review is updated
+    this.clearProductsCache();
+    
+    return response;
+  }
+
+  async deleteReview(reviewId: number): Promise<void> {
+    await this.request(`/reviews/${reviewId}`, {
+      method: 'DELETE',
+    });
+    
+    // Clear product cache when a review is deleted
+    this.clearProductsCache();
   }
 }
 

@@ -5,6 +5,8 @@ import { Table, TextCell, EmptyCell, TableCell } from "./TableComponents";
 import { Skeleton } from "../ui/skeleton";
 import { apiService } from "../../services/api";
 import { Order, BoughtScenariosContentProps, Product } from "../../types";
+// Import the ReviewScreen component
+import ReviewScreen from "./ReviewScreen";
 
 export function PurchaseHistoryContent({
   onBack,
@@ -174,27 +176,29 @@ export function PurchaseHistoryContent({
     try {
       if (!selectedOrder) return;
       
-      // TODO: review functionality 
-      // await apiService.submitReview({
-      //   productId: selectedOrder.productId,
-      //   orderId: selectedOrder.id,
-      //   rating,
-      //   comment: reviewText,
-      //   productName: selectedOrder.name
-      // });
+      // Submit review via API
+      await apiService.submitReview(
+        selectedOrder.id,
+        rating,
+        reviewText
+      );
       
       toast.success('Відгук успішно надіслано!');
       
+      // Mark this order as reviewed
       const orderKey = getOrderKey(selectedOrder.name, selectedOrder.date);
       const updatedReviews = new Set(reviewedOrders).add(orderKey);
       setReviewedOrders(updatedReviews);
       
+      // Save to localStorage
       localStorage.setItem('reviewedOrders', JSON.stringify(Array.from(updatedReviews)));
       
+      // Close the review screen
       handleCloseReview();
     } catch (error) {
       console.error('Error submitting review:', error);
       toast.error('Помилка при відправці відгуку');
+      throw error; // Re-throw to let ReviewScreen handle the error
     }
   };
 
@@ -329,72 +333,81 @@ export function PurchaseHistoryContent({
 
   return (
     <div className="basis-0 content-stretch flex flex-col gap-[10px] grow h-full items-start min-h-px min-w-px relative rounded-[16px] shrink-0" data-name="Right Side">
-      <div 
-        ref={tableContainerRef}
-        className="bg-[#f2f2f2] box-border content-stretch flex gap-[12px] grow h-full w-full items-start overflow-clip px-[24px] relative rounded-[16px] shrink-0 px-[20px] py-[16px]" 
-        data-name="Scrolling Table"
-      >
-        {isLoading ? (
-          // Loading state - show skeletons
-          <div className="basis-0 grow h-full min-h-px min-w-px relative rounded-[12px] shrink-0 overflow-hidden w-full flex items-center justify-center">
-            <div className="flex flex-col items-center justify-center w-full h-full gap-4">
-              <div className="text-lg">Завантаження історії покупок...</div>
-              <div className="space-y-4 w-full max-w-2xl">
-                {[1, 2, 3, 4].map(i => (
-                  <Skeleton key={i} className="h-16 w-full rounded-[12px]" />
-                ))}
-              </div>
-            </div>
-          </div>
-        ) : error ? (
-          // Error state
-          <div className="basis-0 grow h-full min-h-px min-w-px relative rounded-[12px] shrink-0 overflow-hidden w-full flex items-center justify-center">
-            <div className="flex flex-col items-center justify-center w-full h-full gap-4 py-12">
-              <div className="flex flex-col font-['Atkinson_Hyperlegible:Regular','Noto_Sans:Regular',sans-serif] justify-end leading-[0] relative text-[#4d4d4d] text-[18px] text-center" style={{ fontVariationSettings: "'CTGR' 0, 'wdth' 100, 'wght' 400" }}>
-                <p className="leading-[normal]">
-                  {error}
-                </p>
-              </div>
-            </div>
-          </div>
-        ) : boughtProductIds.length === 0 ? (
-          // Empty state - no purchase history
-          <div className="basis-0 grow h-full min-h-px min-w-px relative rounded-[12px] shrink-0 overflow-hidden w-full flex items-center justify-center">
-            <div className="flex flex-col items-center justify-center w-full h-full gap-4 py-12">
-              <div className="flex flex-col font-['Atkinson_Hyperlegible:Regular','Noto_Sans:Regular',sans-serif] justify-end leading-[0] relative text-[#4d4d4d] text-[18px] text-center" style={{ fontVariationSettings: "'CTGR' 0, 'wdth' 100, 'wght' 400" }}>
-                <p className="leading-[normal]">
-                  Ви ще не здійснили жодної покупки
-                </p>
-              </div>
-            </div>
-          </div>
-        ) : orders.length === 0 ? (
-          // Edge case: bought products exist but not found in available products
-          <div className="basis-0 grow h-full min-h-px min-w-px relative rounded-[12px] shrink-0 overflow-hidden w-full flex items-center justify-center">
-            <div className="flex flex-col items-center justify-center w-full h-full gap-4 py-12">
-              <div className="flex flex-col font-['Atkinson_Hyperlegible:Regular','Noto_Sans:Regular',sans-serif] justify-end leading-[0] relative text-[#4d4d4d] text-[18px] text-center" style={{ fontVariationSettings: "'CTGR' 0, 'wdth' 100, 'wght' 400" }}>
-                <p className="leading-[normal]">
-                  Куплені матеріали не знайдені серед доступних продуктів
-                </p>
-              </div>
-              {boughtProductIds.length > 0 && products.length > 0 && (
-                <div className="text-sm text-gray-500 text-center">
-                  <div>Куплені ID: {boughtProductIds.join(', ')}</div>
-                  <div>Доступні ID: {products.map(p => p.id).join(', ')}</div>
+      {/* Conditionally render ReviewScreen or the Purchase History table */}
+      {showReviewScreen && selectedOrder ? (
+        <ReviewScreen 
+          materialName={selectedOrder.name}
+          onClose={handleCloseReview}
+          onSubmit={handleSubmitReview}
+        />
+      ) : (
+        <div 
+          ref={tableContainerRef}
+          className="bg-[#f2f2f2] box-border content-stretch flex gap-[12px] grow h-full w-full items-start overflow-clip px-[24px] relative rounded-[16px] shrink-0 px-[20px] py-[16px]" 
+          data-name="Scrolling Table"
+        >
+          {isLoading ? (
+            // Loading state - show skeletons
+            <div className="basis-0 grow h-full min-h-px min-w-px relative rounded-[12px] shrink-0 overflow-hidden w-full flex items-center justify-center">
+              <div className="flex flex-col items-center justify-center w-full h-full gap-4">
+                <div className="text-lg">Завантаження історії покупок...</div>
+                <div className="space-y-4 w-full max-w-2xl">
+                  {[1, 2, 3, 4].map(i => (
+                    <Skeleton key={i} className="h-16 w-full rounded-[12px]" />
+                  ))}
                 </div>
-              )}
+              </div>
             </div>
-          </div>
-        ) : (
-          // Show table only when we have orders and not loading
-          <div className="basis-0 grow h-full min-h-px min-w-px relative rounded-[12px] shrink-0 overflow-hidden w-full" data-name="Table">
-            <div className="content-stretch flex gap-[2px] items-start overflow-x-clip overflow-y-auto relative size-full rounded-[12px] w-full">
-              {tableColumns && <Table columns={tableColumns} />}
+          ) : error ? (
+            // Error state
+            <div className="basis-0 grow h-full min-h-px min-w-px relative rounded-[12px] shrink-0 overflow-hidden w-full flex items-center justify-center">
+              <div className="flex flex-col items-center justify-center w-full h-full gap-4 py-12">
+                <div className="flex flex-col font-['Atkinson_Hyperlegible:Regular','Noto_Sans:Regular',sans-serif] justify-end leading-[0] relative text-[#4d4d4d] text-[18px] text-center" style={{ fontVariationSettings: "'CTGR' 0, 'wdth' 100, 'wght' 400" }}>
+                  <p className="leading-[normal]">
+                    {error}
+                  </p>
+                </div>
+              </div>
             </div>
-            <div aria-hidden="true" className="absolute border border-solid border-white inset-0 pointer-events-none rounded-[12px]" />
-          </div>
-        )}
-      </div>
+          ) : boughtProductIds.length === 0 ? (
+            // Empty state - no purchase history
+            <div className="basis-0 grow h-full min-h-px min-w-px relative rounded-[12px] shrink-0 overflow-hidden w-full flex items-center justify-center">
+              <div className="flex flex-col items-center justify-center w-full h-full gap-4 py-12">
+                <div className="flex flex-col font-['Atkinson_Hyperlegible:Regular','Noto_Sans:Regular',sans-serif] justify-end leading-[0] relative text-[#4d4d4d] text-[18px] text-center" style={{ fontVariationSettings: "'CTGR' 0, 'wdth' 100, 'wght' 400" }}>
+                  <p className="leading-[normal]">
+                    Ви ще не здійснили жодної покупки
+                  </p>
+                </div>
+              </div>
+            </div>
+          ) : orders.length === 0 ? (
+            // Edge case: bought products exist but not found in available products
+            <div className="basis-0 grow h-full min-h-px min-w-px relative rounded-[12px] shrink-0 overflow-hidden w-full flex items-center justify-center">
+              <div className="flex flex-col items-center justify-center w-full h-full gap-4 py-12">
+                <div className="flex flex-col font-['Atkinson_Hyperlegible:Regular','Noto_Sans:Regular',sans-serif] justify-end leading-[0] relative text-[#4d4d4d] text-[18px] text-center" style={{ fontVariationSettings: "'CTGR' 0, 'wdth' 100, 'wght' 400" }}>
+                  <p className="leading-[normal]">
+                    Куплені матеріали не знайдені серед доступних продуктів
+                  </p>
+                </div>
+                {boughtProductIds.length > 0 && products.length > 0 && (
+                  <div className="text-sm text-gray-500 text-center">
+                    <div>Куплені ID: {boughtProductIds.join(', ')}</div>
+                    <div>Доступні ID: {products.map(p => p.id).join(', ')}</div>
+                  </div>
+                )}
+              </div>
+            </div>
+          ) : (
+            // Show table only when we have orders and not loading
+            <div className="basis-0 grow h-full min-h-px min-w-px relative rounded-[12px] shrink-0 overflow-hidden w-full" data-name="Table">
+              <div className="content-stretch flex gap-[2px] items-start overflow-x-clip overflow-y-auto relative size-full rounded-[12px] w-full">
+                {tableColumns && <Table columns={tableColumns} />}
+              </div>
+              <div aria-hidden="true" className="absolute border border-solid border-white inset-0 pointer-events-none rounded-[12px]" />
+            </div>
+          )}
+        </div>
+      )}
     </div>
   );
 }
