@@ -295,33 +295,6 @@ class ApiService {
     }
   }
 
-  clearProductsCache(): void {
-    try {
-      localStorage.removeItem('cachedProducts');
-      localStorage.removeItem('cachedProducts_timestamp');
-      console.log('🧹 Products cache cleared');
-    } catch (error) {
-      console.error('Error clearing products cache:', error);
-    }
-  }
-
-  clearUserDataCache(): void {
-    try {
-      const userKeys = [
-        'userProfile', 
-        'userPreferences', 
-        'cartItems', 
-        'recentProducts', 
-        'searchHistory',
-        'cachedProducts',
-        'cachedProducts_timestamp'
-      ];
-      userKeys.forEach(key => localStorage.removeItem(key));
-    } catch (error) {
-      console.error('Error clearing user data cache:', error);
-    }
-  }
-
   // Cache management
   private getCachedSavedProducts(): number[] | null {
     try {
@@ -421,15 +394,6 @@ class ApiService {
     this.setCachedSavedProducts(current.filter(id => id !== productId));
   }
 
-  clearSavedProductsCache(): void {
-    try {
-      localStorage.removeItem('savedProducts');
-      localStorage.removeItem('savedProducts_timestamp');
-    } catch (error) {
-      console.error('Error clearing saved products cache:', error);
-    }
-  }
-
   // Bought products methods with localStorage caching
   async getBoughtProducts(): Promise<number[]> {
     try {
@@ -478,15 +442,6 @@ class ApiService {
     const current = this.getCachedBoughtProducts() || [];
     if (!current.includes(productId)) {
       this.setCachedBoughtProducts([...current, productId]);
-    }
-  }
-
-  clearBoughtProductsCache(): void {
-    try {
-      localStorage.removeItem('boughtProducts');
-      localStorage.removeItem('boughtProducts_timestamp');
-    } catch (error) {
-      console.error('Error clearing bought products cache:', error);
     }
   }
 
@@ -672,11 +627,34 @@ class ApiService {
   }
 
   // Clear all user-related data on logout
-  private clearUserData(): void {
+  clearUserData(): void {
     this.clearSavedProductsCache();
     this.clearBoughtProductsCache();
     this.clearUserDataCache();
+    this.clearPurchaseHistoryCache(); // New method
+    this.clearPersonalOrdersCache();  // New method
     this.setToken(null);
+  }
+
+  clearPurchaseHistoryCache(): void {
+    try {
+      // Clear reviewed orders from PurchaseHistory component
+      localStorage.removeItem('reviewedOrders');
+      console.log('🧹 Purchase history cache cleared');
+    } catch (error) {
+      console.error('Error clearing purchase history cache:', error);
+    }
+  }
+
+  clearPersonalOrdersCache(): void {
+    try {
+      // Clear personal orders cache from PersonalOrders component
+      localStorage.removeItem('cachedPersonalOrders');
+      localStorage.removeItem('cachedPersonalOrders_timestamp');
+      console.log('🧹 Personal orders cache cleared');
+    } catch (error) {
+      console.error('Error clearing personal orders cache:', error);
+    }
   }
 
   clearAllUsersCache(): void {
@@ -688,6 +666,8 @@ class ApiService {
         key.startsWith('userProfile_') ||
         key.startsWith('userPreferences_') ||
         key.startsWith('cartItems_') ||
+        key.startsWith('cachedPersonalOrders') || // Added
+        key.includes('reviewedOrders') ||          // Added
         key.includes('_timestamp')
       );
       
@@ -695,12 +675,58 @@ class ApiService {
       
       const genericKeys = [
         'savedProducts', 'savedProducts_timestamp', 'userProfile',
-        'userPreferences', 'cartItems', 'authToken', 'lastLoggedInUser'
+        'userPreferences', 'cartItems', 'authToken', 'lastLoggedInUser',
+        'reviewedOrders', 'cachedPersonalOrders', 'cachedPersonalOrders_timestamp' // Added
       ];
       
       genericKeys.forEach(key => localStorage.removeItem(key));
     } catch (error) {
       console.error('Error clearing all users cache:', error);
+    }
+  }
+
+  clearSavedProductsCache(): void {
+    try {
+      localStorage.removeItem('savedProducts');
+      localStorage.removeItem('savedProducts_timestamp');
+    } catch (error) {
+      console.error('Error clearing saved products cache:', error);
+    }
+  }
+
+  clearBoughtProductsCache(): void {
+    try {
+      localStorage.removeItem('boughtProducts');
+      localStorage.removeItem('boughtProducts_timestamp');
+    } catch (error) {
+      console.error('Error clearing bought products cache:', error);
+    }
+  }
+
+  clearProductsCache(): void {
+    try {
+      localStorage.removeItem('cachedProducts');
+      localStorage.removeItem('cachedProducts_timestamp');
+      console.log('🧹 Products cache cleared');
+    } catch (error) {
+      console.error('Error clearing products cache:', error);
+    }
+  }
+
+  clearUserDataCache(): void {
+    try {
+      const userKeys = [
+        'userProfile', 
+        'userPreferences', 
+        'cartItems', 
+        'recentProducts', 
+        'searchHistory',
+        'cachedProducts',
+        'cachedProducts_timestamp'
+      ];
+      userKeys.forEach(key => localStorage.removeItem(key));
+    } catch (error) {
+      console.error('Error clearing user data cache:', error);
     }
   }
 

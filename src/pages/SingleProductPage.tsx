@@ -9,7 +9,6 @@ import { useSingleProduct } from '../hooks/useSingleProduct';
 import { apiService } from "../services/api";
 import { LoginRequiredModal } from "../components/auth/LoginRequiredModal";
 import { toast } from "sonner";
-import { Product } from "../types";
 
 export default function SingleProductPage() {
   const { id } = useParams<{ id: string }>();
