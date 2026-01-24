@@ -85,7 +85,6 @@ export interface BoughtScenariosContentProps {
   products?: any[];
 }
 
-
 export interface Order {
   id: number; 
   name: string;
@@ -109,13 +108,6 @@ export interface AuthState {
   user: AuthUser | null;
   isLoading: boolean;
   error: string | null;
-}
-export interface ApiResponse<T> {
-  success: boolean;
-  data: T;
-  count?: number;
-  error?: string;
-  details?: string;
 }
 
 // FAQ types
@@ -193,6 +185,7 @@ export interface Poll {
   id: number;
   question: string;
   options: string[];
+  optionVoteIds: number[]; // Add this
   selectedOption: number | null;
   hasVoted: boolean;
   voteCount: number;
@@ -222,6 +215,11 @@ export interface VoteRequest {
 
 export interface VoteResponse {
   success: boolean;
+  error?: string;
+}
+export interface PollDetailsResponse {
+  success: boolean;
+  poll: ApiPoll;
   error?: string;
 }
 
@@ -268,4 +266,64 @@ export interface PollCardProps {
   voters: VoterData[];
   onSelectOption: (pollIndex: number, optionIndex: number) => void;
   onVote: (pollIndex: number) => void;
+}
+
+export interface UserProfileApiResponse {
+  user: {
+    id: number;
+    name: string;
+    email: string;
+    avatar_url?: string;
+    authProvider: 'email' | 'google' | 'facebook';
+    createdAt: string;
+    is_admin?: boolean;
+  };
+}
+
+export interface UserProfileData {
+  id: number;
+  name: string;
+  email: string;
+  avatar_url?: string;
+  authProvider: 'email' | 'google' | 'facebook';
+  createdAt: string;
+  is_admin?: boolean;
+}
+
+// Auth response types
+export interface AuthResponse {
+  token?: string;
+  user?: AuthUser;
+  success?: boolean;
+  message?: string;
+  [key: string]: any;
+}
+
+export interface LoginResponse extends AuthResponse {
+  token: string;
+  user: AuthUser;
+}
+
+export interface RegistrationResponse extends AuthResponse {
+  message: string;
+  requiresVerification?: boolean;
+}
+
+export interface SocialLoginResponse extends AuthResponse {
+  token: string;
+  user: AuthUser;
+}
+
+export interface PersonalOrdersApiResponse {
+  success: boolean;
+  personalOrders?: PersonalOrder[];
+  personalOrder?: PersonalOrder;
+  error?: string;
+}
+
+export interface ApiResponse<T = any> {
+  success: boolean;
+  data?: T;
+  error?: string;
+  [key: string]: any;
 }

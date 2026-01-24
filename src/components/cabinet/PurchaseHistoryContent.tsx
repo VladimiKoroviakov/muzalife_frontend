@@ -1,12 +1,13 @@
-import { useState, useEffect, useRef } from "react";
+import { useState, useEffect, useRef, useCallback } from "react";
 import { toast } from "sonner";
 import svgPaths from "../ui/icons/svgIconPaths";
 import { Table, TextCell, EmptyCell, TableCell } from "./TableComponents";
 import { Skeleton } from "../ui/skeleton";
 import { apiService } from "../../services/api";
 import { Order, BoughtScenariosContentProps, Product } from "../../types";
-// Import the ReviewScreen component
 import ReviewScreen from "./ReviewScreen";
+import { CacheManager } from "../../utils/cache-manager";
+import config from "../../config";
 
 export function PurchaseHistoryContent({
   onBack,
@@ -14,15 +15,14 @@ export function PurchaseHistoryContent({
 }: BoughtScenariosContentProps) {
   const [showReviewScreen, setShowReviewScreen] = useState(false);
   const [selectedOrder, setSelectedOrder] = useState<Order | null>(null);
-  const [reviewedOrders, setReviewedOrders] = useState<Set<string>>(new Set());
+  const [reviewedProducts, setReviewedProducts] = useState<Set<number>>(new Set());
   const [boughtProductIds, setBoughtProductIds] = useState<number[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [productsLoading, setProductsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
-  const [tableHeight, setTableHeight] = useState<number>(0);
   const tableContainerRef = useRef<HTMLDivElement>(null);
+  const [tableHeight, setTableHeight] = useState<number>(0);
 
-  // Define formatDate function before using it
   const formatDate = (dateString: string): string => {
     if (!dateString) return 'Невідома дата';
     
@@ -38,15 +38,84 @@ export function PurchaseHistoryContent({
     }
   };
 
-  // Load bought product IDs from API
+  // Load user reviews with cache-first approach
+  const loadUserReviews = useCallback(async () => {
+    try {
+      // 1. First check cache with timestamp
+      const cacheKey = config.cacheKeys.REVIEWED_PRODUCTS;
+      const timestampKey = `${config.cacheKeys.REVIEWED_PRODUCTS}_timestamp`;
+      
+      const cachedProductIds = CacheManager.getItem<number[]>(cacheKey);
+      const cacheTimestamp = CacheManager.getItem<number>(timestampKey);
+      
+      // Check if cache is valid (1 hour)
+      const isCacheValid = cacheTimestamp && 
+                          Date.now() - cacheTimestamp < 60 * 60 * 1000;
+      
+      if (cachedProductIds && isCacheValid) {
+        setReviewedProducts(new Set(cachedProductIds));
+        return; // Use cached data
+      }
+      
+      // 2. If no cache or expired, call API
+      const userProfile = await apiService.getProfile();
+      if (!userProfile?.id) {
+        throw new Error('User not authenticated');
+      }
+      
+      try {
+        const reviews = await apiService.getUserReviews(userProfile.id);
+        const reviewedProductIds = reviews.map(review => review.productId);
+        
+        // Update state
+        setReviewedProducts(new Set(reviewedProductIds));
+        
+        // 3. Cache the response with timestamp
+        CacheManager.setItem(cacheKey, reviewedProductIds);
+        CacheManager.setItem(timestampKey, Date.now());
+        
+      } catch (apiError: any) {
+        console.error('API error loading user reviews:', apiError);
+        
+        // If API fails, use cached data even if expired
+        if (cachedProductIds) {
+          setReviewedProducts(new Set(cachedProductIds));
+        } else {
+          // No cache available, use empty set
+          setReviewedProducts(new Set());
+        }
+        
+        // Update timestamp to prevent immediate retry
+        CacheManager.setItem(timestampKey, Date.now());
+      }
+      
+    } catch (error) {
+      console.error('Error in loadUserReviews:', error);
+      // Final fallback to any available cache
+      const cachedProductIds = CacheManager.getItem<number[]>(config.cacheKeys.REVIEWED_PRODUCTS);
+      if (cachedProductIds) {
+        setReviewedProducts(new Set(cachedProductIds));
+      }
+    }
+  }, []);
+
+  // Load bought product IDs
   useEffect(() => {
     const loadBoughtProducts = async () => {
       try {
         setIsLoading(true);
         setError(null);
         
+        // Check cache first
+        const cachedBoughtProducts = CacheManager.getItem<number[]>(config.cacheKeys.BOUGHT_PRODUCTS);
+        if (cachedBoughtProducts) {
+          setBoughtProductIds(cachedBoughtProducts);
+        }
+        
+        // Always fetch fresh data
         const boughtIds = await apiService.getBoughtProducts();
         setBoughtProductIds(boughtIds);
+        
       } catch (error) {
         console.error('Error loading bought products:', error);
         setError('Не вдалося завантажити історію покупок');
@@ -59,45 +128,33 @@ export function PurchaseHistoryContent({
     loadBoughtProducts();
   }, []);
 
+  // Load user reviews when bought products are loaded
+  useEffect(() => {
+    if (boughtProductIds.length > 0 && !isLoading) {
+      loadUserReviews();
+    }
+  }, [boughtProductIds, isLoading, loadUserReviews]);
+
   // Monitor when products are loaded
   useEffect(() => {
     setProductsLoading(false);
   }, [products]);
 
-  // Load reviewed orders from localStorage
-  useEffect(() => {
-    const loadReviewedOrders = () => {
-      try {
-        const savedReviews = localStorage.getItem('reviewedOrders');
-        if (savedReviews) {
-          setReviewedOrders(new Set(JSON.parse(savedReviews)));
-        }
-      } catch (error) {
-        console.error('Error loading reviewed orders:', error);
-      }
-    };
-
-    loadReviewedOrders();
-  }, []);
-
-  // Calculate table height for empty rows
+  // Calculate table height
   useEffect(() => {
     const updateTableHeight = () => {
       if (tableContainerRef.current) {
-        // Get the height of the table container minus any padding/margins
         const container = tableContainerRef.current;
         const style = window.getComputedStyle(container);
         const paddingTop = parseFloat(style.paddingTop);
         const paddingBottom = parseFloat(style.paddingBottom);
         const height = container.clientHeight - paddingTop - paddingBottom;
-        
         setTableHeight(height);
       }
     }; 
 
     updateTableHeight();
     window.addEventListener('resize', updateTableHeight);
-
     return () => window.removeEventListener('resize', updateTableHeight);
   }, []);
 
@@ -115,8 +172,6 @@ export function PurchaseHistoryContent({
     materialType: material.type || 'Не вказано'
   }));
 
-  const getOrderKey = (name: string, date: string) => `${name}:${date}`;
-
   const getRowBg = (index: number) => index % 2 === 0 ? '#f2f2f2' : '#e6e6e6';
 
   const getEmptyRowsCount = () => {
@@ -128,7 +183,6 @@ export function PurchaseHistoryContent({
       const availableHeight = tableHeight - rowHeight;
       const rowsThatFit = Math.floor(availableHeight / rowHeight);
       const emptyRowsNeeded = Math.max(0, rowsThatFit - orders.length);
-      
       return emptyRowsNeeded;
     }
     
@@ -140,10 +194,7 @@ export function PurchaseHistoryContent({
   const handleResendMaterial = async (materialName: string, purchaseDate: string) => {
     try {
       const order = orders.find(o => o.name === materialName && o.date === purchaseDate);
-      
       if (order) {
-        // TODO: resend functionality 
-        // await apiService.resendMaterial(order.productId);
         toast.success(`Матеріал "${materialName}" буде відправлено на вашу email адресу`);
       } else {
         toast.error('Не вдалося знайти замовлення');
@@ -155,8 +206,8 @@ export function PurchaseHistoryContent({
   };
 
   const handleOpenReview = (order: Order) => {
-    const orderKey = getOrderKey(order.name, order.date);
-    if (reviewedOrders.has(orderKey)) {
+    // Check if product is already reviewed
+    if (reviewedProducts.has(order.id)) {
       toast.error('Ви вже залишили відгук', {
         description: 'Ви можете залишити лише один відгук на цей матеріал'
       });
@@ -185,24 +236,30 @@ export function PurchaseHistoryContent({
       
       toast.success('Відгук успішно надіслано!');
       
-      // Mark this order as reviewed
-      const orderKey = getOrderKey(selectedOrder.name, selectedOrder.date);
-      const updatedReviews = new Set(reviewedOrders).add(orderKey);
-      setReviewedOrders(updatedReviews);
+      // Update local state
+      const updatedReviewedProducts = new Set([...reviewedProducts, selectedOrder.id]);
+      setReviewedProducts(updatedReviewedProducts);
       
-      // Save to localStorage
-      localStorage.setItem('reviewedOrders', JSON.stringify(Array.from(updatedReviews)));
+      // Update cache immediately
+      const cacheKey = config.cacheKeys.REVIEWED_PRODUCTS;
+      const timestampKey = `${config.cacheKeys.REVIEWED_PRODUCTS}_timestamp`;
       
-      // Close the review screen
+      const currentCache = CacheManager.getItem<number[]>(cacheKey) || [];
+      if (!currentCache.includes(selectedOrder.id)) {
+        const updatedCache = [...currentCache, selectedOrder.id];
+        CacheManager.setItem(cacheKey, updatedCache);
+        CacheManager.setItem(timestampKey, Date.now());
+      }
+      
       handleCloseReview();
     } catch (error) {
       console.error('Error submitting review:', error);
       toast.error('Помилка при відправці відгуку');
-      throw error; // Re-throw to let ReviewScreen handle the error
+      throw error; 
     }
   };
 
-  // Generate table data only when we have orders and not loading
+  // Generate table data
   const tableColumns = orders.length > 0 && !isLoading && !productsLoading ? [
     {
       header: "Назва матеріалу",
@@ -211,17 +268,17 @@ export function PurchaseHistoryContent({
       cells: [
         ...orders.map((order, index) => (
           <TextCell 
-            key={`name-${order.id || index}`}
+            key={`name-${order.id}`}
             text={order.name}
             bg={getRowBg(index)}
           />
         )),
-        ...(emptyRowsCount > 0 ? Array.from({ length: emptyRowsCount }, (_, index) => (
+        ...Array.from({ length: emptyRowsCount }, (_, index) => (
           <EmptyCell 
             key={`empty-name-${index}`} 
             bg={getRowBg(orders.length + index)}
           />
-        )) : [])
+        ))
       ]
     },
     {
@@ -231,18 +288,18 @@ export function PurchaseHistoryContent({
       cells: [
         ...orders.map((order, index) => (
           <TextCell 
-            key={`type-${order.id || index}`}
+            key={`type-${order.id}`}
             text={order.materialType || 'Не вказано'}
             bg={getRowBg(index)}
             color="#4d4d4d"
           />
         )),
-        ...(emptyRowsCount > 0 ? Array.from({ length: emptyRowsCount }, (_, index) => (
+        ...Array.from({ length: emptyRowsCount }, (_, index) => (
           <EmptyCell 
             key={`empty-type-${index}`} 
             bg={getRowBg(orders.length + index)}
           />
-        )) : [])
+        ))
       ]
     },
     {
@@ -252,18 +309,18 @@ export function PurchaseHistoryContent({
       cells: [
         ...orders.map((order, index) => (
           <TextCell 
-            key={`date-${order.id || index}`}
+            key={`date-${order.id}`}
             text={order.date}
             bg={getRowBg(index)}
             color="#4d4d4d"
           />
         )),
-        ...(emptyRowsCount > 0 ? Array.from({ length: emptyRowsCount }, (_, index) => (
+        ...Array.from({ length: emptyRowsCount }, (_, index) => (
           <EmptyCell 
             key={`empty-date-${index}`} 
             bg={getRowBg(orders.length + index)}
           />
-        )) : [])
+        ))
       ]
     },
     {
@@ -271,51 +328,55 @@ export function PurchaseHistoryContent({
       width: "10%",
       minWidth: "100px",
       cells: [
-        ...orders.map((order, index) => (
-          <TableCell 
-            key={`actions-${order.id || index}`} 
-            bg={getRowBg(index)}
-          >
-            <div className="flex flex-row items-center size-full">
-              <div className="box-border content-stretch flex gap-[16px] h-[40px] items-center px-[16px] py-[10px] relative w-full">
-                <div 
-                  onClick={() => handleResendMaterial(order.name, order.date)}
-                  className="relative shrink-0 size-[24px] cursor-pointer hover:opacity-70 transition-opacity" 
-                  data-name="icon download"
-                  title="Повторно надіслати матеріал"
-                >
-                  <div className="absolute inset-[16.667%] mask-alpha mask-intersect mask-no-clip mask-no-repeat mask-position-[-4px] mask-size-[24px_24px]" data-name="download">
-                    <svg className="block size-full" fill="none" preserveAspectRatio="none" viewBox="0 0 16 16">
-                      <path d={svgPaths.p13494900} fill="var(--fill-0, #0D0D0D)" id="download" />
-                    </svg>
+        ...orders.map((order, index) => {
+          const isReviewed = reviewedProducts.has(order.id);
+          
+          return (
+            <TableCell 
+              key={`actions-${order.id}`} 
+              bg={getRowBg(index)}
+            >
+              <div className="flex flex-row items-center size-full">
+                <div className="box-border content-stretch flex gap-[16px] h-[40px] items-center px-[16px] py-[10px] relative w-full">
+                  <div 
+                    onClick={() => handleResendMaterial(order.name, order.date)}
+                    className="relative shrink-0 size-[24px] cursor-pointer hover:opacity-70 transition-opacity" 
+                    data-name="icon download"
+                    title="Повторно надіслати матеріал"
+                  >
+                    <div className="absolute inset-[16.667%] mask-alpha mask-intersect mask-no-clip mask-no-repeat mask-position-[-4px] mask-size-[24px_24px]" data-name="download">
+                      <svg className="block size-full" fill="none" preserveAspectRatio="none" viewBox="0 0 16 16">
+                        <path d={svgPaths.p13494900} fill="var(--fill-0, #0D0D0D)" id="download" />
+                      </svg>
+                    </div>
                   </div>
-                </div>
-                <div 
-                  onClick={() => handleOpenReview(order)}
-                  className={`relative shrink-0 size-[24px] transition-opacity ${
-                    reviewedOrders.has(getOrderKey(order.name, order.date))
-                      ? 'opacity-30 cursor-not-allowed'
-                      : 'cursor-pointer hover:opacity-70'
-                  }`}
-                  data-name="comment"
-                  title={reviewedOrders.has(getOrderKey(order.name, order.date)) ? "Ви вже залишили відгук" : "Залишити відгук"}
-                >
-                  <div className="absolute inset-[8.333%] mask-alpha mask-intersect mask-no-clip mask-no-repeat mask-position-[-2px] mask-size-[24px_24px]" data-name="comment">
-                    <svg className="block size-full" fill="none" preserveAspectRatio="none" viewBox="0 0 20 20">
-                      <path d={svgPaths.p159e6480} fill="var(--fill-0, #4D4D4D)" id="comment" />
-                    </svg>
+                  <div 
+                    onClick={() => handleOpenReview(order)}
+                    className={`relative shrink-0 size-[24px] transition-opacity ${
+                      isReviewed
+                        ? 'opacity-30 cursor-not-allowed'
+                        : 'cursor-pointer hover:opacity-70'
+                    }`}
+                    data-name="comment"
+                    title={isReviewed ? "Ви вже залишили відгук" : "Залишити відгук"}
+                  >
+                    <div className="absolute inset-[8.333%] mask-alpha mask-intersect mask-no-clip mask-no-repeat mask-position-[-2px] mask-size-[24px_24px]" data-name="comment">
+                      <svg className="block size-full" fill="none" preserveAspectRatio="none" viewBox="0 0 20 20">
+                        <path d={svgPaths.p159e6480} fill="var(--fill-0, #4D4D4D)" id="comment" />
+                      </svg>
+                    </div>
                   </div>
                 </div>
               </div>
-            </div>
-          </TableCell>
-        )),
-        ...(emptyRowsCount > 0 ? Array.from({ length: emptyRowsCount }, (_, index) => (
+            </TableCell>
+          );
+        }),
+        ...Array.from({ length: emptyRowsCount }, (_, index) => (
           <EmptyCell 
             key={`empty-actions-${index}`} 
             bg={getRowBg(orders.length + index)}
           />
-        )) : [])
+        ))
       ]
     }
   ] : null;

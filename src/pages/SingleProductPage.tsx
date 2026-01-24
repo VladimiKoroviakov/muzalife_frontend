@@ -346,34 +346,6 @@ export default function SingleProductPage() {
     setShowLoginRequiredModal(false);
   };
 
-  const handleCartClick = () => {
-    setShowCart(!showCart);
-  };
-
-  const handleLoginClick = async () => {
-    try {
-      const token = localStorage.getItem('authToken');
-      
-      if (!token) {
-        navigate('/login');
-        return;
-      }
-
-      const user = await apiService.getProfile();
-      
-      if (user) {
-        navigate('/cabinet');
-      } else {
-        navigate('/login');
-      }
-    } catch (error: any) {
-      if (error.status === 401) {
-        localStorage.removeItem('authToken');
-      }
-      navigate('/login');
-    }
-  };
-
   const currentMainImage = galleryImages.length > 0 ? galleryImages[mainImageIndex] : '';
   const isProductBookmarked = product ? bookmarkedProducts.includes(product.id) : false;
   const isProductInCart = product ? cartItems.includes(product.id) : false;

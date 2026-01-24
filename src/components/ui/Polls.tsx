@@ -1,9 +1,8 @@
 import { useState, useEffect } from "react";
 import svgPaths from "../ui/icons/svgIconPaths";
+import { apiService } from "../../services/api";
 import { 
-  VoterData,
   Poll,
-  ApiPoll,
   OptionProps,
   OptionsProps,
   VotersProps,
@@ -12,6 +11,8 @@ import {
   VotedCardProps,
   PollCardProps
 } from "../../types"
+import { CacheManager } from "../../utils/cache-manager";
+import config from "../../config";
 
 function CheckCircle() {
   return (
@@ -211,7 +212,7 @@ function PollCard({ question, options, pollIndex, hasVoted, selectedOption, vote
     <div className="bg-white relative rounded-[16px] shrink-0 w-full" data-name="Question poll">
       <div className="size-full">
         <div className="box-border content-stretch flex flex-col gap-[24px] items-start pb-[20px] pt-[28px] px-[24px] relative w-full">
-          <div className="flex flex-col font-['Atkinson_Hyperlegible:Bold','Noto_Sans:Bold',sans-serif] justify-end leading-[0] relative shrink-0 text-[24px] text-black w-full" style={{ fontVariationSettings: "'CTGR' 0, 'wdth' 100, 'wght' 700" }}>
+          <div className="flex flex-col font-['Atkinson_Hyperlegible:Bold','Noto_Sans:Bold',sans-serif] justify-end leading-[0] relative shrink-0 text-[24px] text-black w-full" style={{ fontVariationSettings: "'CTGR' 0, 'wdth' 100, 'wweight' 700" }}>
             <p className="leading-[normal]">{question}</p>
           </div>
           <Options 
@@ -231,93 +232,71 @@ function PollCard({ question, options, pollIndex, hasVoted, selectedOption, vote
   );
 }
 
-
-const API_BASE_URL = import.meta.env.VITE_API_URL || 'http://localhost:5001/api';
-
-function Scroll() {
+function Polls() {
   const [polls, setPolls] = useState<Poll[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
+  // Add a constant for cache key (add to config if needed)
+  const POLLS_CACHE_KEY = 'pollsCache';
+  const POLLS_TIMESTAMP_KEY = 'pollsCache_timestamp';
+  const POLLS_CACHE_DURATION = 5 * 60 * 1000; // 5 minutes
+
   useEffect(() => {
-    loadPolls();
+    fetchPolls();
   }, []);
-
-  const loadPolls = async () => {
-    try {
-      setError(null);
-      await fetchPolls();
-    } catch (err) {
-      setError("Не вдалося завантажити опитування");
-      console.error('Error loading polls:', err);
-    }
-  };
-
-  const getAuthToken = (): string | null => {
-    return localStorage.getItem('authToken');
-  };
 
   const fetchPolls = async () => {
     try {
-      const token = getAuthToken();
-      const headers: Record<string, string> = {
-        'Content-Type': 'application/json',
-      };
+      setLoading(true);
+      setError(null);
       
-      if (token) {
-        headers['Authorization'] = `Bearer ${token}`;
-      }
-      const response = await fetch(`${API_BASE_URL}/polls`, {
-        headers,
-        credentials: 'include'
-      });
-
-      if (!response.ok) {
-        throw new Error(`HTTP error! status: ${response.status}`);
-      }
-
-      const result = await response.json();
+      // 1. First check cache with timestamp
+      const cachedPolls = CacheManager.getItem<Poll[]>(POLLS_CACHE_KEY);
+      const cacheTimestamp = CacheManager.getItem<number>(POLLS_TIMESTAMP_KEY);
       
-      if (result.success && result.polls) {
-        const transformedPolls: Poll[] = result.polls
-          .filter((apiPoll: ApiPoll) => !apiPoll.user_has_voted)
-          .map((apiPoll: ApiPoll) => {
-            const options = apiPoll.options?.map(opt => opt.vote_text) || [];
-            
-            const voters: VoterData[] = [];
-            if (apiPoll.total_votes > 0) {
-              for (let i = 0; i < Math.min(3, apiPoll.total_votes); i++) {
-                voters.push({
-                  name: `Голосувач ${i + 1}`,
-                  imageUrl: null
-                });
-              }
-            }
-
-            return {
-              id: apiPoll.poll_id,
-              question: apiPoll.poll_question,
-              options: options,
-              selectedOption: null,
-              hasVoted: apiPoll.user_has_voted,
-              voteCount: apiPoll.total_votes || 0,
-              voters: voters
-            };
-          });
-        setPolls(transformedPolls);
+      // Check if cache is valid (5 minutes)
+      const isCacheValid = cacheTimestamp && 
+                          Date.now() - cacheTimestamp < POLLS_CACHE_DURATION;
+      
+      if (cachedPolls && isCacheValid) {
+        setPolls(cachedPolls);
+        setLoading(false);
+        return; // Use cached data
+      }
+      
+      // 2. If no cache or expired, call API
+      const pollsData = await apiService.getPolls();
+      
+      // Update state
+      setPolls(pollsData);
+      
+      // 3. Cache the response with timestamp
+      CacheManager.setItem(config.cacheKeys.POLLS, pollsData);
+      CacheManager.setItem(config.cacheKeys.POLLS_TIMESTAMP, Date.now());
+      
+    } catch (err: any) {
+      console.error('Error loading polls:', err);
+      
+      // If API fails, use cached data even if expired
+      const cachedPolls = CacheManager.getItem<Poll[]>(config.cacheKeys.POLLS);
+      if (cachedPolls) {
+        setPolls(cachedPolls);
       } else {
-        throw new Error(result.error || 'Failed to fetch polls');
+        // No cache available, show error
+        setError(err.message || "Не вдалося завантажити опитування");
       }
-    } catch (error) {
-      console.error('Error fetching polls:', error);
-      throw error;
+      
+      // Update timestamp to prevent immediate retry
+      CacheManager.setItem(config.cacheKeys.POLLS_TIMESTAMP, Date.now());
+      
     } finally {
       setLoading(false);
     }
   };
 
   const handleSelectOption = (pollId: number, optionIndex: number) => {
-    setPolls(prevPolls => prevPolls.map(poll => 
+    setPolls(prev => prev.map(poll => 
       poll.id === pollId 
         ? { ...poll, selectedOption: optionIndex }
         : poll
@@ -331,83 +310,42 @@ function Scroll() {
     try {
       setError(null);
       
-      const token = getAuthToken();
-      if (!token) {
-        throw new Error('Будь ласка, увійдіть в систему, щоб проголосувати');
-      }
-
-      // Create headers with consistent typing
-      const headers: Record<string, string> = {
-        'Content-Type': 'application/json',
-        'Authorization': `Bearer ${token}`
-      };
-
-      const pollDetailsResponse = await fetch(`${API_BASE_URL}/polls/${pollId}`, {
-        headers,
-        credentials: 'include'
-      });
-
-      if (!pollDetailsResponse.ok) {
-        throw new Error('Не вдалося отримати деталі опитування');
-      }
-
-      const pollDetails = await pollDetailsResponse.json();
-      
-      if (!pollDetails.success) {
-        throw new Error(pollDetails.error || 'Не вдалося отримати деталі опитування');
-      }
-
-      // Find the vote_id for the selected option
-      const selectedVote = pollDetails.poll.options?.[poll.selectedOption];
-      
-      if (!selectedVote) {
+      const voteId = poll.optionVoteIds[poll.selectedOption];
+      if (!voteId) {
         throw new Error('Невірно обраний варіант');
       }
       
-      // Submit the vote
-      const voteResponse = await fetch(`${API_BASE_URL}/polls/${pollId}/vote`, {
-        method: 'POST',
-        headers,
-        credentials: 'include',
-        body: JSON.stringify({ 
-          vote_id: selectedVote.vote_id 
-        }),
-      });
-
-      if (!voteResponse.ok) {
-        if (voteResponse.status === 401) {
-          throw new Error('Будь ласка, увійдіть в систему, щоб проголосувати');
-        }
-        
-        const errorData = await voteResponse.json().catch(() => ({ error: 'Невідома помилка' }));
-        throw new Error(errorData.error || 'Не вдалося надіслати голос');
-      }
-
-      const voteResult = await voteResponse.json();
+      await apiService.submitVote(pollId, voteId);
       
-      if (!voteResult.success) {
-        throw new Error(voteResult.error || 'Не вдалося надіслати голос');
-      }
-
-      // Update the poll to show "thank you" message
+      // Mark as voted and increment count
       const updatedPolls = polls.map(p => 
         p.id === pollId
           ? { ...p, hasVoted: true, voteCount: p.voteCount + 1 }
           : p
       );
+      
       setPolls(updatedPolls);
+      
+      // Update cache immediately
+      CacheManager.setItem(config.cacheKeys.POLLS, updatedPolls);
+      CacheManager.setItem(config.cacheKeys.POLLS_TIMESTAMP, Date.now());
 
-      // Remove the poll card after 2 seconds
+      // Remove voted poll after delay
       setTimeout(() => {
-        setPolls(prevPolls => prevPolls.filter(p => p.id !== pollId));
+        const filteredPolls = updatedPolls.filter(p => p.id !== pollId);
+        setPolls(filteredPolls);
+        
+        // Update cache again after removal
+        CacheManager.setItem(config.cacheKeys.POLLS, filteredPolls);
+        CacheManager.setItem(config.cacheKeys.POLLS_TIMESTAMP, Date.now());
       }, 2000);
 
-    } catch (error) {
-      console.error('Error submitting vote:', error);
-      setError(error instanceof Error ? error.message : "Не вдалося проголосувати");
+    } catch (err: any) {
+      console.error('Error submitting vote:', err);
+      setError(err.message || "Не вдалося проголосувати");
       
       // Reset selection on error
-      setPolls(prevPolls => prevPolls.map(poll => 
+      setPolls(prev => prev.map(poll => 
         poll.id === pollId 
           ? { ...poll, selectedOption: null }
           : poll
@@ -415,16 +353,26 @@ function Scroll() {
     }
   };
 
-  const retryLoadPolls = () => {
-    setLoading(true);
-    loadPolls();
+  const retry = () => {
+    fetchPolls();
+  };
+
+  // Clear polls cache function
+  const clearPollsCache = () => {
+    CacheManager.removeItem(config.cacheKeys.POLLS);
+    CacheManager.removeItem(config.cacheKeys.POLLS_TIMESTAMP);
+    fetchPolls(); // Refresh data
   };
 
   if (loading) {
     return (
-      <div className="basis-0 content-stretch flex flex-col gap-[20px] grow h-full items-start min-h-px min-w-px overflow-x-clip overflow-y-auto relative rounded-tl-[16px] rounded-tr-[16px] shrink-0" data-name="Scroll">
-        <div className="bg-white relative rounded-[16px] shrink-0 w-full h-[300px] flex items-center justify-center">
-          <p className="text-[#4d4d4d]">Завантаження опитувань...</p>
+      <div className="bg-[#f2f2f2] relative rounded-[16px] size-full h-full" data-name="Polls">
+        <div className="box-border content-stretch flex gap-[12px] h-full items-start px-[12px] relative size-full px-[20px] py-[16px]">
+          <div className="basis-0 content-stretch flex flex-col gap-[20px] grow h-full items-start min-h-px min-w-px overflow-x-clip overflow-y-auto relative rounded-tl-[16px] rounded-tr-[16px] shrink-0">
+            <div className="bg-white relative rounded-[16px] shrink-0 w-full h-[300px] flex items-center justify-center">
+              <p className="text-[#4d4d4d]">Завантаження опитувань...</p>
+            </div>
+          </div>
         </div>
       </div>
     );
@@ -432,55 +380,66 @@ function Scroll() {
 
   if (error) {
     return (
-      <div className="basis-0 content-stretch flex flex-col gap-[20px] grow h-full items-start min-h-px min-w-px overflow-x-clip overflow-y-auto relative rounded-tl-[16px] rounded-tr-[16px] shrink-0" data-name="Scroll">
-        <div className="bg-white relative rounded-[16px] shrink-0 w-full h-[200px] flex flex-col items-center justify-center gap-4">
-          <p className="text-[#d32f2f] text-center">{error}</p>
-          <button 
-            onClick={retryLoadPolls}
-            className="bg-[#5e89e8] text-white px-4 py-2 rounded-[12px] hover:opacity-90 transition-opacity"
-          >
-            Спробувати знову
-          </button>
+      <div className="bg-[#f2f2f2] relative rounded-[16px] size-full h-full" data-name="Polls">
+        <div className="box-border content-stretch flex gap-[12px] h-full items-start px-[12px] relative size-full px-[20px] py-[16px]">
+          <div className="basis-0 content-stretch flex flex-col gap-[20px] grow h-full items-start min-h-px min-w-px overflow-x-clip overflow-y-auto relative rounded-tl-[16px] rounded-tr-[16px] shrink-0">
+            <div className="bg-white relative rounded-[16px] shrink-0 w-full h-[200px] flex flex-col items-center justify-center gap-4">
+              <p className="text-[#d32f2f] text-center">{error}</p>
+              <div className="flex gap-2">
+                <button 
+                  onClick={retry}
+                  className="bg-[#5e89e8] text-white px-4 py-2 rounded-[12px] hover:opacity-90 transition-opacity"
+                >
+                  Спробувати знову
+                </button>
+                <button 
+                  onClick={clearPollsCache}
+                  className="bg-[#f2f2f2] text-[#4d4d4d] px-4 py-2 rounded-[12px] hover:opacity-90 transition-opacity border border-[#d9d9d9]"
+                >
+                  Очистити кеш
+                </button>
+              </div>
+            </div>
+          </div>
         </div>
       </div>
     );
   }
 
   return (
-    <div className="basis-0 content-stretch flex flex-col gap-[20px] grow h-full items-start min-h-px min-w-px overflow-x-clip overflow-y-auto relative rounded-tl-[16px] rounded-tr-[16px] shrink-0" data-name="Scroll">
-      {polls.length === 0 ? (
-        <div className="bg-white relative rounded-[16px] shrink-0 w-full h-[200px] flex items-center justify-center">
-          <p className="text-[#4d4d4d]">Немає доступних опитувань</p>
-        </div>
-      ) : (
-        polls.map((poll) => (
-          <PollCard
-            key={poll.id}
-            question={poll.question}
-            options={poll.options}
-            pollIndex={poll.id}
-            hasVoted={poll.hasVoted}
-            selectedOption={poll.selectedOption}
-            voteCount={poll.voteCount}
-            voters={poll.voters}
-            onSelectOption={handleSelectOption}
-            onVote={handleVote}
-          />
-        ))
-      )}
-    </div>
-  );
-}
-
-// Export for backward compatibility
-export const clearPollsCache = () => {};
-
-export default function Polls() {
-  return (
     <div className="bg-[#f2f2f2] relative rounded-[16px] size-full h-full" data-name="Polls">
-        <div className="box-border content-stretch flex gap-[12px] h-full items-start px-[12px] relative size-full px-[20px] py-[16px]">
-          <Scroll />
+      <div className="box-border content-stretch flex gap-[12px] h-full items-start px-[12px] relative size-full px-[20px] py-[16px]">
+        <div className="basis-0 content-stretch flex flex-col gap-[20px] grow h-full items-start min-h-px min-w-px overflow-x-clip overflow-y-auto relative rounded-tl-[16px] rounded-tr-[16px] shrink-0">
+          {polls.length === 0 ? (
+            <div className="bg-white relative rounded-[16px] shrink-0 w-full h-[200px] flex flex-col items-center justify-center gap-4">
+              <p className="text-[#4d4d4d]">Немає доступних опитувань</p>
+              <button 
+                onClick={clearPollsCache}
+                className="bg-[#f2f2f2] text-[#4d4d4d] px-4 py-2 rounded-[12px] hover:opacity-90 transition-opacity border border-[#d9d9d9]"
+              >
+                Оновити дані
+              </button>
+            </div>
+          ) : (
+            polls.map((poll) => (
+              <PollCard
+                key={poll.id}
+                question={poll.question}
+                options={poll.options}
+                pollIndex={poll.id}
+                hasVoted={poll.hasVoted}
+                selectedOption={poll.selectedOption}
+                voteCount={poll.voteCount}
+                voters={poll.voters}
+                onSelectOption={handleSelectOption}
+                onVote={handleVote}
+              />
+            ))
+          )}
         </div>
+      </div>
     </div>
   );
 }
+
+export default Polls;

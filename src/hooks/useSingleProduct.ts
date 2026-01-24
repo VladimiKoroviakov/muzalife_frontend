@@ -20,9 +20,11 @@ export const useSingleProduct = (id: string | undefined): UseSingleProduct => {
       setLoading(true);
       setError(null);
 
+      // Fetch product
       const productData = await apiService.getProductById(id);
       setProduct(productData);
 
+      // Process images
       const images = productData ? [
         productData.image,
         ...(productData.additionalImages || [])
@@ -31,13 +33,22 @@ export const useSingleProduct = (id: string | undefined): UseSingleProduct => {
       ) : [];
       setGalleryImages(images);
 
+      // Fetch reviews - convert id to number
       try {
-        const reviewsData = await apiService.getReviewsByProductId(id);
-        setReviews(reviewsData);
-      } catch (reviewError) {
+        const productId = parseInt(id, 10);
+        if (!isNaN(productId)) {
+          const reviewsData = await apiService.getReviewsByProductId(productId);
+          setReviews(reviewsData);
+        } else {
+          console.warn(`Invalid product ID for reviews: ${id}`);
+          setReviews([]);
+        }
+      } catch (reviewError: any) {
+        console.error('Error fetching reviews:', reviewError);
+        // Don't set error for reviews - just show empty reviews
         setReviews([]);
       }
-    } catch (err) {
+    } catch (err: any) {
       console.error('Error fetching product:', err);
       const errorMessage = err instanceof Error 
         ? err.message 

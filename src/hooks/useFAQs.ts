@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { faqApi } from '../services/faqApi';
+import { apiService } from '../services/api';
 import { FAQItem, UseFAQsReturn } from '../types';
 
 export const useFAQs = (): UseFAQsReturn => {
@@ -11,9 +11,8 @@ export const useFAQs = (): UseFAQsReturn => {
     const fetchFAQs = async () => {
       try {
         setLoading(true);
-        const data = await faqApi.getFAQs();
+        const data = await apiService.getFAQs();
         
-        // Check if data is empty or null
         if (!data || data.length === 0) {
           setError('Наразі немає доступних запитань. Будь ласка, спробуйте пізніше.');
           setFaqs([]);
