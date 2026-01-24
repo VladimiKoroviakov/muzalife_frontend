@@ -108,26 +108,24 @@ export function SettingsContent({ onShowFAQ }: SettingsContentProps) {
     }
 
     try {
-      const response = await apiService.updateName(tempName);
+      // This returns void, so just await it
+      await apiService.updateName(tempName);
 
-      if (response.success) {
-        const cachedProfile = localStorage.getItem('userProfile');
-        if (cachedProfile) {
-          try {
-            const profile = JSON.parse(cachedProfile);
-            profile.name = tempName;
-            localStorage.setItem('userProfile', JSON.stringify(profile));
-          } catch (e) {
-            console.log('Error updating cached profile:', e);
-          }
+      // Update local state and cache
+      const cachedProfile = localStorage.getItem('userProfile');
+      if (cachedProfile) {
+        try {
+          const profile = JSON.parse(cachedProfile);
+          profile.name = tempName;
+          localStorage.setItem('userProfile', JSON.stringify(profile));
+        } catch (e) {
+          console.log('Error updating cached profile:', e);
         }
-
-        setUserName(tempName);
-        setEditNameOpen(false);
-        toast.success("Ім'я успішно оновлено!");
-      } else {
-        toast.error("Не вдалося оновити ім'я");
       }
+
+      setUserName(tempName);
+      setEditNameOpen(false);
+      toast.success("Ім'я успішно оновлено!");
     } catch (error) {
       console.log('Error saving name:', error);
       toast.error("Помилка при оновленні імені");
@@ -232,6 +230,22 @@ export function SettingsContent({ onShowFAQ }: SettingsContentProps) {
     setShowEmailVerificationModal(false);
   };
 
+  const handleResendVerificationCode = async () => {
+    if (!emailChangePending) return;
+    
+    try {
+      const response = await apiService.resendEmailChangeCode(emailChangePending.newEmail);
+      if (response.success) {
+        toast.success("Код підтвердження надіслано повторно");
+      } else {
+        toast.error(response.error || "Не вдалося надіслати код повторно");
+      }
+    } catch (error: any) {
+      console.error('Error resending verification code:', error);
+      toast.error("Помилка при повторному надсиланні коду");
+    }
+  };
+
   const handleEditPassword = () => {
     if (!isEmailPasswordUser) {
       toast.error("Пароль не може бути змінено для користувачів, зареєстрованих через соціальні мережі");
@@ -261,20 +275,18 @@ export function SettingsContent({ onShowFAQ }: SettingsContentProps) {
     }
 
     try {
-      const response = await apiService.changePassword(oldPassword, newPassword);
+      // This returns void, so just await it
+      await apiService.changePassword(oldPassword, newPassword);
 
-      if (response.success) {
-        setEditPasswordOpen(false);
-        setOldPassword("");
-        setNewPassword("");
-        setConfirmPassword("");
-        toast.success("Пароль успішно змінено!");
-      } else {
-        toast.error(response.error || "Не вдалося змінити пароль");
-      }
-    } catch (error) {
+      setEditPasswordOpen(false);
+      setOldPassword("");
+      setNewPassword("");
+      setConfirmPassword("");
+      toast.success("Пароль успішно змінено!");
+    } catch (error: any) {
       console.log('Error changing password:', error);
-      toast.error("Помилка при зміні пароля");
+      // Use the error message if available
+      toast.error(error.message || "Помилка при зміні пароля");
     }
   };
 
@@ -298,12 +310,12 @@ export function SettingsContent({ onShowFAQ }: SettingsContentProps) {
     try {
       const response = await apiService.uploadProfileImage(file);
 
-      if (response.success && response.imageUrl) {
+      if (response.imageUrl) {
         const cachedProfile = localStorage.getItem('userProfile');
         if (cachedProfile) {
           try {
             const profile = JSON.parse(cachedProfile);
-            profile.imageUrl = response.imageUrl;
+            profile.avatar_url = response.imageUrl;
             localStorage.setItem('userProfile', JSON.stringify(profile));
           } catch (e) {
             console.log('Error updating cached profile:', e);
@@ -323,28 +335,24 @@ export function SettingsContent({ onShowFAQ }: SettingsContentProps) {
 
   const handleRemoveImage = async () => {
     try {
-      const response = await apiService.removeProfileImage();
+      await apiService.removeProfileImage();
 
-      if (response.success) {
-        const cachedProfile = localStorage.getItem('userProfile');
-        if (cachedProfile) {
-          try {
-            const profile = JSON.parse(cachedProfile);
-            delete profile.imageUrl;
-            localStorage.setItem('userProfile', JSON.stringify(profile));
-          } catch (e) {
-            console.log('Error updating cached profile:', e);
-          }
+      const cachedProfile = localStorage.getItem('userProfile');
+      if (cachedProfile) {
+        try {
+          const profile = JSON.parse(cachedProfile);
+          delete profile.avatar_url;
+          localStorage.setItem('userProfile', JSON.stringify(profile));
+        } catch (e) {
+          console.log('Error updating cached profile:', e);
         }
-
-        setUserImage(null);
-        toast.success("Зображення видалено");
-      } else {
-        toast.error("Не вдалося видалити зображення");
       }
-    } catch (error) {
+
+      setUserImage(null);
+      toast.success("Зображення видалено");
+    } catch (error: any) {
       console.log('Error removing image:', error);
-      toast.error("Помилка при видаленні зображення");
+      toast.error(error.message || "Помилка при видаленні зображення");
     }
   };
 
@@ -360,26 +368,23 @@ export function SettingsContent({ onShowFAQ }: SettingsContentProps) {
     }
 
     try {
-      const response = await apiService.deleteAccount();
+      // This returns void
+      await apiService.deleteAccount();
 
-      if (response.success) {
-        toast.success("Кабінет успішно видалено");
-        setDeleteAccountOpen(false);
+      toast.success("Кабінет успішно видалено");
+      setDeleteAccountOpen(false);
 
-        localStorage.removeItem('userProfile');
-        localStorage.removeItem('polls_cache');
-        localStorage.removeItem('authToken');
-        localStorage.removeItem('saved_products');
+      localStorage.removeItem('userProfile');
+      localStorage.removeItem('polls_cache');
+      localStorage.removeItem('authToken');
+      localStorage.removeItem('saved_products');
 
-        setTimeout(() => {
-          window.location.reload();
-        }, 1000);
-      } else {
-        toast.error(response.error || "Не вдалося видалити кабінет");
-      }
-    } catch (error) {
+      setTimeout(() => {
+        window.location.reload();
+      }, 1000);
+    } catch (error: any) {
       console.log('Error deleting account:', error);
-      toast.error("Помилка при видаленні кабінету");
+      toast.error(error.message || "Помилка при видаленні кабінету");
     }
   };
 
@@ -837,7 +842,7 @@ export function SettingsContent({ onShowFAQ }: SettingsContentProps) {
         submitLabel="Підтвердити email"
         successToast="Email успішно змінено!"
         onSubmit={handleVerifyEmailChange}
-        onResend={() => apiService.resendEmailChangeCode(emailChangePending.newEmail)}
+        onResend={handleResendVerificationCode}
         onClose={() => {
           setShowEmailVerificationModal(false);
           setEmailChangePending(null);
