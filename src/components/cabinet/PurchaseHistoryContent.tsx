@@ -41,23 +41,17 @@ export function PurchaseHistoryContent({
   // Load user reviews with cache-first approach
   const loadUserReviews = useCallback(async () => {
     try {
-      // 1. First check cache with timestamp
       const cacheKey = config.cacheKeys.REVIEWED_PRODUCTS;
       const timestampKey = `${config.cacheKeys.REVIEWED_PRODUCTS}_timestamp`;
-      
       const cachedProductIds = CacheManager.getItem<number[]>(cacheKey);
       const cacheTimestamp = CacheManager.getItem<number>(timestampKey);
-      
-      // Check if cache is valid (1 hour)
-      const isCacheValid = cacheTimestamp && 
-                          Date.now() - cacheTimestamp < 60 * 60 * 1000;
+      const isCacheValid = cacheTimestamp && Date.now() - cacheTimestamp < 60 * 60 * 1000;
       
       if (cachedProductIds && isCacheValid) {
         setReviewedProducts(new Set(cachedProductIds));
-        return; // Use cached data
+        return;
       }
       
-      // 2. If no cache or expired, call API
       const userProfile = await apiService.getProfile();
       if (!userProfile?.id) {
         throw new Error('User not authenticated');
@@ -70,7 +64,7 @@ export function PurchaseHistoryContent({
         // Update state
         setReviewedProducts(new Set(reviewedProductIds));
         
-        // 3. Cache the response with timestamp
+        // Update cache
         CacheManager.setItem(cacheKey, reviewedProductIds);
         CacheManager.setItem(timestampKey, Date.now());
         

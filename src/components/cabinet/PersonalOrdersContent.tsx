@@ -1,14 +1,10 @@
 import { useState, useEffect, useCallback, useRef } from "react";
 import svgPaths from "../ui/icons/svgIconPaths";
-import { Table, TableColumn, TextCell, EmptyCell, TableCell } from "./TableComponents";
+import { Table, TextCell, EmptyCell, TableCell } from "./TableComponents";
 import { apiService } from "../../services/api";
 import { PersonalOrder } from "../../types";
-
-// Local storage keys
-const PERSONAL_ORDERS_CACHE_KEY = 'cachedPersonalOrders';
-const PERSONAL_ORDERS_TIMESTAMP_KEY = 'cachedPersonalOrders_timestamp';
-// Cache validity duration (5 minutes)
-const CACHE_VALIDITY_DURATION = 5 * 60 * 1000; // 300000 ms
+import { CacheManager } from "../../utils/cache-manager"; 
+import config from "../../config";
 
 export function PersonalOrdersContent() {
   const [orders, setOrders] = useState<PersonalOrder[]>([]);
@@ -20,13 +16,10 @@ export function PersonalOrdersContent() {
   // Cache management functions
   const getCachedOrders = useCallback((): PersonalOrder[] | null => {
     try {
-      const cached = localStorage.getItem(PERSONAL_ORDERS_CACHE_KEY);
-      if (cached) {
-        const parsed = JSON.parse(cached);
-        if (Array.isArray(parsed)) {
-          console.log('📦 Retrieved personal orders from cache');
-          return parsed;
-        }
+      const cached = CacheManager.getItem<PersonalOrder[]>(config.cacheKeys.PERSONAL_ORDERS);
+      if (cached && Array.isArray(cached)) {
+        console.log('📦 Retrieved personal orders from cache');
+        return cached;
       }
     } catch (error) {
       console.error('Error reading cached personal orders:', error);
@@ -36,6 +29,7 @@ export function PersonalOrdersContent() {
 
   const setCachedOrders = useCallback((orders: PersonalOrder[]): void => {
     try {
+      // Store minimal fields to reduce cache size
       const cachedOrders = orders.map(order => ({
         order_id: order.order_id,
         order_title: order.order_title,
@@ -46,8 +40,9 @@ export function PersonalOrdersContent() {
         order_created_at: order.order_created_at
       }));
       
-      localStorage.setItem(PERSONAL_ORDERS_CACHE_KEY, JSON.stringify(cachedOrders));
-      localStorage.setItem(PERSONAL_ORDERS_TIMESTAMP_KEY, Date.now().toString());
+      // Use CacheManager for consistent caching
+      CacheManager.setItem(config.cacheKeys.PERSONAL_ORDERS, cachedOrders);
+      CacheManager.setItem(config.cacheKeys.PERSONAL_ORDERS_TIMESTAMP, Date.now());
       console.log('💾 Saved personal orders to cache (minimal fields)');
     } catch (error) {
       console.error('Error caching personal orders:', error);
@@ -56,15 +51,14 @@ export function PersonalOrdersContent() {
 
   const isOrdersCacheValid = useCallback((): boolean => {
     try {
-      const timestamp = localStorage.getItem(PERSONAL_ORDERS_TIMESTAMP_KEY);
-      if (!timestamp) return false;
+      const cacheTimestamp = CacheManager.getItem<number>(config.cacheKeys.PERSONAL_ORDERS_TIMESTAMP);
+      if (!cacheTimestamp) return false;
       
-      const cacheTime = parseInt(timestamp, 10);
       const currentTime = Date.now();
-      const cacheAge = currentTime - cacheTime;
+      const cacheAge = currentTime - cacheTimestamp;
       
       // Check if cache is still valid
-      return cacheAge < CACHE_VALIDITY_DURATION;
+      return cacheAge < config.cacheDurations.PERSONAL_ORDERS;
     } catch (error) {
       return false;
     }
@@ -72,8 +66,8 @@ export function PersonalOrdersContent() {
 
   const clearOrdersCache = useCallback((): void => {
     try {
-      localStorage.removeItem(PERSONAL_ORDERS_CACHE_KEY);
-      localStorage.removeItem(PERSONAL_ORDERS_TIMESTAMP_KEY);
+      CacheManager.removeItem(config.cacheKeys.PERSONAL_ORDERS);
+      CacheManager.removeItem(config.cacheKeys.PERSONAL_ORDERS_TIMESTAMP);
       console.log('🧹 Personal orders cache cleared');
     } catch (error) {
       console.error('Error clearing personal orders cache:', error);

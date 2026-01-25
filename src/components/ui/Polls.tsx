@@ -14,6 +14,7 @@ import {
 import { CacheManager } from "../../utils/cache-manager";
 import config from "../../config";
 
+
 function CheckCircle() {
   return (
     <div className="relative shrink-0 size-[40px]" data-name="check_circle">
@@ -237,11 +238,6 @@ function Polls() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
-  // Add a constant for cache key (add to config if needed)
-  const POLLS_CACHE_KEY = 'pollsCache';
-  const POLLS_TIMESTAMP_KEY = 'pollsCache_timestamp';
-  const POLLS_CACHE_DURATION = 5 * 60 * 1000; // 5 minutes
-
   useEffect(() => {
     fetchPolls();
   }, []);
@@ -251,27 +247,25 @@ function Polls() {
       setLoading(true);
       setError(null);
       
-      // 1. First check cache with timestamp
-      const cachedPolls = CacheManager.getItem<Poll[]>(POLLS_CACHE_KEY);
-      const cacheTimestamp = CacheManager.getItem<number>(POLLS_TIMESTAMP_KEY);
+      const cachedPolls = CacheManager.getItem<Poll[]>(config.cacheKeys.POLLS);
+      const cacheTimestamp = CacheManager.getItem<number>(config.cacheKeys.POLLS_TIMESTAMP);
       
       // Check if cache is valid (5 minutes)
       const isCacheValid = cacheTimestamp && 
-                          Date.now() - cacheTimestamp < POLLS_CACHE_DURATION;
+                          Date.now() - cacheTimestamp < config.cacheDurations.POLLS;
       
       if (cachedPolls && isCacheValid) {
         setPolls(cachedPolls);
         setLoading(false);
-        return; // Use cached data
+        return;
       }
       
-      // 2. If no cache or expired, call API
       const pollsData = await apiService.getPolls();
       
       // Update state
       setPolls(pollsData);
       
-      // 3. Cache the response with timestamp
+      // Update cache
       CacheManager.setItem(config.cacheKeys.POLLS, pollsData);
       CacheManager.setItem(config.cacheKeys.POLLS_TIMESTAMP, Date.now());
       
@@ -294,7 +288,7 @@ function Polls() {
       setLoading(false);
     }
   };
-
+  
   const handleSelectOption = (pollId: number, optionIndex: number) => {
     setPolls(prev => prev.map(poll => 
       poll.id === pollId 

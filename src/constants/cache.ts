@@ -15,8 +15,9 @@ export const CACHE_KEYS = {
 
 export const CACHE_DURATIONS = {
   PRODUCTS: 5 * 60 * 1000,      // 5 minutes
-  USER_DATA: 30 * 60 * 1000,    // 30 minutes
-  FAQS: 60 * 60 * 1000,         // 1 hour (FAQs rarely change)
   POLLS: 15 * 60 * 1000,        // 15 minutes
+  PERSONAL_ORDERS: 20 * 60 * 1000, // 20 minutes
+  USER_DATA: 30 * 60 * 1000,    // 30 minutes
+  FAQS: 60 * 60 * 1000,         // 1 hour
   DEFAULT: 10 * 60 * 1000,      // 10 minutes
 } as const;
