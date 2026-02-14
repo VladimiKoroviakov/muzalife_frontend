@@ -11,10 +11,6 @@ dist/
 # Local SSL certs
 *.pem
 
-# Coverage & test artifacts
-coverage/
-.vitest/
-
 # Logs
 *.log
 
