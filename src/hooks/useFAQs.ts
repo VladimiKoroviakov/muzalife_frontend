@@ -12,7 +12,7 @@ export const useFAQs = (): UseFAQsReturn => {
       try {
         setLoading(true);
         const data = await apiService.getFAQs();
-        
+
         if (!data || data.length === 0) {
           setError('Наразі немає доступних запитань. Будь ласка, спробуйте пізніше.');
           setFaqs([]);
@@ -22,8 +22,8 @@ export const useFAQs = (): UseFAQsReturn => {
         }
       } catch (err) {
         console.error('Failed to load FAQs:', err);
-        const errorMessage = err instanceof Error 
-          ? err.message 
+        const errorMessage = err instanceof Error
+          ? err.message
           : 'Не вдалося завантажити запитання. Спробуйте оновити сторінку.';
         setError(errorMessage);
         setFaqs([]);

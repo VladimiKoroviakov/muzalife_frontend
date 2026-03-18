@@ -32,7 +32,7 @@ export class CacheManager {
 
   static isCacheValid(key: string, duration: number): boolean {
     const timestamp = this.getItem<number>(`${key}_timestamp`);
-    if (!timestamp) return false;
+    if (!timestamp) {return false;}
     return Date.now() - timestamp < duration;
   }
 
@@ -51,8 +51,8 @@ export class CacheManager {
       'authToken',
     ];
 
-    Object.keys(localStorage).forEach(key => {
-      if (cachePatterns.some(pattern => 
+    Object.keys(localStorage).forEach((key) => {
+      if (cachePatterns.some((pattern) =>
         typeof pattern === 'string' ? key === pattern : pattern.test(key)
       )) {
         localStorage.removeItem(key);

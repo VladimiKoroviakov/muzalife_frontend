@@ -1,5 +1,5 @@
-import { Logo } from "../ui/Logo";
-import { SearchMenu } from "./SearchMenu";
+import { Logo } from '../ui/Logo';
+import { SearchMenu } from './SearchMenu';
 
 interface HeaderProps {
   onBackClick?: () => void;
@@ -8,7 +8,7 @@ interface HeaderProps {
   onSectionChange?: (section: string) => void;
 }
 
-export function Header({ onBackClick, activeSection, userName, onSectionChange }: HeaderProps) {
+export function Header({ onBackClick, activeSection, userName, onSectionChange: _onSectionChange }: HeaderProps) {
   const getTitleForSection = (section: string): string => {
     const titles: Record<string, string> = {
       'main': userName ? `Вітаємо ${userName}!` : 'Вітаємо!',
@@ -30,11 +30,11 @@ export function Header({ onBackClick, activeSection, userName, onSectionChange }
   return (
     <div className="content-stretch flex gap-[24px] items-start max-w-[1280px] relative shrink-0 w-full" data-name="Header">
       <Logo />
-      <SearchMenu 
-        onBackClick={handleBackClick} 
-        title={getTitleForSection(activeSection)} 
-        userName={userName} 
-        activeSection={activeSection} 
+      <SearchMenu
+        onBackClick={handleBackClick}
+        title={getTitleForSection(activeSection)}
+        userName={userName}
+        activeSection={activeSection}
       />
     </div>
   );

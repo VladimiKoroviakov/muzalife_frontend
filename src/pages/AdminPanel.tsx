@@ -1,27 +1,27 @@
-import { useState, useEffect } from "react";
-import { apiService } from "../services/api";
+import { useState, useEffect } from 'react';
+import { apiService } from '../services/api';
 import { useAuthContext } from '../context/AuthContext';
-import { Header } from "../components/cabinet/Header";
-import { Canvas } from "../components/cabinet/Canvas";
-import { useNavigate } from "react-router-dom";
+import { Header } from '../components/cabinet/Header';
+import { Canvas } from '../components/cabinet/Canvas';
+import { useNavigate } from 'react-router-dom';
 
-export default function AdminPanel({ 
-  onBackClick, 
-  addToCart, 
-  products, 
-  onBookmarkedProductsChange 
-}: { 
-  onBackClick?: () => void; 
-  addToCart?: (productId: number) => void; 
-  products?: any[]; 
-  onBookmarkedProductsChange?: (products: number[]) => void; 
+export default function AdminPanel({
+  onBackClick: _onBackClick,
+  addToCart: _addToCart,
+  products: _products,
+  onBookmarkedProductsChange: _onBookmarkedProductsChange
+}: {
+  onBackClick?: () => void;
+  addToCart?: (productId: number) => void;
+  products?: any[];
+  onBookmarkedProductsChange?: (products: number[]) => void;
 }) {
   const [activeSection, setActiveSection] = useState<string>('main');
-  const [userName, setUserName] = useState<string>("");
+  const [userName, setUserName] = useState<string>('');
   const [isLoading, setIsLoading] = useState(true);
   const [localProducts, setLocalProducts] = useState<any[]>([]);
   const [productsLoading, setProductsLoading] = useState(true);
-  
+
   const { signOut, user } = useAuthContext();
   const navigate = useNavigate();
 
@@ -37,7 +37,7 @@ export default function AdminPanel({
     const loadProducts = async () => {
       try {
         setProductsLoading(true);
-        const productsData = await apiService.getProducts(); 
+        const productsData = await apiService.getProducts();
         setLocalProducts(productsData);
       } catch (error) {
         console.error('Error loading products:', error);
@@ -76,16 +76,16 @@ export default function AdminPanel({
               setIsLoading(false);
               return;
             }
-          } catch (e) {
+          } catch {
             localStorage.removeItem('userProfile');
           }
         }
 
         const response = await apiService.getProfile();
-        
+
         // Handle different response formats
         let profileData = null;
-        
+
         if (response?.user) {
           profileData = response.user;
         } else if (response?.name) {
@@ -96,7 +96,7 @@ export default function AdminPanel({
 
         if (profileData?.name) {
           setUserName(profileData.name);
-          
+
           // Cache the complete profile data in FLAT format
           const cacheData = {
             name: profileData.name,
@@ -105,7 +105,7 @@ export default function AdminPanel({
           };
           localStorage.setItem('userProfile', JSON.stringify(cacheData));
         }
-      } catch (error) {
+      } catch {
         setUserName('Користувач');
       } finally {
         setIsLoading(false);
@@ -139,17 +139,17 @@ export default function AdminPanel({
     <div className="bg-[#e6e6e6] relative size-full" data-name="Admin panel">
       <div className="flex flex-col items-center max-w-inherit min-w-inherit size-full">
         <div className="box-border content-stretch flex flex-col gap-[48px] items-center max-w-inherit min-w-inherit px-[48px] py-[24px] relative size-full">
-          <Header 
+          <Header
             onBackClick={handleBackClick}
-            activeSection={activeSection} 
-            userName={userName} 
-            onSectionChange={setActiveSection} 
+            activeSection={activeSection}
+            userName={userName}
+            onSectionChange={setActiveSection}
           />
-          <Canvas 
+          <Canvas
             onLogout={handleLogout}
-            activeSection={activeSection} 
-            onSectionChange={setActiveSection} 
-            onShowFAQ={handleShowFAQ} 
+            activeSection={activeSection}
+            onSectionChange={setActiveSection}
+            onShowFAQ={handleShowFAQ}
             products={localProducts}
           />
         </div>

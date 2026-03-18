@@ -1,8 +1,8 @@
-import { useState } from "react";
-import { toast } from "sonner";
+import { useState } from 'react';
+import { toast } from 'sonner';
 import { useGoogleLogin } from '@react-oauth/google';
-import { useAuth } from "../../hooks/useAuth"; 
-import imgGoogleLogo from "../../assets/images/Google-logo.png";
+import { useAuth } from '../../hooks/useAuth';
+import imgGoogleLogo from '../../assets/images/Google-logo.png';
 
 type GoogleLoginButtonProps = {
   onSuccess: () => void;
@@ -17,15 +17,15 @@ export function GoogleLoginButton({ onSuccess, onError }: GoogleLoginButtonProps
   const googleLogin = useGoogleLogin({
     onSuccess: async (tokenResponse) => {
       // The button is clicked, now we are validating with the backend
-      if (!isLoading) setIsLoading(true); 
-      
+      if (!isLoading) {setIsLoading(true);}
+
       try {
         console.log('Google login successful, sending to backend...');
         const { error } = await signInWithOAuth('google', tokenResponse.access_token);
-        
+
         if (error) {
           console.error('Backend OAuth error:', error);
-          toast.error("Помилка входу через Google");
+          toast.error('Помилка входу через Google');
           onError(error);
         } else {
           console.log('Backend OAuth success, calling onSuccess prop.');
@@ -35,7 +35,7 @@ export function GoogleLoginButton({ onSuccess, onError }: GoogleLoginButtonProps
       } catch (error) {
         const errorMessage = error instanceof Error ? error.message : 'Google authentication failed';
         console.error('Google auth failed:', error);
-        toast.error("Помилка входу через Google");
+        toast.error('Помилка входу через Google');
         onError(errorMessage);
       } finally {
         setIsLoading(false);
@@ -45,13 +45,13 @@ export function GoogleLoginButton({ onSuccess, onError }: GoogleLoginButtonProps
       // Handle errors from the Google popup itself
       const errorMessage = (error && ('error_description' in error)) ? error.error_description : 'Google login failed';
       console.error('Google login failed:', error);
-      toast.error("Помилка входу через Google");
+      toast.error('Помилка входу через Google');
       onError(errorMessage || 'Google login failed');
       setIsLoading(false);
     },
     onNonOAuthError: () => {
       console.error('Google non-OAuth error');
-      toast.error("Помилка входу через Google");
+      toast.error('Помилка входу через Google');
       onError('Google authentication not available');
       setIsLoading(false);
     },
@@ -77,7 +77,7 @@ export function GoogleLoginButton({ onSuccess, onError }: GoogleLoginButtonProps
       </div>
       <div className="flex flex-col justify-end leading-[0] relative shrink-0 text-[#0d0d0d] text-[0px] text-nowrap" style={{ fontVariationSettings: "'CTGR' 0, 'wdth' 100, 'wght' 400" }}>
         <p className="leading-[normal] whitespace-pre">
-          <span className="text-[18px]">{isLoading ? "Вхід..." : "Продовжити з "}</span>
+          <span className="text-[18px]">{isLoading ? 'Вхід...' : 'Продовжити з '}</span>
           <span className="text-[20px]">Google</span>
         </p>
       </div>

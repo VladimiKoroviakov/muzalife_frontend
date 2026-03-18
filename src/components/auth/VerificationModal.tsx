@@ -53,7 +53,7 @@ export function VerificationCodeModal({
 
     try {
       await onSubmit(code);
-      if (successToast) toast.success(successToast);
+      if (successToast) {toast.success(successToast);}
       onClose();
     } catch (err: any) {
       vc.setError(err?.message ?? 'Помилка підтвердження');
@@ -64,7 +64,7 @@ export function VerificationCodeModal({
   };
 
   const handleResend = async () => {
-    if (!vc.canResend || vc.isResending) return;
+    if (!vc.canResend || vc.isResending) {return;}
 
     vc.setIsResending(true);
     try {
@@ -79,7 +79,7 @@ export function VerificationCodeModal({
   };
 
   return (
-    <Dialog open={isOpen} onOpenChange={o => !o && onClose()}>
+    <Dialog open={isOpen} onOpenChange={(o) => !o && onClose()}>
       <DialogContent className="sm:max-w-[425px]">
         <DialogHeader>
           <DialogTitle className="text-2xl text-center">{title}</DialogTitle>
@@ -105,7 +105,7 @@ export function VerificationCodeModal({
               <Input
                 key={i}
                 value={digit}
-                onChange={e => vc.onChange(i, e)}
+                onChange={(e) => vc.onChange(i, e)}
                 onKeyDown={vc.onKeyDown}
                 onPaste={i === 0 ? vc.onPaste : undefined}
                 maxLength={1}

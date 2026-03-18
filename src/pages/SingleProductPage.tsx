@@ -1,27 +1,27 @@
-import { useState, useEffect, useCallback } from "react";
-import { useParams, useNavigate } from "react-router-dom";
-import { ProductHeader } from "../components/product/ProductHeader";
-import { ProductGallery } from "../components/product/ProductGallery";
-import { ProductInfo } from "../components/product/ProductInfo";
-import { ImageViewer } from "../components/product/ImageViewer";
-import { Cart } from "../components/features/Cart";
+import { useState, useEffect, useCallback } from 'react';
+import { useParams, useNavigate } from 'react-router-dom';
+import { ProductHeader } from '../components/product/ProductHeader';
+import { ProductGallery } from '../components/product/ProductGallery';
+import { ProductInfo } from '../components/product/ProductInfo';
+import { ImageViewer } from '../components/product/ImageViewer';
+import { Cart } from '../components/features/Cart';
 import { useSingleProduct } from '../hooks/useSingleProduct';
-import { apiService } from "../services/api";
-import { LoginRequiredModal } from "../components/auth/LoginRequiredModal";
-import { toast } from "sonner";
+import { apiService } from '../services/api';
+import { LoginRequiredModal } from '../components/auth/LoginRequiredModal';
+import { toast } from 'sonner';
 
 export default function SingleProductPage() {
   const { id } = useParams<{ id: string }>();
-  const { 
-    product, 
-    reviews, 
-    galleryImages, 
-    loading, 
-    error, 
-    refetch 
+  const {
+    product,
+    reviews,
+    galleryImages,
+    loading,
+    error,
+    refetch
   } = useSingleProduct(id);
-  
-  const [activeTab, setActiveTab] = useState("description");
+
+  const [activeTab, setActiveTab] = useState('description');
   const [isViewerOpen, setIsViewerOpen] = useState(false);
   const [currentImageIndex, setCurrentImageIndex] = useState(0);
   const [sliderIndex, setSliderIndex] = useState(0);
@@ -71,7 +71,7 @@ export default function SingleProductPage() {
     const checkAuth = async () => {
       try {
         const token = localStorage.getItem('authToken');
-        
+
         if (!token) {
           setIsAuthenticated(false);
           await loadSavedProducts();
@@ -80,7 +80,7 @@ export default function SingleProductPage() {
 
         const user = await apiService.getProfile();
         setIsAuthenticated(!!user);
-        
+
         if (user) {
           await loadSavedProducts();
         } else {
@@ -94,7 +94,7 @@ export default function SingleProductPage() {
         await loadSavedProducts();
       }
     };
-    
+
     checkAuth();
   }, []);
 
@@ -117,7 +117,7 @@ export default function SingleProductPage() {
       }
       return;
     }
-    
+
     try {
       const savedProducts = await apiService.getSavedProducts();
       setBookmarkedProducts(savedProducts);
@@ -152,7 +152,7 @@ export default function SingleProductPage() {
           console.error('Error parsing cartItems from storage event:', error);
         }
       }
-      
+
       if (e.key === 'savedProducts' && e.newValue) {
         try {
           const newSavedProducts = JSON.parse(e.newValue);
@@ -171,23 +171,23 @@ export default function SingleProductPage() {
 
   // Add to cart functionality - automatically remove from saved if it was saved
   const addToCart = (productId: number) => {
-    setCartItems(prev => {
+    setCartItems((prev) => {
       if (!prev.includes(productId)) {
         const newCartItems = [...prev, productId];
         try {
           localStorage.setItem('cartItems', JSON.stringify(newCartItems));
-          
+
           // If product was saved, remove it from saved
           if (bookmarkedProducts.includes(productId)) {
-            const newSavedProducts = bookmarkedProducts.filter(id => id !== productId);
+            const newSavedProducts = bookmarkedProducts.filter((id) => id !== productId);
             setBookmarkedProducts(newSavedProducts);
             localStorage.setItem('savedProducts', JSON.stringify(newSavedProducts));
-            
+
             // If authenticated, also remove from API
             if (isAuthenticated) {
               apiService.unsaveProduct(productId).catch(console.error);
             }
-            
+
             toast.success('Матеріал додано до кошика та видалено зі збережених', {
               duration: 3000,
             });
@@ -210,8 +210,8 @@ export default function SingleProductPage() {
   };
 
   const removeFromCart = (productId: number) => {
-    setCartItems(prev => {
-      const newCartItems = prev.filter(id => id !== productId);
+    setCartItems((prev) => {
+      const newCartItems = prev.filter((id) => id !== productId);
       try {
         localStorage.setItem('cartItems', JSON.stringify(newCartItems));
         toast.success('Матеріал видалено з кошика', {
@@ -240,13 +240,13 @@ export default function SingleProductPage() {
     try {
       const isCurrentlyBookmarked = bookmarkedProducts.includes(productId);
 
-      const newBookmarkedProducts = isCurrentlyBookmarked 
-        ? bookmarkedProducts.filter(id => id !== productId)
+      const newBookmarkedProducts = isCurrentlyBookmarked
+        ? bookmarkedProducts.filter((id) => id !== productId)
         : [...bookmarkedProducts, productId];
-      
+
       setBookmarkedProducts(newBookmarkedProducts);
       localStorage.setItem('savedProducts', JSON.stringify(newBookmarkedProducts));
-      
+
       if (isCurrentlyBookmarked) {
         toast.success('Матеріал видалено зі збережених', {
           duration: 3000,
@@ -256,28 +256,28 @@ export default function SingleProductPage() {
           duration: 3000,
         });
       }
-      
+
       if (isCurrentlyBookmarked) {
         await apiService.unsaveProduct(productId);
       } else {
         await apiService.saveProduct(productId);
       }
-      
+
       const updatedSavedProducts = await apiService.getSavedProducts();
       setBookmarkedProducts(updatedSavedProducts);
       localStorage.setItem('savedProducts', JSON.stringify(updatedSavedProducts));
-      
+
     } catch (error) {
       console.error('Error toggling bookmark:', error);
       toast.error('Помилка при збереженні матеріалу', {
         duration: 3000,
       });
-      
+
       try {
         const savedProducts = await apiService.getSavedProducts();
         setBookmarkedProducts(savedProducts);
         localStorage.setItem('savedProducts', JSON.stringify(savedProducts));
-      } catch (fallbackError) {
+      } catch {
         await loadSavedProducts();
       }
     }
@@ -349,7 +349,7 @@ export default function SingleProductPage() {
   const currentMainImage = galleryImages.length > 0 ? galleryImages[mainImageIndex] : '';
   const isProductBookmarked = product ? bookmarkedProducts.includes(product.id) : false;
   const isProductInCart = product ? cartItems.includes(product.id) : false;
-  
+
   // Check if product can be bookmarked (not in cart)
   const canBookmark = !isProductInCart;
 
@@ -369,13 +369,13 @@ export default function SingleProductPage() {
         <div className="text-[#4d4d4d] text-[18px] text-center flex flex-col gap-4">
           {error || 'Продукт не знайдено'}
           <div className="flex justify-between gap-4">
-            <button 
+            <button
               onClick={() => navigate('/')}
               className="mt-4 px-6 py-2 bg-[#5e89e8] text-white rounded-[12px] hover:bg-[#4a76d6] transition-colors"
             >
               На головну
             </button>
-            <button 
+            <button
               onClick={refetch}
               className="mt-4 ml-4 px-6 py-2 bg-[#5e89e8] text-white rounded-[12px] hover:bg-[#4a76d6] transition-colors"
             >
@@ -391,12 +391,12 @@ export default function SingleProductPage() {
     <div className="bg-[#e6e6e6] relative size-full" data-name="Single scenario page">
       <div className="flex flex-col items-center max-w-inherit min-w-inherit size-full">
         <div className="box-border content-stretch flex flex-col gap-[40px] items-center max-w-inherit min-w-inherit px-[48px] py-[24px] relative size-full">
-          <ProductHeader 
+          <ProductHeader
             onClose={handleClose}
           />
-          
+
           <div className="basis-0 content-stretch flex gap-[12px] grow items-start max-w-[1280px] min-h-px min-w-px relative rounded-[16px] shrink-0 w-full" data-name="Canvas">
-            <ProductGallery 
+            <ProductGallery
               onImageClick={handleImageClick}
               sliderIndex={sliderIndex}
               onSliderPrevious={handleSliderPrevious}
@@ -406,11 +406,11 @@ export default function SingleProductPage() {
               galleryImages={galleryImages}
               product={product}
             />
-            
-            <ProductInfo 
-              activeTab={activeTab} 
-              setActiveTab={setActiveTab} 
-              product={product} 
+
+            <ProductInfo
+              activeTab={activeTab}
+              setActiveTab={setActiveTab}
+              product={product}
               reviews={reviews}
               isBookmarked={isProductBookmarked}
               onToggleBookmark={() => product && toggleBookmark(product.id)}
@@ -424,7 +424,7 @@ export default function SingleProductPage() {
       </div>
 
       {galleryImages.length > 0 && (
-        <ImageViewer 
+        <ImageViewer
           isOpen={isViewerOpen}
           onClose={handleCloseViewer}
           currentImageIndex={currentImageIndex}
@@ -436,15 +436,15 @@ export default function SingleProductPage() {
       )}
 
       {showCart && (
-        <Cart 
-          cartItems={cartItems} 
-          products={[product]} 
-          onClose={() => setShowCart(false)} 
-          onRemoveItem={removeFromCart} 
+        <Cart
+          cartItems={cartItems}
+          products={[product]}
+          onClose={() => setShowCart(false)}
+          onRemoveItem={removeFromCart}
         />
       )}
 
-      <LoginRequiredModal 
+      <LoginRequiredModal
         open={showLoginRequiredModal}
         onOpenChange={setShowLoginRequiredModal}
         onLogin={handleLoginFromModal}

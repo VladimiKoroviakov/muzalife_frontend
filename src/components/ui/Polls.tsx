@@ -1,7 +1,7 @@
-import { useState, useEffect } from "react";
-import svgPaths from "../ui/icons/svgIconPaths";
-import { apiService } from "../../services/api";
-import { 
+import { useState, useEffect } from 'react';
+import svgPaths from '../ui/icons/svgIconPaths';
+import { apiService } from '../../services/api';
+import {
   Poll,
   OptionProps,
   OptionsProps,
@@ -10,9 +10,9 @@ import {
   RowProps,
   VotedCardProps,
   PollCardProps
-} from "../../types"
-import { CacheManager } from "../../utils/cache-manager";
-import config from "../../config";
+} from '../../types';
+import { CacheManager } from '../../utils/cache-manager';
+import config from '../../config';
 
 
 function CheckCircle() {
@@ -20,7 +20,7 @@ function CheckCircle() {
     <div className="relative shrink-0 size-[40px]" data-name="check_circle">
       <svg className="block size-full" fill="none" preserveAspectRatio="none" viewBox="0 0 40 40">
         <g id="check_circle">
-          <mask height="40" id="mask0_103_258" maskUnits="userSpaceOnUse" style={{ maskType: "alpha" }} width="40" x="0" y="0">
+          <mask height="40" id="mask0_103_258" maskUnits="userSpaceOnUse" style={{ maskType: 'alpha' }} width="40" x="0" y="0">
             <rect fill="var(--fill-0, #D9D9D9)" height="40" id="Bounding box" width="40" />
           </mask>
           <g mask="url(#mask0_103_258)">
@@ -37,7 +37,7 @@ function RadioButtonUnchecked() {
     <div className="relative shrink-0 size-[24px]" data-name="radio_button_unchecked">
       <svg className="block size-full" fill="none" preserveAspectRatio="none" viewBox="0 0 24 24">
         <g id="radio_button_unchecked">
-          <mask height="24" id="mask0_103_273" maskUnits="userSpaceOnUse" style={{ maskType: "alpha" }} width="24" x="0" y="0">
+          <mask height="24" id="mask0_103_273" maskUnits="userSpaceOnUse" style={{ maskType: 'alpha' }} width="24" x="0" y="0">
             <rect fill="var(--fill-0, #D9D9D9)" height="24" id="Bounding box" width="24" />
           </mask>
           <g mask="url(#mask0_103_273)">
@@ -54,7 +54,7 @@ function RadioButtonChecked() {
     <div className="relative shrink-0 size-[24px]" data-name="radio_button_checked">
       <svg className="block size-full" fill="none" preserveAspectRatio="none" viewBox="0 0 24 24">
         <g id="radio_button_checked">
-          <mask height="24" id="mask0_103_267" maskUnits="userSpaceOnUse" style={{ maskType: "alpha" }} width="24" x="0" y="0">
+          <mask height="24" id="mask0_103_267" maskUnits="userSpaceOnUse" style={{ maskType: 'alpha' }} width="24" x="0" y="0">
             <rect fill="var(--fill-0, #D9D9D9)" height="24" id="Bounding box" width="24" />
           </mask>
           <g mask="url(#mask0_103_267)">
@@ -68,8 +68,8 @@ function RadioButtonChecked() {
 
 function Option({ label, isSelected, onClick }: OptionProps) {
   return (
-    <div 
-      className="content-center flex flex-wrap gap-[4px] items-center justify-center relative shrink-0 w-full cursor-pointer hover:opacity-80 transition-opacity" 
+    <div
+      className="content-center flex flex-wrap gap-[4px] items-center justify-center relative shrink-0 w-full cursor-pointer hover:opacity-80 transition-opacity"
       data-name="Option"
       onClick={onClick}
     >
@@ -85,7 +85,7 @@ function Options({ options, selectedOption, onSelectOption }: OptionsProps) {
   return (
     <div className="content-stretch flex flex-col gap-[20px] items-start relative shrink-0 w-full" data-name="Options">
       {options.map((option, index) => (
-        <Option 
+        <Option
           key={index}
           label={option}
           isSelected={selectedOption === index}
@@ -106,7 +106,7 @@ function Voters({ voters }: VotersProps) {
   };
 
   const displayVoters = voters.slice(0, 3);
-  
+
   while (displayVoters.length < 3) {
     displayVoters.push({ name: '', imageUrl: null });
   }
@@ -116,28 +116,28 @@ function Voters({ voters }: VotersProps) {
       <div className="flex items-center relative">
         {displayVoters.map((voter, index) => {
           const leftPosition = index * 16; // Overlapping effect
-          
+
           if (!voter.name) {
             // Empty placeholder circle
             return (
-              <div 
+              <div
                 key={index}
                 className="absolute top-0 w-[44px] h-[44px] rounded-full bg-[#E6E6E6] border-2 border-white"
                 style={{ left: `${leftPosition}px` }}
               />
             );
           }
-          
+
           if (voter.imageUrl) {
             // Show user image
             return (
-              <div 
+              <div
                 key={index}
                 className="absolute top-0 w-[44px] h-[44px] rounded-full border-2 border-white overflow-hidden"
                 style={{ left: `${leftPosition}px` }}
               >
-                <img 
-                  src={voter.imageUrl} 
+                <img
+                  src={voter.imageUrl}
                   alt={voter.name}
                   className="w-full h-full object-cover"
                 />
@@ -146,7 +146,7 @@ function Voters({ voters }: VotersProps) {
           } else {
             // Show initials
             return (
-              <div 
+              <div
                 key={index}
                 className="absolute top-0 w-[44px] h-[44px] rounded-full bg-[#5e89e8] border-2 border-white flex items-center justify-center text-white text-sm font-bold"
                 style={{ left: `${leftPosition}px` }}
@@ -176,7 +176,7 @@ function Row({ voteCount, voters, onVote, hasSelection }: RowProps) {
   return (
     <div className="content-stretch flex items-center justify-between relative shrink-0 w-full" data-name="row">
       <Votes voteCount={voteCount} voters={voters} />
-      <div 
+      <div
         className={`bg-[#5e89e8] box-border content-stretch flex gap-[8px] h-[44px] items-center justify-center px-[24px] py-[12px] relative rounded-[12px] shrink-0 ${hasSelection ? 'cursor-pointer hover:opacity-90' : 'opacity-50 cursor-not-allowed'} transition-opacity`}
         data-name="Button"
         onClick={hasSelection ? onVote : undefined}
@@ -189,7 +189,7 @@ function Row({ voteCount, voters, onVote, hasSelection }: RowProps) {
   );
 }
 
-function VotedCard({ message = "Дякуюємо, Ваш голос враховано!" }: VotedCardProps) {
+function VotedCard({ message = 'Дякуюємо, Ваш голос враховано!' }: VotedCardProps) {
   return (
     <div className="bg-white h-[269px] relative rounded-[16px] shrink-0 w-full" data-name="Question poll">
       <div className="flex flex-col items-center justify-center size-full">
@@ -216,12 +216,12 @@ function PollCard({ question, options, pollIndex, hasVoted, selectedOption, vote
           <div className="flex flex-col font-['Atkinson_Hyperlegible:Bold','Noto_Sans:Bold',sans-serif] justify-end leading-[0] relative shrink-0 text-[24px] text-black w-full" style={{ fontVariationSettings: "'CTGR' 0, 'wdth' 100, 'wweight' 700" }}>
             <p className="leading-[normal]">{question}</p>
           </div>
-          <Options 
+          <Options
             options={options}
             selectedOption={selectedOption}
             onSelectOption={(optionIndex) => onSelectOption(pollIndex, optionIndex)}
           />
-          <Row 
+          <Row
             voteCount={voteCount}
             voters={voters}
             onVote={() => onVote(pollIndex)}
@@ -246,89 +246,89 @@ function Polls() {
     try {
       setLoading(true);
       setError(null);
-      
+
       const cachedPolls = CacheManager.getItem<Poll[]>(config.cacheKeys.POLLS);
       const cacheTimestamp = CacheManager.getItem<number>(config.cacheKeys.POLLS_TIMESTAMP);
-      
+
       // Check if cache is valid (5 minutes)
-      const isCacheValid = cacheTimestamp && 
+      const isCacheValid = cacheTimestamp &&
                           Date.now() - cacheTimestamp < config.cacheDurations.POLLS;
-      
+
       if (cachedPolls && isCacheValid) {
         setPolls(cachedPolls);
         setLoading(false);
         return;
       }
-      
+
       const pollsData = await apiService.getPolls();
-      
+
       // Update state
       setPolls(pollsData);
-      
+
       // Update cache
       CacheManager.setItem(config.cacheKeys.POLLS, pollsData);
       CacheManager.setItem(config.cacheKeys.POLLS_TIMESTAMP, Date.now());
-      
+
     } catch (err: any) {
       console.error('Error loading polls:', err);
-      
+
       // If API fails, use cached data even if expired
       const cachedPolls = CacheManager.getItem<Poll[]>(config.cacheKeys.POLLS);
       if (cachedPolls) {
         setPolls(cachedPolls);
       } else {
         // No cache available, show error
-        setError(err.message || "Не вдалося завантажити опитування");
+        setError(err.message || 'Не вдалося завантажити опитування');
       }
-      
+
       // Update timestamp to prevent immediate retry
       CacheManager.setItem(config.cacheKeys.POLLS_TIMESTAMP, Date.now());
-      
+
     } finally {
       setLoading(false);
     }
   };
-  
+
   const handleSelectOption = (pollId: number, optionIndex: number) => {
-    setPolls(prev => prev.map(poll => 
-      poll.id === pollId 
+    setPolls((prev) => prev.map((poll) =>
+      poll.id === pollId
         ? { ...poll, selectedOption: optionIndex }
         : poll
     ));
   };
 
   const handleVote = async (pollId: number) => {
-    const poll = polls.find(p => p.id === pollId);
-    if (!poll || poll.selectedOption === null) return;
+    const poll = polls.find((p) => p.id === pollId);
+    if (!poll || poll.selectedOption === null) {return;}
 
     try {
       setError(null);
-      
+
       const voteId = poll.optionVoteIds[poll.selectedOption];
       if (!voteId) {
         throw new Error('Невірно обраний варіант');
       }
-      
+
       await apiService.submitVote(pollId, voteId);
-      
+
       // Mark as voted and increment count
-      const updatedPolls = polls.map(p => 
+      const updatedPolls = polls.map((p) =>
         p.id === pollId
           ? { ...p, hasVoted: true, voteCount: p.voteCount + 1 }
           : p
       );
-      
+
       setPolls(updatedPolls);
-      
+
       // Update cache immediately
       CacheManager.setItem(config.cacheKeys.POLLS, updatedPolls);
       CacheManager.setItem(config.cacheKeys.POLLS_TIMESTAMP, Date.now());
 
       // Remove voted poll after delay
       setTimeout(() => {
-        const filteredPolls = updatedPolls.filter(p => p.id !== pollId);
+        const filteredPolls = updatedPolls.filter((p) => p.id !== pollId);
         setPolls(filteredPolls);
-        
+
         // Update cache again after removal
         CacheManager.setItem(config.cacheKeys.POLLS, filteredPolls);
         CacheManager.setItem(config.cacheKeys.POLLS_TIMESTAMP, Date.now());
@@ -336,11 +336,11 @@ function Polls() {
 
     } catch (err: any) {
       console.error('Error submitting vote:', err);
-      setError(err.message || "Не вдалося проголосувати");
-      
+      setError(err.message || 'Не вдалося проголосувати');
+
       // Reset selection on error
-      setPolls(prev => prev.map(poll => 
-        poll.id === pollId 
+      setPolls((prev) => prev.map((poll) =>
+        poll.id === pollId
           ? { ...poll, selectedOption: null }
           : poll
       ));
@@ -380,13 +380,13 @@ function Polls() {
             <div className="bg-white relative rounded-[16px] shrink-0 w-full h-[200px] flex flex-col items-center justify-center gap-4">
               <p className="text-[#d32f2f] text-center">{error}</p>
               <div className="flex gap-2">
-                <button 
+                <button
                   onClick={retry}
                   className="bg-[#5e89e8] text-white px-4 py-2 rounded-[12px] hover:opacity-90 transition-opacity"
                 >
                   Спробувати знову
                 </button>
-                <button 
+                <button
                   onClick={clearPollsCache}
                   className="bg-[#f2f2f2] text-[#4d4d4d] px-4 py-2 rounded-[12px] hover:opacity-90 transition-opacity border border-[#d9d9d9]"
                 >
@@ -407,7 +407,7 @@ function Polls() {
           {polls.length === 0 ? (
             <div className="bg-white relative rounded-[16px] shrink-0 w-full h-[200px] flex flex-col items-center justify-center gap-4">
               <p className="text-[#4d4d4d]">Немає доступних опитувань</p>
-              <button 
+              <button
                 onClick={clearPollsCache}
                 className="bg-[#f2f2f2] text-[#4d4d4d] px-4 py-2 rounded-[12px] hover:opacity-90 transition-opacity border border-[#d9d9d9]"
               >

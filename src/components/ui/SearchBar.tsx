@@ -1,4 +1,4 @@
-import { Search } from "./icons/Search";
+import { Search } from './icons/Search';
 
 interface SearchBarProps {
   searchQuery: string;
@@ -24,7 +24,7 @@ export function SearchBar({ searchQuery, setSearchQuery }: SearchBarProps) {
           </div>
           {searchQuery && (
             <button
-              onClick={() => setSearchQuery("")}
+              onClick={() => setSearchQuery('')}
               className="flex items-center justify-center w-[44px] h-[44px] rounded-[12px] shrink-0 cursor-pointer hover:bg-[#f2f2f2] transition-colors text-[#4d4d4d]"
             >
               <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">

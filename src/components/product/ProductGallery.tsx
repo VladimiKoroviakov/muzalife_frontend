@@ -1,11 +1,11 @@
-import { Product } from "../../types";
-import svgIconPaths from "../ui/icons/svgIconPaths";
+import { Product } from '../../types';
+import svgIconPaths from '../ui/icons/svgIconPaths';
 
 function KeyboardArrowLeft({ onClick }: { onClick: () => void }) {
   return (
-    <div 
+    <div
       onClick={onClick}
-      className="basis-0 bg-[#f2f2f2] grow h-full min-h-px min-w-px relative rounded-bl-[4px] rounded-tl-[4px] shrink-0 cursor-pointer hover:bg-[#dadada] transition-colors" 
+      className="basis-0 bg-[#f2f2f2] grow h-full min-h-px min-w-px relative rounded-bl-[4px] rounded-tl-[4px] shrink-0 cursor-pointer hover:bg-[#dadada] transition-colors"
       data-name="keyboard_arrow_left"
     >
       <div aria-hidden="true" className="absolute border border-[#f2f2f2] border-solid inset-0 pointer-events-none rounded-bl-[4px] rounded-tl-[4px]" />
@@ -24,9 +24,9 @@ function KeyboardArrowLeft({ onClick }: { onClick: () => void }) {
 
 function KeyboardArrowRight({ onClick }: { onClick: () => void }) {
   return (
-    <div 
+    <div
       onClick={onClick}
-      className="basis-0 bg-[#f2f2f2] grow h-full min-h-px min-w-px relative rounded-br-[4px] rounded-tr-[4px] shrink-0 cursor-pointer hover:bg-[#e6e6e6] transition-colors" 
+      className="basis-0 bg-[#f2f2f2] grow h-full min-h-px min-w-px relative rounded-br-[4px] rounded-tr-[4px] shrink-0 cursor-pointer hover:bg-[#e6e6e6] transition-colors"
       data-name="keyboard_arrow_right"
     >
       <div className="border border-[#f2f2f2] flex flex-row items-center justify-center size-full">
@@ -42,16 +42,16 @@ function KeyboardArrowRight({ onClick }: { onClick: () => void }) {
   );
 }
 
-function Slider({ 
-  sliderIndex, 
-  onPrevious, 
-  onNext, 
+function Slider({
+  sliderIndex,
+  onPrevious,
+  onNext,
   onThumbnailClick,
   galleryImages,
   product
-}: { 
-  sliderIndex: number; 
-  onPrevious: () => void; 
+}: {
+  sliderIndex: number;
+  onPrevious: () => void;
   onNext: () => void;
   onThumbnailClick: (index: number) => void;
   galleryImages: string[];
@@ -59,7 +59,7 @@ function Slider({
 }) {
   const visibleImages = [];
   const visibleIndices: number[] = [];
-  
+
   for (let i = 0; i < Math.min(5, galleryImages.length); i++) {
     const index = (sliderIndex + i) % galleryImages.length;
     visibleImages.push(galleryImages[index]);
@@ -71,23 +71,23 @@ function Slider({
       <div className="basis-0 flex flex-row grow items-center self-stretch shrink-0">
         <KeyboardArrowLeft onClick={onPrevious} />
       </div>
-      
+
       {visibleImages.map((image, position) => (
-        <div 
+        <div
           key={visibleIndices[position]}
           onClick={() => onThumbnailClick(visibleIndices[position])}
           className={`h-[95px] relative rounded-[4px] shrink-0 cursor-pointer hover:opacity-80 transition-opacity ${
             position === 0 ? 'w-[137px]' : 'w-[65px]'
-          }`} 
+          }`}
           data-name="Image"
         >
           <div aria-hidden="true" className="absolute inset-0 rounded-[4px]">
-            <img 
+            <img
               alt={`${product.title} - Image ${visibleIndices[position] + 1}`}
               className={`absolute max-w-none object-50%-50% rounded-[4px] size-full ${
                 position === 0 ? 'object-contain' : 'object-cover'
-              }`} 
-              src={image} 
+              }`}
+              src={image}
             />
             <div className="absolute bg-[rgba(0,0,0,0.1)] inset-0 rounded-[4px]" />
           </div>
@@ -96,7 +96,7 @@ function Slider({
           )}
         </div>
       ))}
-      
+
       <div className="basis-0 flex flex-row grow items-center self-stretch shrink-0">
         <KeyboardArrowRight onClick={onNext} />
       </div>
@@ -115,10 +115,10 @@ interface ProductGalleryProps {
   product: Product;
 }
 
-export function ProductGallery({ 
-  onImageClick, 
-  sliderIndex, 
-  onSliderPrevious, 
+export function ProductGallery({
+  onImageClick,
+  sliderIndex,
+  onSliderPrevious,
   onSliderNext,
   currentMainImage,
   onThumbnailClick,
@@ -137,23 +137,23 @@ export function ProductGallery({
 
   return (
     <div className="content-stretch flex flex-col gap-[16px] h-full items-start relative shrink-0" data-name="Left side">
-      <div 
+      <div
         onClick={onImageClick}
-        className="basis-0 grow min-h-px min-w-px relative rounded-[16.483px] shrink-0 w-[575px] cursor-pointer hover:opacity-90 transition-opacity" 
+        className="basis-0 grow min-h-px min-w-px relative rounded-[16.483px] shrink-0 w-[575px] cursor-pointer hover:opacity-90 transition-opacity"
         data-name="Image"
       >
         <div aria-hidden="true" className="absolute inset-0 rounded-[16.483px]">
-          <img 
-            alt={product.title} 
-            className="absolute max-w-none object-50%-50% object-contain rounded-[16.483px] size-full" 
-            src={currentMainImage} 
+          <img
+            alt={product.title}
+            className="absolute max-w-none object-50%-50% object-contain rounded-[16.483px] size-full"
+            src={currentMainImage}
           />
           <div className="absolute bg-[rgba(0,0,0,0.1)] inset-0 rounded-[16.483px]" />
         </div>
       </div>
-      
+
       {galleryImages.length > 1 && (
-        <Slider 
+        <Slider
           sliderIndex={sliderIndex}
           onPrevious={onSliderPrevious}
           onNext={onSliderNext}

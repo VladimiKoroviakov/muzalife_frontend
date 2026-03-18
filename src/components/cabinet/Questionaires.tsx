@@ -1,4 +1,4 @@
-import svgPaths from "../ui/icons/svgIconPaths";
+import svgPaths from '../ui/icons/svgIconPaths';
 
 interface QuestionairesProps {
   onClick?: () => void;
@@ -13,7 +13,7 @@ export function Questionaires({ onClick }: QuestionairesProps) {
         </svg>
       </div>
       <div className="flex flex-col font-['Atkinson_Hyperlegible:Bold','Noto_Sans:Bold',sans-serif] justify-end leading-[normal] min-w-full relative shrink-0 text-[#4d4d4d] text-[48px] text-center w-[min-content]" style={{ fontVariationSettings: "'CTGR' 0, 'wdth' 100, 'wght' 700" }}>
-        <p className="mb-0 text-[40px] group-hover:text-[#0D0D0D] transition-all">{`Опитування `}</p>
+        <p className="mb-0 text-[40px] group-hover:text-[#0D0D0D] transition-all">{'Опитування '}</p>
         <p className="text-[40px] group-hover:text-[#0D0D0D] transition-all">для користувачів</p>
       </div>
     </div>

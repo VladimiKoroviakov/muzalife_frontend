@@ -1,20 +1,20 @@
-import { useState, useEffect } from "react";
-import { apiService } from "../services/api";
+import { useState, useEffect } from 'react';
+import { apiService } from '../services/api';
 import { useAuthContext } from '../context/AuthContext';
-import { Header } from "../components/cabinet/Header";
-import { Canvas } from "../components/cabinet/Canvas";
-import FAQs from "./FAQsPage";
+import { Header } from '../components/cabinet/Header';
+import { Canvas } from '../components/cabinet/Canvas';
+import FAQs from './FAQsPage';
 
-export default function UserCabinet({ 
-  onBackClick, 
-  addToCart, 
-  products, 
-  onBookmarkedProductsChange 
-}: { 
-  onBackClick?: () => void; 
-  addToCart?: (productId: number) => void; 
-  products?: any[]; 
-  onBookmarkedProductsChange?: (products: number[]) => void; 
+export default function UserCabinet({
+  onBackClick,
+  addToCart,
+  products,
+  onBookmarkedProductsChange
+}: {
+  onBackClick?: () => void;
+  addToCart?: (productId: number) => void;
+  products?: any[];
+  onBookmarkedProductsChange?: (products: number[]) => void;
 }) {
   const [activeSection, setActiveSection] = useState<string>('main');
   const [showFAQ, setShowFAQ] = useState(false);
@@ -22,7 +22,7 @@ export default function UserCabinet({
   const [isLoading, setIsLoading] = useState(true);
   const [localProducts, setLocalProducts] = useState<any[]>([]);
   const [productsLoading, setProductsLoading] = useState(true);
-  
+
   const { signOut, user } = useAuthContext();
 
   const handleBackClick = onBackClick || (() => {
@@ -38,10 +38,10 @@ export default function UserCabinet({
         setProductsLoading(false);
         return;
       }
-      
+
       try {
         setProductsLoading(true);
-        const productsData = await apiService.getProducts(); 
+        const productsData = await apiService.getProducts();
         setLocalProducts(productsData);
       } catch (error) {
         console.error('Error loading products:', error);
@@ -72,14 +72,14 @@ export default function UserCabinet({
       try {
         // Prefer auth context (fast path)
         if (user?.name) {
-          if (isMounted) setUserName(user.name);
+          if (isMounted) {setUserName(user.name);}
           return;
         }
 
         // Prefer cached profile
         const cached = getCachedProfile();
         if (cached?.name) {
-          if (isMounted) setUserName(cached.name);
+          if (isMounted) {setUserName(cached.name);}
           return;
         }
 
@@ -100,10 +100,10 @@ export default function UserCabinet({
           localStorage.setItem('userProfile', JSON.stringify(userProfileToStore));
         }
 
-      } catch (error) {
-        if (isMounted) setUserName(null);
+      } catch {
+        if (isMounted) {setUserName(null);}
       } finally {
-        if (isMounted) setIsLoading(false);
+        if (isMounted) {setIsLoading(false);}
       }
     };
 
@@ -117,10 +117,10 @@ export default function UserCabinet({
   const getCachedProfile = () => {
     try {
       const raw = localStorage.getItem('userProfile');
-      if (!raw) return null;
+      if (!raw) {return null;}
 
       const profile = JSON.parse(raw);
-      if (!profile.name || profile.name === 'Користувач') return null;
+      if (!profile.name || profile.name === 'Користувач') {return null;}
 
       return profile;
     } catch {
@@ -158,20 +158,20 @@ export default function UserCabinet({
     <div className="bg-[#e6e6e6] relative size-full" data-name="User Cabinet">
       <div className="flex flex-col items-center max-w-inherit min-w-inherit size-full">
         <div className="box-border content-stretch flex flex-col gap-[48px] items-center max-w-inherit min-w-inherit px-[48px] py-[24px] relative size-full">
-          <Header 
+          <Header
             onBackClick={handleBackClick}
-            activeSection={activeSection} 
-            userName={userName ?? 'Користувач'} 
-            onSectionChange={setActiveSection} 
+            activeSection={activeSection}
+            userName={userName ?? 'Користувач'}
+            onSectionChange={setActiveSection}
           />
-          <Canvas 
+          <Canvas
             onLogout={handleLogout}
-            activeSection={activeSection} 
-            onSectionChange={setActiveSection} 
-            addToCart={addToCart} 
-            onShowFAQ={() => setShowFAQ(true)} 
+            activeSection={activeSection}
+            onSectionChange={setActiveSection}
+            addToCart={addToCart}
+            onShowFAQ={() => setShowFAQ(true)}
             products={localProducts}
-            onBookmarkedProductsChange={onBookmarkedProductsChange} 
+            onBookmarkedProductsChange={onBookmarkedProductsChange}
           />
         </div>
       </div>

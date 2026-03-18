@@ -1,4 +1,4 @@
-import svgPaths from "../ui/icons/svgIconPaths";
+import svgPaths from '../ui/icons/svgIconPaths';
 
 interface SavedScenariosProps {
   onClick?: () => void;

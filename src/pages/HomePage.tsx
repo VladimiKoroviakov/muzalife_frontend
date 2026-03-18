@@ -1,21 +1,21 @@
-import { useState, useEffect, useCallback } from "react";
-import { useNavigate } from "react-router-dom";
-import { Header } from "../components/layout/Header";
-import { Canvas } from "../components/layout/Canvas";
-import { Cart } from "../components/features/Cart";
-import { LoginRequiredModal } from "../components/auth/LoginRequiredModal";
-import { apiService } from "../services/api";
-import { toast } from "sonner";
-import { Product } from "../types";
+import { useState, useEffect, useCallback } from 'react';
+import { useNavigate } from 'react-router-dom';
+import { Header } from '../components/layout/Header';
+import { Canvas } from '../components/layout/Canvas';
+import { Cart } from '../components/features/Cart';
+import { LoginRequiredModal } from '../components/auth/LoginRequiredModal';
+import { apiService } from '../services/api';
+import { toast } from 'sonner';
+import { Product } from '../types';
 
 export default function HomePage() {
   const [allProducts, setAllProducts] = useState<Product[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
-  const [searchQuery, setSearchQuery] = useState("");
+  const [searchQuery, setSearchQuery] = useState('');
   const [selectedAgeCategory, setSelectedAgeCategory] = useState<string | null>(null);
   const [selectedEvents, setSelectedEvents] = useState<string[]>([]);
-  const [activeTab, setActiveTab] = useState("all");
+  const [activeTab, setActiveTab] = useState('all');
   const [bookmarkedProducts, setBookmarkedProducts] = useState<number[]>([]);
   const [cartItems, setCartItems] = useState<number[]>([]);
   const [showFilters, setShowFilters] = useState(true);
@@ -63,7 +63,7 @@ export default function HomePage() {
     const checkAuth = async () => {
       try {
         const token = localStorage.getItem('authToken');
-        
+
         if (!token) {
           console.log('No auth token found, skipping auth check');
           setIsAuthenticated(false);
@@ -109,8 +109,8 @@ export default function HomePage() {
   }, []);
 
   const loadSavedProducts = useCallback(async () => {
-    if (!isAuthenticated) return;
-    
+    if (!isAuthenticated) {return;}
+
     try {
       const savedProducts = await apiService.getSavedProducts();
       setBookmarkedProducts(savedProducts);
@@ -128,14 +128,14 @@ export default function HomePage() {
 
     try {
       const isCurrentlyBookmarked = bookmarkedProducts.includes(productId);
-      
-      const newBookmarkedProducts = isCurrentlyBookmarked 
-        ? bookmarkedProducts.filter(id => id !== productId)
+
+      const newBookmarkedProducts = isCurrentlyBookmarked
+        ? bookmarkedProducts.filter((id) => id !== productId)
         : [...bookmarkedProducts, productId];
-      
+
       setBookmarkedProducts(newBookmarkedProducts);
       localStorage.setItem('savedProducts', JSON.stringify(newBookmarkedProducts));
-      
+
       if (isCurrentlyBookmarked) {
         toast.success('Матеріал видалено зі збережених', {
           duration: 3000,
@@ -145,32 +145,32 @@ export default function HomePage() {
           duration: 3000,
         });
       }
-      
+
       if (isCurrentlyBookmarked) {
         await apiService.unsaveProduct(productId);
       } else {
         await apiService.saveProduct(productId);
       }
-      
+
       // Refresh from API to ensure consistency
       const updatedSavedProducts = await apiService.getSavedProducts();
       setBookmarkedProducts(updatedSavedProducts);
       localStorage.setItem('savedProducts', JSON.stringify(updatedSavedProducts));
-      
+
     } catch (error) {
       console.error('Error toggling bookmark:', error);
-      
+
       // Show error toast
       toast.error('Помилка при збереженні матеріалу', {
         duration: 3000,
       });
-      
+
       // Revert optimistic update on error
       try {
         const savedProducts = await apiService.getSavedProducts();
         setBookmarkedProducts(savedProducts);
         localStorage.setItem('savedProducts', JSON.stringify(savedProducts));
-      } catch (fallbackError) {
+      } catch {
         await loadSavedProducts();
       }
     }
@@ -185,7 +185,7 @@ export default function HomePage() {
   }, [isAuthenticated]);
 
   const addToCart = (productId: number) => {
-    setCartItems(prev => {
+    setCartItems((prev) => {
       if (!prev.includes(productId)) {
         const newCartItems = [...prev, productId];
         try {
@@ -200,8 +200,8 @@ export default function HomePage() {
   };
 
   const removeFromCart = (productId: number) => {
-    setCartItems(prev => {
-      const newCartItems = prev.filter(id => id !== productId);
+    setCartItems((prev) => {
+      const newCartItems = prev.filter((id) => id !== productId);
       try {
         localStorage.setItem('cartItems', JSON.stringify(newCartItems));
       } catch (error) {
@@ -212,9 +212,9 @@ export default function HomePage() {
   };
 
   const toggleEvent = (event: string) => {
-    setSelectedEvents(prev =>
+    setSelectedEvents((prev) =>
       prev.includes(event)
-        ? prev.filter(e => e !== event)
+        ? prev.filter((e) => e !== event)
         : [...prev, event]
     );
   };
@@ -227,7 +227,7 @@ export default function HomePage() {
   const handleLoginClick = async () => {
     try {
       const token = localStorage.getItem('authToken');
-      
+
       if (!token) {
         navigate('/login');
         return;
@@ -235,7 +235,7 @@ export default function HomePage() {
 
       const user = await apiService.getProfile();
       console.log('Profile icon clicked. Is authenticated:', !!user);
-      
+
       if (user) {
         console.log('Navigating to profile');
         navigate('/cabinet');
@@ -265,23 +265,23 @@ export default function HomePage() {
     setShowLoginRequiredModal(false);
   };
 
-  const filteredProducts = allProducts.filter(product => {
+  const filteredProducts = allProducts.filter((product) => {
     if (searchQuery && !product.title.toLowerCase().includes(searchQuery.toLowerCase())) {
       return false;
     }
 
     // Tab filter
-    if (activeTab === "scenarios" && product.type !== "Сценарій") return false;
-    if (activeTab === "quests" && product.type !== "Квест") return false;
-    if (activeTab === "poetry" && product.type !== "Поезія") return false;
-    if (activeTab === "free" && product.type !== "Безкоштовний матеріал") return false;
-    if (activeTab === "other" && product.type !== "Інше") return false;
+    if (activeTab === 'scenarios' && product.type !== 'Сценарій') {return false;}
+    if (activeTab === 'quests' && product.type !== 'Квест') {return false;}
+    if (activeTab === 'poetry' && product.type !== 'Поезія') {return false;}
+    if (activeTab === 'free' && product.type !== 'Безкоштовний матеріал') {return false;}
+    if (activeTab === 'other' && product.type !== 'Інше') {return false;}
 
     if (selectedAgeCategory) {
-      const productAgeCategories = Array.isArray(product.ageCategory) 
-        ? product.ageCategory 
+      const productAgeCategories = Array.isArray(product.ageCategory)
+        ? product.ageCategory
         : [product.ageCategory];
-      
+
       if (!productAgeCategories.includes(selectedAgeCategory)) {
         return false;
       }
@@ -290,8 +290,8 @@ export default function HomePage() {
     // Events filter
     if (selectedEvents.length > 0) {
       const productEvents = Array.isArray(product.events) ? product.events : [];
-      const hasEvent = productEvents.some(event => selectedEvents.includes(event));
-      if (!hasEvent) return false;
+      const hasEvent = productEvents.some((event) => selectedEvents.includes(event));
+      if (!hasEvent) {return false;}
     }
 
     return true;
@@ -301,8 +301,8 @@ export default function HomePage() {
     <div className="bg-[#e6e6e6] relative size-full" data-name="Store Light">
       <div className="flex flex-col items-center max-w-inherit min-w-inherit size-full">
         <div className="box-border content-stretch flex flex-col gap-[20px] items-center max-w-inherit min-w-inherit px-[48px] py-[24px] relative size-full">
-          <Header 
-            cartCount={cartItems.length} 
+          <Header
+            cartCount={cartItems.length}
             onCartClick={() => setShowCart(!showCart)}
             onHelpClick={() => navigate('/faqs')}
             onLoginClick={handleLoginClick}
@@ -320,7 +320,7 @@ export default function HomePage() {
               setShowFilters={setShowFilters}
               selectedAgeCategory={selectedAgeCategory}
               setSelectedAgeCategory={setSelectedAgeCategory}
-              selectedEvents={selectedEvents}    
+              selectedEvents={selectedEvents}
               toggleEvent={toggleEvent}
               clearFilters={clearFilters}
               activeTab={activeTab}
@@ -335,17 +335,17 @@ export default function HomePage() {
           )}
 
           {showCart && (
-            <Cart 
-              cartItems={cartItems} 
+            <Cart
+              cartItems={cartItems}
               products={allProducts}
-              onClose={() => setShowCart(false)} 
-              onRemoveItem={removeFromCart} 
+              onClose={() => setShowCart(false)}
+              onRemoveItem={removeFromCart}
             />
           )}
         </div>
       </div>
-      
-      <LoginRequiredModal 
+
+      <LoginRequiredModal
         open={showLoginRequiredModal}
         onOpenChange={setShowLoginRequiredModal}
         onLogin={handleLoginFromModal}

@@ -13,18 +13,18 @@ export function useAuth() {
   const authCheckCalled = useRef(false);
 
   const checkAuth = async () => {
-    if (authCheckInProgress.current) return;
+    if (authCheckInProgress.current) {return;}
 
     authCheckInProgress.current = true;
 
     try {
       const token = localStorage.getItem('authToken');
       if (!token) {
-        setAuthState(prev => ({ ...prev, isLoading: false }));
+        setAuthState((prev) => ({ ...prev, isLoading: false }));
         return;
       }
 
-      const profile: AuthUser = await apiService.getProfile(); 
+      const profile: AuthUser = await apiService.getProfile();
 
       setAuthState({
         user: profile,
@@ -49,7 +49,7 @@ export function useAuth() {
       authCheckCalled.current = true;
       checkAuth();
     }
-  }, []); 
+  }, []);
 
   const mapUser = (user: any): AuthUser => ({
     id: user.id,
@@ -66,7 +66,7 @@ export function useAuth() {
     password: string,
     loginType: 'regular' | 'admin' = 'regular'
   ) => {
-    setAuthState(prev => ({ ...prev, isLoading: true, error: null }));
+    setAuthState((prev) => ({ ...prev, isLoading: true, error: null }));
 
     try {
       const { user } = await apiService.login(email, password, loginType);
@@ -82,7 +82,7 @@ export function useAuth() {
       const message =
         error instanceof Error ? error.message : 'Login failed';
 
-      setAuthState(prev => ({
+      setAuthState((prev) => ({
         ...prev,
         isLoading: false,
         error: message,
@@ -97,7 +97,7 @@ export function useAuth() {
     password: string,
     name: string
   ) => {
-    setAuthState(prev => ({ ...prev, isLoading: true, error: null }));
+    setAuthState((prev) => ({ ...prev, isLoading: true, error: null }));
 
     try {
       await apiService.initiateRegistration(email, password, name);
@@ -126,7 +126,7 @@ export function useAuth() {
         };
       }
 
-      setAuthState(prev => ({
+      setAuthState((prev) => ({
         ...prev,
         isLoading: false,
         error: message,
@@ -142,7 +142,7 @@ export function useAuth() {
     name: string,
     verificationCode: string
   ) => {
-    setAuthState(prev => ({ ...prev, isLoading: true, error: null }));
+    setAuthState((prev) => ({ ...prev, isLoading: true, error: null }));
 
     try {
       const { user } = await apiService.verifyRegistration(
@@ -167,7 +167,7 @@ export function useAuth() {
       const message =
         error instanceof Error ? error.message : 'Registration failed';
 
-      setAuthState(prev => ({
+      setAuthState((prev) => ({
         ...prev,
         isLoading: false,
         error: message,
@@ -181,7 +181,7 @@ export function useAuth() {
     provider: 'google' | 'facebook',
     accessToken: string
   ) => {
-    setAuthState(prev => ({ ...prev, isLoading: true, error: null }));
+    setAuthState((prev) => ({ ...prev, isLoading: true, error: null }));
 
     try {
       const { user } =
@@ -202,7 +202,7 @@ export function useAuth() {
           ? error.message
           : `${provider} login failed`;
 
-      setAuthState(prev => ({
+      setAuthState((prev) => ({
         ...prev,
         isLoading: false,
         error: message,
@@ -215,7 +215,7 @@ export function useAuth() {
   const signOut = async () => {
     authCheckCalled.current = false;
     authCheckInProgress.current = false;
-    
+
     await apiService.logout();
     setAuthState({
       user: null,
@@ -225,7 +225,7 @@ export function useAuth() {
   };
 
   const clearError = () => {
-    setAuthState(prev => ({ ...prev, error: null }));
+    setAuthState((prev) => ({ ...prev, error: null }));
   };
 
   const refreshAuth = async () => {

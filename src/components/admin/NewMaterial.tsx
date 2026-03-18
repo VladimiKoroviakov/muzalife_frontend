@@ -1,11 +1,11 @@
-import svgIconPaths from "../ui/icons/svgIconPaths";
+import svgIconPaths from '../ui/icons/svgIconPaths';
 
 function IconUpload() {
   return (
     <div className="relative shrink-0 size-[112px]" data-name="icon upload">
       <svg className="block size-full" fill="none" preserveAspectRatio="none" viewBox="0 0 112 112">
         <g id="icon upload">
-          <mask height="112" id="mask0_5_1485" maskUnits="userSpaceOnUse" style={{ maskType: "alpha" }} width="112" x="0" y="0">
+          <mask height="112" id="mask0_5_1485" maskUnits="userSpaceOnUse" style={{ maskType: 'alpha' }} width="112" x="0" y="0">
             <rect fill="var(--fill-0, #D9D9D9)" height="112" id="Bounding box" width="112" />
           </mask>
           <g mask="url(#mask0_5_1485)">
@@ -71,7 +71,7 @@ function IconArrowDown() {
     <div className="relative shrink-0 size-[24px]" data-name="icon arrow down">
       <svg className="block size-full" fill="none" preserveAspectRatio="none" viewBox="0 0 24 24">
         <g id="icon arrow down">
-          <mask height="24" id="mask0_5_1473" maskUnits="userSpaceOnUse" style={{ maskType: "alpha" }} width="24" x="0" y="0">
+          <mask height="24" id="mask0_5_1473" maskUnits="userSpaceOnUse" style={{ maskType: 'alpha' }} width="24" x="0" y="0">
             <rect fill="var(--fill-0, #D9D9D9)" height="24" id="Bounding box" width="24" />
           </mask>
           <g mask="url(#mask0_5_1473)">
@@ -104,7 +104,7 @@ function IconArrowDown1() {
     <div className="relative shrink-0 size-[24px]" data-name="icon arrow down">
       <svg className="block size-full" fill="none" preserveAspectRatio="none" viewBox="0 0 24 24">
         <g id="icon arrow down">
-          <mask height="24" id="mask0_5_1473" maskUnits="userSpaceOnUse" style={{ maskType: "alpha" }} width="24" x="0" y="0">
+          <mask height="24" id="mask0_5_1473" maskUnits="userSpaceOnUse" style={{ maskType: 'alpha' }} width="24" x="0" y="0">
             <rect fill="var(--fill-0, #D9D9D9)" height="24" id="Bounding box" width="24" />
           </mask>
           <g mask="url(#mask0_5_1473)">

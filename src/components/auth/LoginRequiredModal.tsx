@@ -1,5 +1,5 @@
-import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle } from "../ui/dialog";
-import { Button } from "../ui/button";
+import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle } from '../ui/dialog';
+import { Button } from '../ui/button';
 
 interface LoginRequiredModalProps {
   open: boolean;
@@ -15,13 +15,13 @@ export function LoginRequiredModal({ open, onOpenChange, onLogin }: LoginRequire
         <DialogHeader>
           <DialogTitle>Необхідна авторизація</DialogTitle>
           <DialogDescription>
-            Функція збереження матеріалів доступна лише для зареєстрованих користувачів. 
+            Функція збереження матеріалів доступна лише для зареєстрованих користувачів.
             Будь ласка, увійдіть у свій обліковий запис, щоб зберігати обрані матеріали та отримати доступ до них з будь-якого пристрою.
           </DialogDescription>
         </DialogHeader>
         <DialogFooter className="flex gap-2">
-          <Button 
-            variant="outline" 
+          <Button
+            variant="outline"
             onClick={() => onOpenChange(false)}
           >
             Повернутись

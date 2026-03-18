@@ -1,9 +1,9 @@
-import { FamilyRestroom } from "../ui/FamilyRestroom";
-import { Celebration } from "../ui/Celebration";
-import { RadioButtonChecked } from "../ui/RadioButtonChecked";
-import { RadioButtonUnchecked } from "../ui/RadioButtonUnchecked";
-import { CheckBoxChecked } from "../ui/CheckBoxChecked";
-import { CheckBoxOutlineBlank } from "../ui/CheckBoxOutlineBlank";
+import { FamilyRestroom } from '../ui/FamilyRestroom';
+import { Celebration } from '../ui/Celebration';
+import { RadioButtonChecked } from '../ui/RadioButtonChecked';
+import { RadioButtonUnchecked } from '../ui/RadioButtonUnchecked';
+import { CheckBoxChecked } from '../ui/CheckBoxChecked';
+import { CheckBoxOutlineBlank } from '../ui/CheckBoxOutlineBlank';
 
 interface FiltersSidebarProps {
   selectedAgeCategory: string | null;
@@ -21,26 +21,26 @@ export function FiltersSidebar({
   clearFilters
 }: FiltersSidebarProps) {
   const ageCategories = [
-    "Дитячий садок (3-6 років)",
-    "Початкова школа (6-10 років)", 
-    "Середня школа (10-15 років)",
-    "Старша школа (15-18 років)"
+    'Дитячий садок (3-6 років)',
+    'Початкова школа (6-10 років)',
+    'Середня школа (10-15 років)',
+    'Старша школа (15-18 років)'
   ];
 
   const events = [
-    "Перший дзвоник",
-    "8 березня",
-    "Різдво",
-    "Новий рік",
-    "Випускний",
-    "День вишиванки",
-    "День молоді",
-    "День козацтва",
-    "День матері",
-    "День батька",
-    "Хелловін",
-    "Масляна",
-    "Інші свята та заходи",
+    'Перший дзвоник',
+    '8 березня',
+    'Різдво',
+    'Новий рік',
+    'Випускний',
+    'День вишиванки',
+    'День молоді',
+    'День козацтва',
+    'День матері',
+    'День батька',
+    'Хелловін',
+    'Масляна',
+    'Інші свята та заходи',
   ];
 
   return (

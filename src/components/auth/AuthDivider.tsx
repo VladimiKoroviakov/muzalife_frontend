@@ -3,7 +3,7 @@ import React from 'react';
 function DividerLine() {
   return (
     <div className="basis-0 grow h-0 min-h-px min-w-px relative shrink-0">
-      <div className="absolute bottom-0 left-0 right-0 top-[-1px]" style={{ "--stroke-0": "rgba(77, 77, 77, 1)" } as React.CSSProperties}>
+      <div className="absolute bottom-0 left-0 right-0 top-[-1px]" style={{ '--stroke-0': 'rgba(77, 77, 77, 1)' } as React.CSSProperties}>
         <svg className="block size-full" fill="none" preserveAspectRatio="none" viewBox="0 0 252 1">
           <line id="Line 1" stroke="var(--stroke-0, #4D4D4D)" x2="251.5" y1="0.5" y2="0.5" />
         </svg>

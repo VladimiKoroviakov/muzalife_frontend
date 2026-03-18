@@ -1,11 +1,11 @@
-import { useState, useEffect } from "react";
-import { useNavigate } from "react-router-dom";
-import { useFAQs } from "../hooks/useFAQs";
-import { Logo } from "../components/ui/Logo";
-import CloseButton from "../components/ui/CloseButton";
-import { Question } from "../components/faqs/Question";
-import { EmptyFAQs } from "../components/faqs/EmptyFAQs";
-import { ErrorState } from "../components/faqs/ErrorState";
+import { useState, useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
+import { useFAQs } from '../hooks/useFAQs';
+import { Logo } from '../components/ui/Logo';
+import CloseButton from '../components/ui/CloseButton';
+import { Question } from '../components/faqs/Question';
+import { EmptyFAQs } from '../components/faqs/EmptyFAQs';
+import { ErrorState } from '../components/faqs/ErrorState';
 
 // Main FaQs Component
 export default function FAQs() {
@@ -68,8 +68,8 @@ export default function FAQs() {
           <div className="content-stretch flex gap-[24px] items-start max-w-[1280px] relative shrink-0 w-full" data-name="top bar">
             <Logo />
             <div className="basis-0 content-stretch flex gap-[24px] grow items-center justify-end min-h-px min-w-px relative self-stretch shrink-0" data-name="bar">
-              <CloseButton 
-                onClick={handleClose} 
+              <CloseButton
+                onClick={handleClose}
               />
             </div>
           </div>
@@ -79,7 +79,7 @@ export default function FAQs() {
               <div className="flex flex-col font-['Atkinson_Hyperlegible:Regular','Noto_Sans:Regular',sans-serif] justify-end leading-[0] relative shrink-0 text-[#0d0d0d] text-[48px] text-center w-full" style={{ fontVariationSettings: "'CTGR' 0, 'wdth' 100, 'wght' 400" }}>
                 <p className="leading-[normal]">Запитання клієнтів</p>
               </div>
-              
+
               <div className="basis-0 content-stretch flex gap-[10px] grow items-start min-h-px min-w-px overflow-clip relative shrink-0 w-full" data-name="Scrollling">
                 {renderQuestions()}
               </div>

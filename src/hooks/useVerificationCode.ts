@@ -26,19 +26,19 @@ export function useVerificationCode({
 
   /* ---------------- Countdown ---------------- */
   useEffect(() => {
-    if (!isOpen) return;
+    if (!isOpen) {return;}
 
     if (countdown > 0 && !canResend) {
-      const t = setTimeout(() => setCountdown(c => c - 1), 1000);
+      const t = setTimeout(() => setCountdown((c) => c - 1), 1000);
       return () => clearTimeout(t);
     }
 
-    if (countdown === 0) setCanResend(true);
+    if (countdown === 0) {setCanResend(true);}
   }, [countdown, canResend, isOpen]);
 
   /* ---------------- Reset on open ---------------- */
   useEffect(() => {
-    if (!isOpen) return;
+    if (!isOpen) {return;}
 
     setCode(Array(length).fill(''));
     setError(null);
@@ -59,7 +59,7 @@ export function useVerificationCode({
   const onChange = (index: number, e: React.ChangeEvent<HTMLInputElement>) => {
     const val = e.target.value.trim();
 
-    if (val && !RE_DIGIT.test(val)) return;
+    if (val && !RE_DIGIT.test(val)) {return;}
 
     if (val.length === length) {
       setCode(val.split('').slice(0, length));
@@ -72,7 +72,7 @@ export function useVerificationCode({
     setCode(next);
     setError(null);
 
-    if (val && index < length - 1) focusNext(e.target);
+    if (val && index < length - 1) {focusNext(e.target);}
   };
 
   const onKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
@@ -83,8 +83,8 @@ export function useVerificationCode({
       focusPrev(el);
     }
 
-    if (e.key === 'ArrowLeft') focusPrev(el);
-    if (e.key === 'ArrowRight') focusNext(el);
+    if (e.key === 'ArrowLeft') {focusPrev(el);}
+    if (e.key === 'ArrowRight') {focusNext(el);}
   };
 
   const onPaste = (e: React.ClipboardEvent<HTMLInputElement>) => {

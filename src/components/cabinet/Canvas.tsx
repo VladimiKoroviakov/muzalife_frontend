@@ -1,11 +1,11 @@
-import { Tabs } from "./Tabs";
-import { Tab } from "./Tab";
-import { RightSide } from "./RightSide";
-import { PurchaseHistoryContent } from "./PurchaseHistoryContent";
-import { SavedScenariosContent } from "./SavedScenariosContent";
-import { PersonalOrdersContent } from "./PersonalOrdersContent";
-import { QuestionnairesContent } from "./QuestionnairesContent";
-import { SettingsContent } from "./SettingsContent";
+import { Tabs } from './Tabs';
+import { Tab } from './Tab';
+import { RightSide } from './RightSide';
+import { PurchaseHistoryContent } from './PurchaseHistoryContent';
+import { SavedScenariosContent } from './SavedScenariosContent';
+import { PersonalOrdersContent } from './PersonalOrdersContent';
+import { QuestionnairesContent } from './QuestionnairesContent';
+import { SettingsContent } from './SettingsContent';
 
 interface CanvasProps {
   onLogout?: () => void;
@@ -17,29 +17,29 @@ interface CanvasProps {
   onBookmarkedProductsChange?: (products: number[]) => void;
 }
 
-export function Canvas({ 
-  onLogout, 
-  activeSection, 
-  onSectionChange, 
-  addToCart, 
-  onShowFAQ, 
-  products, 
-  onBookmarkedProductsChange 
+export function Canvas({
+  onLogout,
+  activeSection,
+  onSectionChange,
+  addToCart,
+  onShowFAQ,
+  products,
+  onBookmarkedProductsChange
 }: CanvasProps) {
   const renderContent = () => {
     switch (activeSection) {
       case 'history':
         return <PurchaseHistoryContent
-          onBack={() => onSectionChange('main')} 
+          onBack={() => onSectionChange('main')}
           products={products}
          />;
       case 'saved':
         return (
-          <SavedScenariosContent 
-            onBack={() => onSectionChange('main')} 
-            addToCart={addToCart} 
-            products={products} 
-            onBookmarkedProductsChange={onBookmarkedProductsChange} 
+          <SavedScenariosContent
+            onBack={() => onSectionChange('main')}
+            addToCart={addToCart}
+            products={products}
+            onBookmarkedProductsChange={onBookmarkedProductsChange}
           />
         );
       case 'orders':

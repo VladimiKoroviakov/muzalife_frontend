@@ -1,7 +1,7 @@
-import { MiddleBar } from "./MiddleBar";
-import { Product } from "../../types";
-import { FiltersSidebar } from "../features/FiltersSidebar";
-import ProductCard from "../ui/ProductCard";
+import { MiddleBar } from './MiddleBar';
+import { Product } from '../../types';
+import { FiltersSidebar } from '../features/FiltersSidebar';
+import ProductCard from '../ui/ProductCard';
 
 interface CanvasProps {
   showFilters: boolean;
@@ -26,7 +26,7 @@ export function Canvas({
   setShowFilters,
   selectedAgeCategory,
   setSelectedAgeCategory,
-  selectedEvents,    
+  selectedEvents,
   toggleEvent,
   clearFilters,
   activeTab,
@@ -40,11 +40,11 @@ export function Canvas({
 }: CanvasProps) {
   return (
     <div className="basis-0 content-stretch flex flex-col grow items-start max-w-[1280px] min-h-px min-w-px relative shrink-0 w-[1280px]" data-name="Canvas">
-      <MiddleBar 
-        showFilters={showFilters} 
-        setShowFilters={setShowFilters} 
-        activeTab={activeTab} 
-        setActiveTab={setActiveTab} 
+      <MiddleBar
+        showFilters={showFilters}
+        setShowFilters={setShowFilters}
+        activeTab={activeTab}
+        setActiveTab={setActiveTab}
       />
 
       <div className="basis-0 content-stretch flex gap-[24px] grow items-start min-h-px min-w-px relative shrink-0 w-full">
@@ -60,8 +60,8 @@ export function Canvas({
           </div>
         )}
 
-        <div className={`box-border content-stretch flex gap-[10px] h-full items-start pb-0 pt-[24px] px-0 relative shrink-0 ${showFilters ? "basis-0 grow min-h-px min-w-px" : "w-[1280px]"}`}>
-          <div className={`content-start grid ${showFilters ? "grid-cols-3" : "grid-cols-4"} gap-[24px] h-full items-stretch overflow-x-clip overflow-y-auto relative ${showFilters ? "rounded-tl-[12px] rounded-tr-[12px]" : "rounded-tl-[16px] rounded-tr-[16px]"} shrink-0 ${showFilters ? "basis-0 grow min-h-px min-w-px" : "basis-0 grow min-h-px min-w-px"}`}>
+        <div className={`box-border content-stretch flex gap-[10px] h-full items-start pb-0 pt-[24px] px-0 relative shrink-0 ${showFilters ? 'basis-0 grow min-h-px min-w-px' : 'w-[1280px]'}`}>
+          <div className={`content-start grid ${showFilters ? 'grid-cols-3' : 'grid-cols-4'} gap-[24px] h-full items-stretch overflow-x-clip overflow-y-auto relative ${showFilters ? 'rounded-tl-[12px] rounded-tr-[12px]' : 'rounded-tl-[16px] rounded-tr-[16px]'} shrink-0 ${showFilters ? 'basis-0 grow min-h-px min-w-px' : 'basis-0 grow min-h-px min-w-px'}`}>
             {products.length === 0 ? (
               <div className="col-span-full flex items-center justify-center h-full self-stretch text-[#4d4d4d]">
                 <p className="text-[18px] text-center">

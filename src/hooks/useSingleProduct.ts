@@ -28,7 +28,7 @@ export const useSingleProduct = (id: string | undefined): UseSingleProduct => {
       const images = productData ? [
         productData.image,
         ...(productData.additionalImages || [])
-      ].filter((img, index, array) => 
+      ].filter((img, index, array) =>
         img && array.indexOf(img) === index
       ) : [];
       setGalleryImages(images);
@@ -50,13 +50,13 @@ export const useSingleProduct = (id: string | undefined): UseSingleProduct => {
       }
     } catch (err: any) {
       console.error('Error fetching product:', err);
-      const errorMessage = err instanceof Error 
-        ? err.message 
+      const errorMessage = err instanceof Error
+        ? err.message
         : 'Не вдалося завантажити інформацію про продукт. Спробуйте оновити сторінку.';
       setError(errorMessage);
       setProduct(null);
       setReviews([]);
-      setGalleryImages([]); 
+      setGalleryImages([]);
     } finally {
       setLoading(false);
     }
@@ -66,12 +66,12 @@ export const useSingleProduct = (id: string | undefined): UseSingleProduct => {
     fetchProductData();
   }, [id]);
 
-  return { 
-    product, 
-    reviews, 
+  return {
+    product,
+    reviews,
     galleryImages,
-    loading, 
-    error, 
-    refetch: fetchProductData 
+    loading,
+    error,
+    refetch: fetchProductData
   };
 };

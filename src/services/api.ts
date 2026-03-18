@@ -1,12 +1,12 @@
 import config from '../config';
 import { CacheManager } from '../utils/cache-manager';
-import { 
-  Product, 
-  PersonalOrder, 
-  CreatePersonalOrderData, 
-  UpdatePersonalOrderData, 
+import {
+  Product,
+  PersonalOrder,
+  CreatePersonalOrderData,
+  UpdatePersonalOrderData,
   UserProfileApiResponse,
-  Review, 
+  Review,
   AuthUser,
   FAQItem,
   Poll,
@@ -54,23 +54,16 @@ class ApiService {
       ...(body && { body: JSON.stringify(body) }),
     };
 
-    try {
-      const response = await fetch(url, requestConfig);
-      const data = await response.json();
+    const response = await fetch(url, requestConfig);
+    const data = await response.json();
 
-      if (!response.ok) {
-        const error = new Error(data.error || 'Request failed');
-        (error as any).status = response.status;
-        throw error;
-      }
-
-      return data;
-    } catch (error: any) {
-      // Only log non-401 errors
-      if (error.status !== config.httpStatusCodes.UNAUTHORIZED) {
-      }
+    if (!response.ok) {
+      const error = new Error(data.error || 'Request failed');
+      (error as any).status = response.status;
       throw error;
     }
+
+    return data;
   }
 
   private async get<T>(endpoint: string): Promise<T> {
@@ -92,7 +85,7 @@ class ApiService {
   // Auth methods
   private async authRequest<T = AuthResponse>(endpoint: string, body: any): Promise<T> {
     const result = await this.post<T>(endpoint, body);
-    
+
     // Type-safe token check
     if (result && typeof result === 'object' && 'token' in result) {
       const token = (result as any).token;
@@ -100,7 +93,7 @@ class ApiService {
         this.setToken(token);
       }
     }
-    
+
     return result;
   }
 
@@ -109,13 +102,13 @@ class ApiService {
   }
 
   async verifyRegistration(
-    email: string, 
-    password: string, 
-    name: string, 
+    email: string,
+    password: string,
+    name: string,
     verificationCode: string
   ): Promise<AuthResponse> {
-    return this.authRequest<AuthResponse>(config.endpoints.auth.register.verify, { 
-      email, password, name, verificationCode 
+    return this.authRequest<AuthResponse>(config.endpoints.auth.register.verify, {
+      email, password, name, verificationCode
     });
   }
 
@@ -124,8 +117,8 @@ class ApiService {
   }
 
   async login(
-    email: string, 
-    password: string, 
+    email: string,
+    password: string,
     loginType: 'regular' | 'admin' = 'regular'
   ): Promise<AuthResponse> {
     return this.authRequest<AuthResponse>(config.endpoints.auth.login, { email, password, loginType });
@@ -183,7 +176,7 @@ class ApiService {
 
   async updateName(name: string): Promise<void> {
     await this.put(config.endpoints.users.name, { name });
-    
+
     // Update cached profile
     const cachedProfile = CacheManager.getItem<AuthUser>(config.cacheKeys.USER_PROFILE);
     if (cachedProfile) {
@@ -197,12 +190,12 @@ class ApiService {
   }
 
   async verifyEmailChange(
-    verificationCode: string, 
-    newEmail: string, 
+    verificationCode: string,
+    newEmail: string,
     userId: number
   ): Promise<ApiResponse> {
-    return this.post<ApiResponse>(config.endpoints.users.email.change.verify, { 
-      newEmail, verificationCode, userId 
+    return this.post<ApiResponse>(config.endpoints.users.email.change.verify, {
+      newEmail, verificationCode, userId
     });
   }
 
@@ -231,7 +224,7 @@ class ApiService {
     if (!response.ok) {
       throw new Error(data.error || 'Upload failed');
     }
-    
+
     // Update cached profile
     const cachedProfile = CacheManager.getItem<AuthUser>(config.cacheKeys.USER_PROFILE);
     if (cachedProfile) {
@@ -244,7 +237,7 @@ class ApiService {
 
   async removeProfileImage(): Promise<void> {
     await this.delete(config.endpoints.users.image);
-    
+
     // Update cached profile
     const cachedProfile = CacheManager.getItem<AuthUser>(config.cacheKeys.USER_PROFILE);
     if (cachedProfile) {
@@ -273,18 +266,18 @@ class ApiService {
 
     try {
       const products = await this.get<Product[]>(config.endpoints.products);
-      
+
       // Cache products
       CacheManager.setWithTimestamp(config.cacheKeys.PRODUCTS, products);
-      
+
       return products;
     } catch (error) {
-      
+
       // Fallback to cached products
       if (cachedProducts) {
         return cachedProducts;
       }
-      
+
       throw error;
     }
   }
@@ -302,24 +295,24 @@ class ApiService {
 
     try {
       const response = await this.get<ApiResponse<number[]>>(config.endpoints.savedProducts.ids);
-      
+
       if (response.success && Array.isArray(response.data)) {
         CacheManager.setItem(config.cacheKeys.SAVED_PRODUCTS, response.data);
         return response.data;
       }
-      
+
       throw new Error(response.error || 'Invalid response format');
-    } catch (error) {
+    } catch {
       return cached || [];
     }
   }
 
   async saveProduct(productId: number): Promise<void> {
     const response = await this.post<ApiResponse<void>>(
-      config.endpoints.savedProducts.base, 
+      config.endpoints.savedProducts.base,
       { productId }
     );
-    
+
     if (!response.success) {
       throw new Error(response.error || 'Failed to save product');
     }
@@ -331,7 +324,7 @@ class ApiService {
     const response = await this.delete<ApiResponse<void>>(
       `${config.endpoints.savedProducts.base}/${productId}`
     );
-    
+
     if (!response.success) {
       throw new Error(response.error || 'Failed to unsave product');
     }
@@ -348,24 +341,24 @@ class ApiService {
 
     try {
       const response = await this.get<ApiResponse<number[]>>(config.endpoints.boughtProducts.ids);
-      
+
       if (response.success && Array.isArray(response.data)) {
         CacheManager.setItem(config.cacheKeys.BOUGHT_PRODUCTS, response.data);
         return response.data;
       }
-      
+
       throw new Error(response.error || 'Invalid response format');
-    } catch (error) {
+    } catch {
       return cached || [];
     }
   }
 
   async buyProduct(productId: number): Promise<void> {
     const response = await this.post<ApiResponse<void>>(
-      config.endpoints.boughtProducts.base, 
+      config.endpoints.boughtProducts.base,
       { productId }
     );
-    
+
     if (!response.success) {
       throw new Error(response.error || 'Failed to save bought product');
     }
@@ -386,15 +379,15 @@ class ApiService {
   ): void {
     const current = this.getCachedArray<T>(key) || [];
     let updated: T[];
-    
+
     if (operation === 'add') {
-      updated = current.some(existing => comparator(existing, item)) 
-        ? current 
+      updated = current.some((existing) => comparator(existing, item))
+        ? current
         : [...current, item];
     } else {
-      updated = current.filter(existing => !comparator(existing, item));
+      updated = current.filter((existing) => !comparator(existing, item));
     }
-    
+
     CacheManager.setItem(key, updated);
   }
 
@@ -402,15 +395,15 @@ class ApiService {
   async getPersonalOrders(): Promise<PersonalOrder[]> {
     try {
       const response = await this.get<PersonalOrdersApiResponse>(config.endpoints.personalOrders.base);
-      
+
       if (response.success && Array.isArray(response.personalOrders)) {
         return response.personalOrders;
       }
-      
+
       throw new Error(response.error || 'Invalid response format');
     } catch (error: any) {
       if (error.status === config.httpStatusCodes.FORBIDDEN) {
-        throw new Error('Authentication required to view personal orders');
+        throw new Error('Authentication required to view personal orders', { cause: error });
       }
       throw error;
     }
@@ -419,15 +412,15 @@ class ApiService {
   async getAllPersonalOrders(): Promise<PersonalOrder[]> {
     try {
       const response = await this.get<PersonalOrdersApiResponse>(config.endpoints.personalOrders.all);
-      
+
       if (response.success && Array.isArray(response.personalOrders)) {
         return response.personalOrders;
       }
-      
+
       throw new Error(response.error || 'Invalid response format');
     } catch (error: any) {
       if (error.status === config.httpStatusCodes.FORBIDDEN) {
-        throw new Error('Admin access required to view all personal orders');
+        throw new Error('Admin access required to view all personal orders', { cause: error });
       }
       throw error;
     }
@@ -438,15 +431,15 @@ class ApiService {
       const response = await this.get<PersonalOrdersApiResponse>(
         `${config.endpoints.personalOrders.base}/${orderId}`
       );
-      
+
       if (response.success && response.personalOrder) {
         return response.personalOrder;
       }
-      
+
       throw new Error(response.error || 'Invalid response format');
     } catch (error: any) {
       if (error.status === config.httpStatusCodes.NOT_FOUND) {
-        throw new Error('Order not found');
+        throw new Error('Order not found', { cause: error });
       }
       throw error;
     }
@@ -467,27 +460,27 @@ class ApiService {
       config.endpoints.personalOrders.base,
       dataToSend
     );
-    
+
     if (response.success && response.personalOrder) {
       return response.personalOrder;
     }
-    
+
     throw new Error(response.error || 'Invalid response format');
   }
 
   async updatePersonalOrder(
-    orderId: number, 
+    orderId: number,
     updateData: UpdatePersonalOrderData
   ): Promise<PersonalOrder> {
     const response = await this.put<PersonalOrdersApiResponse>(
       `${config.endpoints.personalOrders.base}/${orderId}`,
       updateData
     );
-    
+
     if (response.success && response.personalOrder) {
       return response.personalOrder;
     }
-    
+
     // Handle specific errors
     if (response.error?.includes('not found')) {
       throw new Error('Order not found');
@@ -495,7 +488,7 @@ class ApiService {
     if (response.error?.includes('authorized')) {
       throw new Error('Not authorized to update this order');
     }
-    
+
     throw new Error(response.error || 'Invalid update data provided');
   }
 
@@ -503,7 +496,7 @@ class ApiService {
     const response = await this.delete<PersonalOrdersApiResponse>(
       `${config.endpoints.personalOrders.base}/${orderId}`
     );
-    
+
     if (!response.success) {
       if (response.error?.includes('not found')) {
         throw new Error('Order not found');
@@ -530,31 +523,31 @@ class ApiService {
 
     try {
       const response = await this.get<ApiResponse<FAQItem[]>>(config.endpoints.faqs);
-      
+
       if (response.success && Array.isArray(response.data)) {
         CacheManager.setWithTimestamp(config.cacheKeys.FAQS, response.data);
         return response.data;
       }
-      
+
       throw new Error(response.error || 'Failed to fetch FAQs');
     } catch (error) {
-      
+
       // Fallback to cached FAQs
       if (cachedFAQs) {
         return cachedFAQs;
       }
-      
+
       throw error;
     }
   }
 
   async getFAQById(id: number): Promise<FAQItem> {
     const response = await this.get<ApiResponse<FAQItem>>(`${config.endpoints.faqs}/${id}`);
-    
+
     if (response.success && response.data) {
       return response.data;
     }
-    
+
     throw new Error(response.error || 'Failed to fetch FAQ');
   }
 
@@ -566,15 +559,15 @@ class ApiService {
         polls: ApiPoll[];
         error?: string;
       }>(config.endpoints.polls.base);
-      
+
       if (response.success && Array.isArray(response.polls)) {
         const polls: Poll[] = response.polls
           .filter((apiPoll: ApiPoll) => !apiPoll.user_has_voted && apiPoll.is_active)
           .map((apiPoll: ApiPoll) => {
             // Store both text and ID for each option
-            const options = apiPoll.options?.map(opt => opt.vote_text) || [];
-            const optionVoteIds = apiPoll.options?.map(opt => opt.vote_id) || [];
-            
+            const options = apiPoll.options?.map((opt) => opt.vote_text) || [];
+            const optionVoteIds = apiPoll.options?.map((opt) => opt.vote_id) || [];
+
             const voters: VoterData[] = [];
             if (apiPoll.total_votes > 0) {
               for (let i = 0; i < Math.min(3, apiPoll.total_votes); i++) {
@@ -588,22 +581,22 @@ class ApiService {
             return {
               id: apiPoll.poll_id,
               question: apiPoll.poll_question,
-              options: options,
-              optionVoteIds: optionVoteIds,
+              options,
+              optionVoteIds,
               selectedOption: null,
               hasVoted: apiPoll.user_has_voted,
               voteCount: apiPoll.total_votes || 0,
-              voters: voters
+              voters
             };
           });
-        
+
         return polls;
       }
-      
+
       throw new Error(response.error || 'Failed to fetch polls');
     } catch (error: any) {
       if (error.status === 401) {
-        throw new Error('Будь ласка, увійдіть в систему, щоб переглядати опитування');
+        throw new Error('Будь ласка, увійдіть в систему, щоб переглядати опитування', { cause: error });
       }
       throw error;
     }
@@ -616,15 +609,15 @@ class ApiService {
         poll: ApiPoll;
         error?: string;
       }>(config.endpoints.polls.byId(pollId));
-      
+
       if (response.success && response.poll) {
         return response.poll;
       }
-      
+
       throw new Error(response.error || 'Failed to fetch poll details');
     } catch (error: any) {
       if (error.status === 404) {
-        throw new Error('Опитування не знайдено');
+        throw new Error('Опитування не знайдено', { cause: error });
       }
       throw error;
     }
@@ -639,19 +632,19 @@ class ApiService {
         config.endpoints.polls.vote(pollId),
         { vote_id: voteId }
       );
-      
+
       if (!response.success) {
         throw new Error(response.error || 'Не вдалося надіслати голос');
       }
     } catch (error: any) {
       if (error.status === 401) {
-        throw new Error('Будь ласка, увійдіть в систему, щоб проголосувати');
+        throw new Error('Будь ласка, увійдіть в систему, щоб проголосувати', { cause: error });
       }
-      
+
       if (error.status === 400) {
-        throw new Error('Невірний запит на голосування');
+        throw new Error('Невірний запит на голосування', { cause: error });
       }
-      
+
       throw error;
     }
   }
@@ -680,7 +673,7 @@ class ApiService {
         // User has no reviews
         return [];
       }
-      
+
       // For other errors, re-throw
       throw error;
     }
@@ -692,15 +685,15 @@ class ApiService {
         config.endpoints.reviews,
         { productId, rating, comment }
       );
-      
+
       // Clear product cache when a new review is submitted
       this.clearProductsCache();
-      
+
       return review;
     } catch (error: any) {
       // Check for conflict error (already reviewed)
       if (error.status === 409) {
-        throw new Error('Ви вже залишили відгук на цей продукт');
+        throw new Error('Ви вже залишили відгук на цей продукт', { cause: error });
       }
       throw error;
     }
@@ -708,31 +701,31 @@ class ApiService {
 
   async updateReview(reviewId: number, rating?: number, comment?: string): Promise<Review> {
     const updateData: any = {};
-    if (rating !== undefined) updateData.rating = rating;
-    if (comment !== undefined) updateData.comment = comment;
-    
+    if (rating !== undefined) {updateData.rating = rating;}
+    if (comment !== undefined) {updateData.comment = comment;}
+
     const review = await this.put<Review>(
       `${config.endpoints.reviews}/${reviewId}`,
       updateData
     );
-    
+
     // Clear product cache when a review is updated
     this.clearProductsCache();
-    
+
     return review;
   }
 
   async deleteReview(reviewId: number): Promise<void> {
     await this.delete(`${config.endpoints.reviews}/${reviewId}`);
-    
+
     // Clear product cache when a review is deleted
     this.clearProductsCache();
   }
 
   // Helper methods
   formatOrderDeadline(deadline: string | null): string {
-    if (!deadline) return 'No deadline set';
-    
+    if (!deadline) {return 'No deadline set';}
+
     const date = new Date(deadline);
     return date.toLocaleDateString('en-US', {
       year: 'numeric',

@@ -1,11 +1,11 @@
-import { Product } from "../../types";
-import { IconTrash } from "../ui/icons/IconTrash";
+import { Product } from '../../types';
+import { IconTrash } from '../ui/icons/IconTrash';
 
 function Delete({ onClick }: { onClick: () => void }) {
   return (
-    <button 
-      onClick={onClick} 
-      className="relative shrink-0 size-[28px] cursor-pointer hover:opacity-70 transition-opacity flex items-center justify-center" 
+    <button
+      onClick={onClick}
+      className="relative shrink-0 size-[28px] cursor-pointer hover:opacity-70 transition-opacity flex items-center justify-center"
       data-name="delete"
     >
       <IconTrash className="size-[20px] text-[#4D4D4D]" />

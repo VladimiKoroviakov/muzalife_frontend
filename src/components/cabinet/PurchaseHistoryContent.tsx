@@ -1,16 +1,16 @@
-import { useState, useEffect, useRef, useCallback } from "react";
-import { toast } from "sonner";
-import svgPaths from "../ui/icons/svgIconPaths";
-import { Table, TextCell, EmptyCell, TableCell } from "./TableComponents";
-import { Skeleton } from "../ui/skeleton";
-import { apiService } from "../../services/api";
-import { Order, BoughtScenariosContentProps, Product } from "../../types";
-import ReviewScreen from "./ReviewScreen";
-import { CacheManager } from "../../utils/cache-manager";
-import config from "../../config";
+import { useState, useEffect, useRef, useCallback } from 'react';
+import { toast } from 'sonner';
+import svgPaths from '../ui/icons/svgIconPaths';
+import { Table, TextCell, EmptyCell, TableCell } from './TableComponents';
+import { Skeleton } from '../ui/skeleton';
+import { apiService } from '../../services/api';
+import { Order, BoughtScenariosContentProps } from '../../types';
+import ReviewScreen from './ReviewScreen';
+import { CacheManager } from '../../utils/cache-manager';
+import config from '../../config';
 
 export function PurchaseHistoryContent({
-  onBack,
+  onBack: _onBack,
   products = []
 }: BoughtScenariosContentProps) {
   const [showReviewScreen, setShowReviewScreen] = useState(false);
@@ -24,8 +24,8 @@ export function PurchaseHistoryContent({
   const [tableHeight, setTableHeight] = useState<number>(0);
 
   const formatDate = (dateString: string): string => {
-    if (!dateString) return 'Невідома дата';
-    
+    if (!dateString) {return 'Невідома дата';}
+
     try {
       const date = new Date(dateString);
       return date.toLocaleDateString('uk-UA', {
@@ -33,7 +33,7 @@ export function PurchaseHistoryContent({
         month: '2-digit',
         year: 'numeric'
       });
-    } catch (e) {
+    } catch {
       return dateString;
     }
   };
@@ -46,31 +46,31 @@ export function PurchaseHistoryContent({
       const cachedProductIds = CacheManager.getItem<number[]>(cacheKey);
       const cacheTimestamp = CacheManager.getItem<number>(timestampKey);
       const isCacheValid = cacheTimestamp && Date.now() - cacheTimestamp < 60 * 60 * 1000;
-      
+
       if (cachedProductIds && isCacheValid) {
         setReviewedProducts(new Set(cachedProductIds));
         return;
       }
-      
+
       const userProfile = await apiService.getProfile();
       if (!userProfile?.id) {
         throw new Error('User not authenticated');
       }
-      
+
       try {
         const reviews = await apiService.getUserReviews(userProfile.id);
-        const reviewedProductIds = reviews.map(review => review.productId);
-        
+        const reviewedProductIds = reviews.map((review) => review.productId);
+
         // Update state
         setReviewedProducts(new Set(reviewedProductIds));
-        
+
         // Update cache
         CacheManager.setItem(cacheKey, reviewedProductIds);
         CacheManager.setItem(timestampKey, Date.now());
-        
+
       } catch (apiError: any) {
         console.error('API error loading user reviews:', apiError);
-        
+
         // If API fails, use cached data even if expired
         if (cachedProductIds) {
           setReviewedProducts(new Set(cachedProductIds));
@@ -78,11 +78,11 @@ export function PurchaseHistoryContent({
           // No cache available, use empty set
           setReviewedProducts(new Set());
         }
-        
+
         // Update timestamp to prevent immediate retry
         CacheManager.setItem(timestampKey, Date.now());
       }
-      
+
     } catch (error) {
       console.error('Error in loadUserReviews:', error);
       // Final fallback to any available cache
@@ -99,17 +99,17 @@ export function PurchaseHistoryContent({
       try {
         setIsLoading(true);
         setError(null);
-        
+
         // Check cache first
         const cachedBoughtProducts = CacheManager.getItem<number[]>(config.cacheKeys.BOUGHT_PRODUCTS);
         if (cachedBoughtProducts) {
           setBoughtProductIds(cachedBoughtProducts);
         }
-        
+
         // Always fetch fresh data
         const boughtIds = await apiService.getBoughtProducts();
         setBoughtProductIds(boughtIds);
-        
+
       } catch (error) {
         console.error('Error loading bought products:', error);
         setError('Не вдалося завантажити історію покупок');
@@ -145,7 +145,7 @@ export function PurchaseHistoryContent({
         const height = container.clientHeight - paddingTop - paddingBottom;
         setTableHeight(height);
       }
-    }; 
+    };
 
     updateTableHeight();
     window.addEventListener('resize', updateTableHeight);
@@ -153,13 +153,13 @@ export function PurchaseHistoryContent({
   }, []);
 
   // Filter products to show only bought ones
-  const boughtMaterials = products.filter(p => {
+  const boughtMaterials = products.filter((p) => {
     const productId = typeof p.id === 'string' ? parseInt(p.id, 10) : Number(p.id);
     return boughtProductIds.includes(productId);
   });
 
   // Transform bought materials to orders format
-  const orders: Order[] = boughtMaterials.map(material => ({
+  const orders: Order[] = boughtMaterials.map((material) => ({
     id: Number(material.id),
     name: material.title || 'Невідомий матеріал',
     date: formatDate(material.bought_at || material.orderDate || material.createdAt || new Date().toISOString()),
@@ -169,17 +169,17 @@ export function PurchaseHistoryContent({
   const getRowBg = (index: number) => index % 2 === 0 ? '#f2f2f2' : '#e6e6e6';
 
   const getEmptyRowsCount = () => {
-    if (orders.length === 0) return 0;
-    
+    if (orders.length === 0) {return 0;}
+
     const rowHeight = 40;
-    
+
     if (tableHeight > 0) {
       const availableHeight = tableHeight - rowHeight;
       const rowsThatFit = Math.floor(availableHeight / rowHeight);
       const emptyRowsNeeded = Math.max(0, rowsThatFit - orders.length);
       return emptyRowsNeeded;
     }
-    
+
     return Math.max(0, 13 - orders.length);
   };
 
@@ -187,7 +187,7 @@ export function PurchaseHistoryContent({
 
   const handleResendMaterial = async (materialName: string, purchaseDate: string) => {
     try {
-      const order = orders.find(o => o.name === materialName && o.date === purchaseDate);
+      const order = orders.find((o) => o.name === materialName && o.date === purchaseDate);
       if (order) {
         toast.success(`Матеріал "${materialName}" буде відправлено на вашу email адресу`);
       } else {
@@ -207,7 +207,7 @@ export function PurchaseHistoryContent({
       });
       return;
     }
-    
+
     setSelectedOrder(order);
     setShowReviewScreen(true);
   };
@@ -219,69 +219,69 @@ export function PurchaseHistoryContent({
 
   const handleSubmitReview = async (rating: number, reviewText: string) => {
     try {
-      if (!selectedOrder) return;
-      
+      if (!selectedOrder) {return;}
+
       // Submit review via API
       await apiService.submitReview(
         selectedOrder.id,
         rating,
         reviewText
       );
-      
+
       toast.success('Відгук успішно надіслано!');
-      
+
       // Update local state
       const updatedReviewedProducts = new Set([...reviewedProducts, selectedOrder.id]);
       setReviewedProducts(updatedReviewedProducts);
-      
+
       // Update cache immediately
       const cacheKey = config.cacheKeys.REVIEWED_PRODUCTS;
       const timestampKey = `${config.cacheKeys.REVIEWED_PRODUCTS}_timestamp`;
-      
+
       const currentCache = CacheManager.getItem<number[]>(cacheKey) || [];
       if (!currentCache.includes(selectedOrder.id)) {
         const updatedCache = [...currentCache, selectedOrder.id];
         CacheManager.setItem(cacheKey, updatedCache);
         CacheManager.setItem(timestampKey, Date.now());
       }
-      
+
       handleCloseReview();
     } catch (error) {
       console.error('Error submitting review:', error);
       toast.error('Помилка при відправці відгуку');
-      throw error; 
+      throw error;
     }
   };
 
   // Generate table data
   const tableColumns = orders.length > 0 && !isLoading && !productsLoading ? [
     {
-      header: "Назва матеріалу",
-      width: "50%",
-      minWidth: "200px",
+      header: 'Назва матеріалу',
+      width: '50%',
+      minWidth: '200px',
       cells: [
         ...orders.map((order, index) => (
-          <TextCell 
+          <TextCell
             key={`name-${order.id}`}
             text={order.name}
             bg={getRowBg(index)}
           />
         )),
         ...Array.from({ length: emptyRowsCount }, (_, index) => (
-          <EmptyCell 
-            key={`empty-name-${index}`} 
+          <EmptyCell
+            key={`empty-name-${index}`}
             bg={getRowBg(orders.length + index)}
           />
         ))
       ]
     },
     {
-      header: "Тип матеріалу",
-      width: "25%",
-      minWidth: "100px",
+      header: 'Тип матеріалу',
+      width: '25%',
+      minWidth: '100px',
       cells: [
         ...orders.map((order, index) => (
-          <TextCell 
+          <TextCell
             key={`type-${order.id}`}
             text={order.materialType || 'Не вказано'}
             bg={getRowBg(index)}
@@ -289,20 +289,20 @@ export function PurchaseHistoryContent({
           />
         )),
         ...Array.from({ length: emptyRowsCount }, (_, index) => (
-          <EmptyCell 
-            key={`empty-type-${index}`} 
+          <EmptyCell
+            key={`empty-type-${index}`}
             bg={getRowBg(orders.length + index)}
           />
         ))
       ]
     },
     {
-      header: "Дата покупки",
-      width: "15%",
-      minWidth: "100px",
+      header: 'Дата покупки',
+      width: '15%',
+      minWidth: '100px',
       cells: [
         ...orders.map((order, index) => (
-          <TextCell 
+          <TextCell
             key={`date-${order.id}`}
             text={order.date}
             bg={getRowBg(index)}
@@ -310,31 +310,31 @@ export function PurchaseHistoryContent({
           />
         )),
         ...Array.from({ length: emptyRowsCount }, (_, index) => (
-          <EmptyCell 
-            key={`empty-date-${index}`} 
+          <EmptyCell
+            key={`empty-date-${index}`}
             bg={getRowBg(orders.length + index)}
           />
         ))
       ]
     },
     {
-      header: "Дії",
-      width: "10%",
-      minWidth: "100px",
+      header: 'Дії',
+      width: '10%',
+      minWidth: '100px',
       cells: [
         ...orders.map((order, index) => {
           const isReviewed = reviewedProducts.has(order.id);
-          
+
           return (
-            <TableCell 
-              key={`actions-${order.id}`} 
+            <TableCell
+              key={`actions-${order.id}`}
               bg={getRowBg(index)}
             >
               <div className="flex flex-row items-center size-full">
                 <div className="box-border content-stretch flex gap-[16px] h-[40px] items-center px-[16px] py-[10px] relative w-full">
-                  <div 
+                  <div
                     onClick={() => handleResendMaterial(order.name, order.date)}
-                    className="relative shrink-0 size-[24px] cursor-pointer hover:opacity-70 transition-opacity" 
+                    className="relative shrink-0 size-[24px] cursor-pointer hover:opacity-70 transition-opacity"
                     data-name="icon download"
                     title="Повторно надіслати матеріал"
                   >
@@ -344,7 +344,7 @@ export function PurchaseHistoryContent({
                       </svg>
                     </div>
                   </div>
-                  <div 
+                  <div
                     onClick={() => handleOpenReview(order)}
                     className={`relative shrink-0 size-[24px] transition-opacity ${
                       isReviewed
@@ -352,7 +352,7 @@ export function PurchaseHistoryContent({
                         : 'cursor-pointer hover:opacity-70'
                     }`}
                     data-name="comment"
-                    title={isReviewed ? "Ви вже залишили відгук" : "Залишити відгук"}
+                    title={isReviewed ? 'Ви вже залишили відгук' : 'Залишити відгук'}
                   >
                     <div className="absolute inset-[8.333%] mask-alpha mask-intersect mask-no-clip mask-no-repeat mask-position-[-2px] mask-size-[24px_24px]" data-name="comment">
                       <svg className="block size-full" fill="none" preserveAspectRatio="none" viewBox="0 0 20 20">
@@ -366,8 +366,8 @@ export function PurchaseHistoryContent({
           );
         }),
         ...Array.from({ length: emptyRowsCount }, (_, index) => (
-          <EmptyCell 
-            key={`empty-actions-${index}`} 
+          <EmptyCell
+            key={`empty-actions-${index}`}
             bg={getRowBg(orders.length + index)}
           />
         ))
@@ -390,15 +390,15 @@ export function PurchaseHistoryContent({
     <div className="basis-0 content-stretch flex flex-col gap-[10px] grow h-full items-start min-h-px min-w-px relative rounded-[16px] shrink-0" data-name="Right Side">
       {/* Conditionally render ReviewScreen or the Purchase History table */}
       {showReviewScreen && selectedOrder ? (
-        <ReviewScreen 
+        <ReviewScreen
           materialName={selectedOrder.name}
           onClose={handleCloseReview}
           onSubmit={handleSubmitReview}
         />
       ) : (
-        <div 
+        <div
           ref={tableContainerRef}
-          className="bg-[#f2f2f2] box-border content-stretch flex gap-[12px] grow h-full w-full items-start overflow-clip px-[24px] relative rounded-[16px] shrink-0 px-[20px] py-[16px]" 
+          className="bg-[#f2f2f2] box-border content-stretch flex gap-[12px] grow h-full w-full items-start overflow-clip px-[24px] relative rounded-[16px] shrink-0 px-[20px] py-[16px]"
           data-name="Scrolling Table"
         >
           {isLoading ? (
@@ -407,7 +407,7 @@ export function PurchaseHistoryContent({
               <div className="flex flex-col items-center justify-center w-full h-full gap-4">
                 <div className="text-lg">Завантаження історії покупок...</div>
                 <div className="space-y-4 w-full max-w-2xl">
-                  {[1, 2, 3, 4].map(i => (
+                  {[1, 2, 3, 4].map((i) => (
                     <Skeleton key={i} className="h-16 w-full rounded-[12px]" />
                   ))}
                 </div>
@@ -447,7 +447,7 @@ export function PurchaseHistoryContent({
                 {boughtProductIds.length > 0 && products.length > 0 && (
                   <div className="text-sm text-gray-500 text-center">
                     <div>Куплені ID: {boughtProductIds.join(', ')}</div>
-                    <div>Доступні ID: {products.map(p => p.id).join(', ')}</div>
+                    <div>Доступні ID: {products.map((p) => p.id).join(', ')}</div>
                   </div>
                 )}
               </div>

@@ -1,6 +1,6 @@
-import { Logo } from "../ui/Logo";
-import { SearchBar } from "../ui/SearchBar";
-import { Hamburger } from "../ui/Hamburger";
+import { Logo } from '../ui/Logo';
+import { SearchBar } from '../ui/SearchBar';
+import { Hamburger } from '../ui/Hamburger';
 
 interface HeaderProps {
   cartCount: number;
@@ -11,8 +11,8 @@ interface HeaderProps {
   setSearchQuery: (query: string) => void;
 }
 
-export function Header({ 
-  cartCount, 
+export function Header({
+  cartCount,
   onCartClick,
   onHelpClick,
   onLoginClick,
@@ -24,11 +24,11 @@ export function Header({
       <Logo />
       <div className="basis-0 content-stretch flex gap-[24px] grow items-center min-h-px min-w-px relative self-stretch shrink-0">
         <SearchBar searchQuery={searchQuery} setSearchQuery={setSearchQuery} />
-        <Hamburger 
-          cartCount={cartCount} 
-          onCartClick={onCartClick} 
-          onHelpClick={onHelpClick} 
-          onLoginClick={onLoginClick} 
+        <Hamburger
+          cartCount={cartCount}
+          onCartClick={onCartClick}
+          onHelpClick={onHelpClick}
+          onLoginClick={onLoginClick}
         />
       </div>
     </div>

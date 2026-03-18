@@ -1,4 +1,4 @@
-import { Reply } from "./Reply";
+import { Reply } from './Reply';
 
 interface SearchMenuProps {
   onBackClick?: () => void;
@@ -9,7 +9,7 @@ interface SearchMenuProps {
 
 export function SearchMenu({ onBackClick, title, userName, activeSection }: SearchMenuProps) {
   const displayText = activeSection === 'main' && userName ? `Вітаємо, ${userName}!` : title;
-  
+
   return (
     <div className="basis-0 content-stretch flex grow h-[52px] items-end justify-between min-h-px min-w-px relative shrink-0" data-name="Search & Menu">
       <div className="flex flex-col font-['Atkinson_Hyperlegible:Bold','Noto_Sans:Bold',sans-serif] h-full justify-end leading-[0] relative shrink-0 text-[#4d4d4d] text-[32px] flex-1" style={{ fontVariationSettings: "'CTGR' 0, 'wdth' 100, 'wght' 700" }}>

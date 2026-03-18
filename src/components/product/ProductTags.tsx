@@ -1,5 +1,5 @@
-import { Product } from "../../types";
-import Badge from "../ui/badge";
+import { Product } from '../../types';
+import Badge from '../ui/badge';
 
 export function ProductTags({ product }: { product: Product }) {
   return (

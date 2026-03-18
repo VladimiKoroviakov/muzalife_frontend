@@ -1,18 +1,18 @@
-import { Product } from "../../types";
+import { Product } from '../../types';
 import { CartItem } from '../ui/CartItem';
-import { IconBag } from "../ui/icons/IconBag";
-import CloseButton from "../ui/CloseButton";
+import { IconBag } from '../ui/icons/IconBag';
+import CloseButton from '../ui/CloseButton';
 
 // Cart Component
 export function Cart({ cartItems, products, onClose, onRemoveItem }: { cartItems: number[]; products: Product[]; onClose: () => void; onRemoveItem: (id: number) => void }) {
-  const cartProducts = products.filter(p => cartItems.includes(p.id));
+  const cartProducts = products.filter((p) => cartItems.includes(p.id));
   const totalPrice = cartProducts.reduce((sum, product) => sum + product.price, 0);
 
   return (
     <>
       {/* Blur overlay */}
       <div className="absolute inset-0 backdrop-blur-[10px] backdrop-filter bg-[rgba(0,0,0,0.4)] z-40" onClick={onClose} data-name="Blur layer" />
-      
+
       {/* Cart panel */}
       <div className="absolute bg-[#e6e6e6] box-border content-stretch flex gap-[10px] h-[876px] items-center right-0 top-0 p-[24px] rounded-bl-[16px] rounded-tl-[16px] w-[480px] z-50" data-name="Cart">
         <div className="basis-0 content-stretch flex flex-col gap-[24px] grow h-full items-start max-w-[1280px] min-h-px min-w-px relative rounded-[24px] shrink-0" data-name="Canvas">
@@ -41,7 +41,7 @@ export function Cart({ cartItems, products, onClose, onRemoveItem }: { cartItems
               </div>
             ) : (
               <div className="basis-0 content-stretch flex flex-col gap-[16px] grow h-full items-start min-h-px min-w-px overflow-x-clip overflow-y-auto relative rounded-tl-[12px] rounded-tr-[12px] shrink-0" data-name="Products">
-                
+
                 {cartProducts.map((product) => (
                   <CartItem
                     key={product.id}
@@ -49,7 +49,7 @@ export function Cart({ cartItems, products, onClose, onRemoveItem }: { cartItems
                     onRemoveItem={onRemoveItem}
                   />
                 ))}
-                
+
               </div>
             )}
           </div>

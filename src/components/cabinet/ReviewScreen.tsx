@@ -1,6 +1,6 @@
-import { useState } from "react";
-import  svgPaths from "../ui/icons/svgIconPaths";
-import { toast } from "sonner";
+import { useState } from 'react';
+import  svgPaths from '../ui/icons/svgIconPaths';
+import { toast } from 'sonner';
 
 function Top({ materialName }: { materialName: string }) {
   return (
@@ -18,13 +18,13 @@ function Row({ rating, onRatingChange }: { rating: number; onRatingChange: (rati
       <div className="basis-0 bg-[#f2f2f2] grow h-[52px] min-h-px min-w-px relative rounded-[12px] shrink-0 cursor-pointer" data-name="Select Form field">
         <div aria-hidden="true" className="absolute border border-[#b3b3b3] border-solid inset-0 pointer-events-none rounded-[12px]" />
         <div className="flex flex-row items-center size-full">
-          <select 
-            value={rating} 
+          <select
+            value={rating}
             onChange={(e) => onRatingChange(parseInt(e.target.value))}
             className="box-border content-stretch flex gap-[8px] h-[52px] items-center px-[16px] py-[4px] relative w-full bg-transparent border-none outline-none cursor-pointer font-['Atkinson_Hyperlegible:Regular','Noto_Sans:Regular',sans-serif] text-[#4d4d4d] text-[16px] appearance-none pr-[40px]"
-            style={{ 
+            style={{
               fontVariationSettings: "'CTGR' 0, 'wdth' 100, 'wght' 400",
-              backgroundImage: `url("data:image/svg+xml,%3Csvg width='24' height='24' viewBox='0 0 24 24' fill='none' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M7 10L12 15L17 10' stroke='%23B3B3B3' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E")`,
+              backgroundImage: 'url("data:image/svg+xml,%3Csvg width=\'24\' height=\'24\' viewBox=\'0 0 24 24\' fill=\'none\' xmlns=\'http://www.w3.org/2000/svg\'%3E%3Cpath d=\'M7 10L12 15L17 10\' stroke=\'%23B3B3B3\' stroke-width=\'2\' stroke-linecap=\'round\' stroke-linejoin=\'round\'/%3E%3C/svg%3E")',
               backgroundRepeat: 'no-repeat',
               backgroundPosition: 'right 16px center',
               backgroundSize: '24px 24px'
@@ -87,7 +87,7 @@ function Row1({ onCancel, onSubmit, isSubmitting }: { onCancel: () => void; onSu
           <>
             <div className="relative shrink-0 size-[20px]" data-name="icon order">
               <div className="absolute inset-[8.33%_4.17%_8.33%_12.5%] mask-alpha mask-intersect mask-no-clip mask-no-repeat mask-position-[-3px_-2px] mask-size-[24px_24px]" data-name="contract_edit">
-                <div className="absolute inset-0" style={{ "--fill-0": "rgba(255, 255, 255, 1)" } as React.CSSProperties}>
+                <div className="absolute inset-0" style={{ '--fill-0': 'rgba(255, 255, 255, 1)' } as React.CSSProperties}>
                   <svg className="block size-full" fill="none" preserveAspectRatio="none" viewBox="0 0 17 17">
                     <path d={svgPaths.p7a22000} fill="var(--fill-0, white)" id="contract_edit" />
                   </svg>
@@ -104,17 +104,17 @@ function Row1({ onCancel, onSubmit, isSubmitting }: { onCancel: () => void; onSu
   );
 }
 
-export default function ReviewScreen({ 
-  materialName, 
-  onClose, 
-  onSubmit 
-}: { 
-  materialName: string; 
-  onClose: () => void; 
+export default function ReviewScreen({
+  materialName,
+  onClose,
+  onSubmit
+}: {
+  materialName: string;
+  onClose: () => void;
   onSubmit: (rating: number, reviewText: string) => Promise<void>;
 }) {
   const [rating, setRating] = useState(0);
-  const [reviewText, setReviewText] = useState("");
+  const [reviewText, setReviewText] = useState('');
   const [isSubmitting, setIsSubmitting] = useState(false);
 
   const handleSubmit = async () => {

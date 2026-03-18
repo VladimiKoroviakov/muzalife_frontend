@@ -1,10 +1,10 @@
-import { useState, useEffect, useCallback, useRef } from "react";
-import svgPaths from "../ui/icons/svgIconPaths";
-import { Table, TextCell, EmptyCell, TableCell } from "./TableComponents";
-import { apiService } from "../../services/api";
-import { PersonalOrder } from "../../types";
-import { CacheManager } from "../../utils/cache-manager"; 
-import config from "../../config";
+import { useState, useEffect, useCallback, useRef } from 'react';
+import svgPaths from '../ui/icons/svgIconPaths';
+import { Table, TextCell, EmptyCell, TableCell } from './TableComponents';
+import { apiService } from '../../services/api';
+import { PersonalOrder } from '../../types';
+import { CacheManager } from '../../utils/cache-manager';
+import config from '../../config';
 
 export function PersonalOrdersContent() {
   const [orders, setOrders] = useState<PersonalOrder[]>([]);
@@ -30,7 +30,7 @@ export function PersonalOrdersContent() {
   const setCachedOrders = useCallback((orders: PersonalOrder[]): void => {
     try {
       // Store minimal fields to reduce cache size
-      const cachedOrders = orders.map(order => ({
+      const cachedOrders = orders.map((order) => ({
         order_id: order.order_id,
         order_title: order.order_title,
         order_description: order.order_description,
@@ -39,7 +39,7 @@ export function PersonalOrdersContent() {
         order_deadline: order.order_deadline,
         order_created_at: order.order_created_at
       }));
-      
+
       // Use CacheManager for consistent caching
       CacheManager.setItem(config.cacheKeys.PERSONAL_ORDERS, cachedOrders);
       CacheManager.setItem(config.cacheKeys.PERSONAL_ORDERS_TIMESTAMP, Date.now());
@@ -52,14 +52,14 @@ export function PersonalOrdersContent() {
   const isOrdersCacheValid = useCallback((): boolean => {
     try {
       const cacheTimestamp = CacheManager.getItem<number>(config.cacheKeys.PERSONAL_ORDERS_TIMESTAMP);
-      if (!cacheTimestamp) return false;
-      
+      if (!cacheTimestamp) {return false;}
+
       const currentTime = Date.now();
       const cacheAge = currentTime - cacheTimestamp;
-      
+
       // Check if cache is still valid
       return cacheAge < config.cacheDurations.PERSONAL_ORDERS;
-    } catch (error) {
+    } catch {
       return false;
     }
   }, []);
@@ -84,7 +84,7 @@ export function PersonalOrdersContent() {
       if (!forceRefresh) {
         const cachedOrders = getCachedOrders();
         const isCacheValid = isOrdersCacheValid();
-        
+
         if (cachedOrders && isCacheValid) {
           console.log('🔄 Using cached personal orders');
           setOrders(cachedOrders);
@@ -95,15 +95,15 @@ export function PersonalOrdersContent() {
 
       console.log('🔄 Fetching fresh personal orders from API');
       const personalOrders = await apiService.getPersonalOrders();
-      
+
       // Cache the fresh orders
       setCachedOrders(personalOrders);
-      
+
       // Update state
       setOrders(personalOrders);
     } catch (err: any) {
       console.error('Failed to fetch personal orders:', err);
-      
+
       // Try to fallback to cached orders even if expired
       const cachedOrders = getCachedOrders();
       if (cachedOrders) {
@@ -189,7 +189,7 @@ const getStatusColor = (status: string): string => {
     'повернено': '#cc0000',
     'архівовано': '#a8a8a8'
   };
-  
+
   return colorMap[status.toLowerCase()] || '#4d4d4d';
 };
 
@@ -214,29 +214,29 @@ const getActionText = (status: string): string => {
     'повернено': 'Переглянути',
     'архівовано': 'Переглянути'
   };
-  
+
   return actionMap[status.toLowerCase()] || 'Переглянути';
 };
 
 // Determine action button color based on status
 const getActionColor = (status: string): string | undefined => {
   const statusLower = status.toLowerCase();
-  
+
   // Highlight actions that require attention
-  if (statusLower === 'очікує підтвердження' || 
+  if (statusLower === 'очікує підтвердження' ||
       statusLower === 'на перевірці' ||
       statusLower === 'очікує оплату') {
     return '#ff7b00';
   }
-  
+
   return undefined;
 };
 
 // Make action button bold for statuses requiring attention
 const isActionBold = (status: string): boolean => {
   const statusLower = status.toLowerCase();
-  
-  return statusLower === 'очікує підтвердження' || 
+
+  return statusLower === 'очікує підтвердження' ||
          statusLower === 'на перевірці' ||
          statusLower === 'очікує оплату';
 };
@@ -250,41 +250,41 @@ const isActionBold = (status: string): boolean => {
         month: '2-digit',
         year: 'numeric'
       });
-    } catch (error) {
+    } catch {
       return dateString;
     }
   };
 
   // Format price for display
   const formatPrice = (price: any): string => {
-    if (price === null || price === undefined || price === "") {
-      return "-";
+    if (price === null || price === undefined || price === '') {
+      return '-';
     }
-    
+
     const priceNumber = typeof price === 'string' ? parseFloat(price) : price;
-    
+
     if (typeof priceNumber !== 'number' || isNaN(priceNumber)) {
-      return "-";
+      return '-';
     }
-    
+
     if (priceNumber <= 0) {
-      return "-";
+      return '-';
     }
-    
+
     return `${priceNumber.toFixed(2)} грн`;
   };
 
   // Handle order action click
   const handleOrderAction = async (order: PersonalOrder) => {
     console.log('Order action clicked:', order);
-    
+
     if (order.order_status.toLowerCase() === 'approved') {
       if (window.confirm('Підтвердити це замовлення?')) {
         try {
           await apiService.updatePersonalOrder(order.order_id, {
             orderStatus: 'in_progress'
           });
-          
+
           alert('Замовлення підтверджено');
           // Force refresh to get updated data and clear cache
           forceRefreshOrders();
@@ -318,17 +318,17 @@ const isActionBold = (status: string): boolean => {
   const getRowBg = (index: number) => index % 2 === 0 ? '#f2f2f2' : '#e6e6e6';
 
   const getEmptyRowsCount = () => {
-    if (orders.length === 0) return 0;
-    
+    if (orders.length === 0) {return 0;}
+
     const rowHeight = 40;
-    
+
     if (tableHeight > 0) {
       const availableHeight = tableHeight - rowHeight;
       const rowsThatFit = Math.floor(availableHeight / rowHeight);
       const emptyRowsNeeded = Math.max(0, rowsThatFit - orders.length);
       return emptyRowsNeeded;
     }
-    
+
     return Math.max(0, 14 - orders.length);
   };
 
@@ -338,32 +338,32 @@ const isActionBold = (status: string): boolean => {
   const generateTableData = () => {
     return [
       {
-        header: "Назва Замовлення",
-        width: "38%",
-        minWidth: "200px",
+        header: 'Назва Замовлення',
+        width: '38%',
+        minWidth: '200px',
         cells: [
           ...orders.map((order, index) => (
-            <TextCell 
+            <TextCell
               key={`name-${order.order_id}`}
               text={order.order_title}
               bg={getRowBg(index)}
             />
           )),
           ...(emptyRowsCount > 0 ? Array.from({ length: emptyRowsCount }, (_, index) => (
-            <EmptyCell 
-              key={`empty-name-${index}`} 
+            <EmptyCell
+              key={`empty-name-${index}`}
               bg={getRowBg(orders.length + index)}
             />
           )) : [])
         ]
       },
       {
-        header: "Статус",
-        width: "20%",
-        minWidth: "120px",
+        header: 'Статус',
+        width: '20%',
+        minWidth: '120px',
         cells: [
           ...orders.map((order, index) => (
-            <TextCell 
+            <TextCell
               key={`status-${order.order_id}`}
               text={getStatusText(order.order_status)}
               bg={getRowBg(index)}
@@ -372,70 +372,70 @@ const isActionBold = (status: string): boolean => {
             />
           )),
           ...(emptyRowsCount > 0 ? Array.from({ length: emptyRowsCount }, (_, index) => (
-            <EmptyCell 
-              key={`empty-status-${index}`} 
+            <EmptyCell
+              key={`empty-status-${index}`}
               bg={getRowBg(orders.length + index)}
             />
           )) : [])
         ]
       },
       {
-        header: "Дата Замовлення",
-        width: "20%",
-        minWidth: "190px",
+        header: 'Дата Замовлення',
+        width: '20%',
+        minWidth: '190px',
         cells: [
           ...orders.map((order, index) => (
-            <TextCell 
+            <TextCell
               key={`date-${order.order_id}`}
               text={formatDate(order.order_created_at)}
               bg={getRowBg(index)}
             />
           )),
           ...(emptyRowsCount > 0 ? Array.from({ length: emptyRowsCount }, (_, index) => (
-            <EmptyCell 
-              key={`empty-date-${index}`} 
+            <EmptyCell
+              key={`empty-date-${index}`}
               bg={getRowBg(orders.length + index)}
             />
           )) : [])
         ]
       },
       {
-        header: "Ціна",
-        width: "12%",
-        minWidth: "100px",
+        header: 'Ціна',
+        width: '12%',
+        minWidth: '100px',
         cells: [
           ...orders.map((order, index) => (
-            <TextCell 
+            <TextCell
               key={`price-${order.order_id}`}
               text={formatPrice(order.order_price)}
               bg={getRowBg(index)}
             />
           )),
           ...(emptyRowsCount > 0 ? Array.from({ length: emptyRowsCount }, (_, index) => (
-            <EmptyCell 
-              key={`empty-price-${index}`} 
+            <EmptyCell
+              key={`empty-price-${index}`}
               bg={getRowBg(orders.length + index)}
             />
           )) : [])
         ]
       },
       {
-        header: "Дії",
-        width: "10%",
-        minWidth: "120px",
+        header: 'Дії',
+        width: '10%',
+        minWidth: '120px',
         cells: [
           ...orders.map((order, index) => (
-            <TableCell 
-              key={`actions-${order.order_id}`} 
+            <TableCell
+              key={`actions-${order.order_id}`}
               bg={getRowBg(index)}
             >
               <div className="flex flex-row items-center size-full">
                 <div className="box-border content-stretch flex h-[40px] items-center px-[16px] py-[10px] relative w-full justify-center">
-                  <div 
+                  <div
                     onClick={() => handleOrderAction(order)}
                     className="flex items-center justify-center cursor-pointer hover:opacity-70 transition-opacity"
                   >
-                    <span 
+                    <span
                       className={`${isActionBold(order.order_status) ? 'font-bold' : ''}`}
                       style={{ color: getActionColor(order.order_status) || '#4d4d4d' }}
                     >
@@ -447,8 +447,8 @@ const isActionBold = (status: string): boolean => {
             </TableCell>
           )),
           ...(emptyRowsCount > 0 ? Array.from({ length: emptyRowsCount }, (_, index) => (
-            <EmptyCell 
-              key={`empty-action-${index}`} 
+            <EmptyCell
+              key={`empty-action-${index}`}
               bg={getRowBg(orders.length + index)}
             />
           )) : [])
@@ -473,14 +473,14 @@ const isActionBold = (status: string): boolean => {
                 <div aria-hidden="true" className="absolute border border-solid border-white inset-0 pointer-events-none rounded-[12px]" />
               </div>
             </div>
-            
+
             {/* Bottom Row - Keep this */}
             <div className="content-stretch flex gap-[10px] items-center justify-end relative shrink-0 w-full" data-name="row">
               <p className="[text-underline-position:from-font] [white-space-collapse:collapse] basis-0 decoration-solid font-['Atkinson_Hyperlegible:Regular','Noto_Sans:Regular',sans-serif] grow leading-[normal] min-h-px min-w-px overflow-ellipsis overflow-hidden relative shrink-0 text-[#4d4d4d] text-[16px] text-nowrap underline cursor-pointer hover:text-[#5e89e8] transition-colors" style={{ fontVariationSettings: "'CTGR' 0, 'wdth' 100, 'wght' 400" }}>
                 Умови та Політика Використання
               </p>
               {/* Refresh button */}
-              <button 
+              <button
                 onClick={handleRefreshClick}
                 className="bg-white box-border content-stretch flex gap-[8px] h-[44px] items-center justify-center px-[24px] py-[12px] relative rounded-[12px] shrink-0 cursor-pointer hover:bg-[#f2f2f2] transition-colors"
               >
@@ -520,7 +520,7 @@ const isActionBold = (status: string): boolean => {
               <div className="basis-0 grow h-full min-h-px min-w-px relative rounded-[12px] shrink-0 overflow-auto" data-name="Table">
                 <div className="flex items-center justify-center h-full flex-col gap-2">
                   <div className="text-[#cc0000] text-[18px] text-center">{error}</div>
-                  <button 
+                  <button
                     onClick={() => loadPersonalOrders(true)}
                     className="bg-white px-4 py-2 rounded-md border border-[#4d4d4d] hover:bg-[#f2f2f2] transition-colors"
                   >
@@ -530,7 +530,7 @@ const isActionBold = (status: string): boolean => {
                 <div aria-hidden="true" className="absolute border border-solid border-white inset-0 pointer-events-none rounded-[12px]" />
               </div>
             </div>
-            
+
             {/* Bottom Row - Keep this */}
             <div className="content-stretch flex gap-[10px] items-center justify-end relative shrink-0 w-full" data-name="row">
               <p className="[text-underline-position:from-font] [white-space-collapse:collapse] basis-0 decoration-solid font-['Atkinson_Hyperlegible:Regular','Noto_Sans:Regular',sans-serif] grow leading-[normal] min-h-px min-w-px overflow-ellipsis overflow-hidden relative shrink-0 text-[#4d4d4d] text-[16px] text-nowrap underline cursor-pointer hover:text-[#5e89e8] transition-colors" style={{ fontVariationSettings: "'CTGR' 0, 'wdth' 100, 'wght' 400" }}>
@@ -562,9 +562,9 @@ const isActionBold = (status: string): boolean => {
       <div className="size-full">
         <div className="box-border content-stretch flex flex-col gap-[20px] items-start relative size-full overflow-hidden px-[24px] px-[20px] py-[16px]">
           {/* Scrolling Table - Keep original structure but update content */}
-          <div 
+          <div
             ref={tableContainerRef}
-            className="basis-0 bg-[#f2f2f2] content-stretch flex gap-[8px] grow items-start min-h-px min-w-px overflow-clip relative shrink-0 w-full" 
+            className="basis-0 bg-[#f2f2f2] content-stretch flex gap-[8px] grow items-start min-h-px min-w-px overflow-clip relative shrink-0 w-full"
             data-name="Scrolling Table"
           >
             {/* Table - Updated to match purchase history style */}
@@ -581,18 +581,18 @@ const isActionBold = (status: string): boolean => {
               <div aria-hidden="true" className="absolute border border-solid border-white inset-0 pointer-events-none rounded-[12px]" />
             </div>
           </div>
-          
+
           {/* Bottom Row - Keep original structure */}
           <div className="content-stretch flex gap-[10px] items-center justify-end relative shrink-0 w-full" data-name="row">
-            <p 
+            <p
               onClick={handleTermsClick}
-              className="[text-underline-position:from-font] [white-space-collapse:collapse] basis-0 decoration-solid font-['Atkinson_Hyperlegible:Regular','Noto_Sans:Regular',sans-serif] grow leading-[normal] min-h-px min-w-px overflow-ellipsis overflow-hidden relative shrink-0 text-[#4d4d4d] text-[16px] text-nowrap underline cursor-pointer hover:text-[#5e89e8] transition-colors" 
+              className="[text-underline-position:from-font] [white-space-collapse:collapse] basis-0 decoration-solid font-['Atkinson_Hyperlegible:Regular','Noto_Sans:Regular',sans-serif] grow leading-[normal] min-h-px min-w-px overflow-ellipsis overflow-hidden relative shrink-0 text-[#4d4d4d] text-[16px] text-nowrap underline cursor-pointer hover:text-[#5e89e8] transition-colors"
               style={{ fontVariationSettings: "'CTGR' 0, 'wdth' 100, 'wght' 400" }}
             >
               Умови та Політика Використання
             </p>
             {/* Refresh button */}
-            <button 
+            <button
               onClick={handleRefreshClick}
               className="bg-white box-border content-stretch flex gap-[8px] h-[44px] items-center justify-center px-[24px] py-[12px] relative rounded-[12px] shrink-0 cursor-pointer hover:bg-[#f2f2f2] transition-colors border border-[#4d4d4d]"
             >
@@ -600,9 +600,9 @@ const isActionBold = (status: string): boolean => {
                 <p className="leading-[normal] whitespace-pre">Оновити</p>
               </div>
             </button>
-            <div 
+            <div
               onClick={handleCreateNewOrder}
-              className="bg-white box-border content-stretch flex gap-[8px] h-[44px] items-center justify-center px-[24px] py-[12px] relative rounded-[12px] shrink-0 cursor-pointer hover:bg-[#f2f2f2] transition-colors" 
+              className="bg-white box-border content-stretch flex gap-[8px] h-[44px] items-center justify-center px-[24px] py-[12px] relative rounded-[12px] shrink-0 cursor-pointer hover:bg-[#f2f2f2] transition-colors"
               data-name="Button"
             >
               <div aria-hidden="true" className="absolute border border-[#4d4d4d] border-solid inset-0 pointer-events-none rounded-[12px]" />

@@ -1,4 +1,4 @@
-import { ErrorStateProps } from "../../types"; 
+import { ErrorStateProps } from '../../types';
 
 export function ErrorState({ error }: ErrorStateProps) {
   return (

@@ -1,12 +1,12 @@
-import svgPaths from "./icons/svgIconPaths";
-import { ProductCardProps } from "../../types";
-import { IconBookmarks } from "../ui/icons/IconBookmarks";
-import Badge from "../ui/badge";
-import { toast } from "sonner";
+import svgPaths from './icons/svgIconPaths';
+import { ProductCardProps } from '../../types';
+import { IconBookmarks } from '../ui/icons/IconBookmarks';
+import Badge from '../ui/badge';
+import { toast } from 'sonner';
 
 function Delete({ onClick }: { onClick?: () => void }) {
   return (
-    <button 
+    <button
       onClick={(e) => {
         e.stopPropagation();
         onClick?.();
@@ -16,7 +16,7 @@ function Delete({ onClick }: { onClick?: () => void }) {
     >
       <svg className="block" fill="none" preserveAspectRatio="none" viewBox="0 0 28 28">
         <g id="local_mall">
-          <mask height="28" id="mask0_1_1724" maskUnits="userSpaceOnUse" style={{ maskType: "alpha" }} width="28" x="0" y="0">
+          <mask height="28" id="mask0_1_1724" maskUnits="userSpaceOnUse" style={{ maskType: 'alpha' }} width="28" x="0" y="0">
             <rect fill="var(--fill-0, #D9D9D9)" height="28" id="Bounding box" width="28" />
           </mask>
           <g mask="url(#mask0_1_1724)">
@@ -56,7 +56,7 @@ function Star() {
 
 function Rating({ rating }: { rating: number }) {
   const displayRating = typeof rating === 'number' ? rating : 0;
-  
+
   return (
     <div className="content-stretch flex gap-[4px] items-end justify-end relative shrink-0">
       <Star />
@@ -67,29 +67,29 @@ function Rating({ rating }: { rating: number }) {
   );
 }
 
-function Header({ 
-  badgeText, 
-  badgeColor, 
-  rating, 
-  showBookmark, 
-  isBookmarked, 
+function Header({
+  badgeText,
+  badgeColor,
+  rating,
+  showBookmark,
+  isBookmarked,
   onBookmarkClick,
   isInCart
-}: { 
-  badgeText: string; 
-  badgeColor?: string; 
-  rating: number; 
-  showBookmark?: boolean; 
-  isBookmarked?: boolean; 
+}: {
+  badgeText: string;
+  badgeColor?: string;
+  rating: number;
+  showBookmark?: boolean;
+  isBookmarked?: boolean;
   onBookmarkClick?: () => void;
   isInCart?: boolean;
 }) {
   // Disable bookmarking if product is in cart
   const canBookmark = !isInCart;
-  
+
   const handleBookmarkClick = (e: React.MouseEvent) => {
     e.stopPropagation();
-    
+
     if (!canBookmark) {
       toast.info('Товар вже в кошику. Неможливо додати до збережених.', {
         duration: 3000,
@@ -98,21 +98,21 @@ function Header({
     }
     onBookmarkClick?.();
   };
-  
+
   return (
     <div className="content-stretch flex items-start justify-between relative shrink-0 w-full">
       <Badge text={badgeText} color={badgeColor} />
         <Rating rating={rating} />
         {showBookmark && (
-          <div 
+          <div
             onClick={handleBookmarkClick}
             className={`cursor-pointer transition-opacity ${
-              canBookmark 
-                ? 'hover:opacity-70' 
+              canBookmark
+                ? 'hover:opacity-70'
                 : 'opacity-40 cursor-not-allowed'
             }`}
             data-name="icon bookmarks"
-            title={isInCart ? "Товар вже в кошику. Неможливо додати до збережених." : ""}
+            title={isInCart ? 'Товар вже в кошику. Неможливо додати до збережених.' : ''}
           >
             <IconBookmarks isBookmarked={isBookmarked || false} />
           </div>
@@ -132,8 +132,8 @@ function Price({ price }: { price: number }) {
 }
 
 function CartButton({ isInCart, onClick }: { isInCart?: boolean; onClick?: () => void }) {
-  const text = isInCart ? "В кошику" : "До кошика";
-  
+  const text = isInCart ? 'В кошику' : 'До кошика';
+
   return (
     <button
       onClick={(e) => {
@@ -168,7 +168,7 @@ function Footer({ price, isInCart, onCartClick }: { price: number; isInCart?: bo
 }
 
 export default function ProductCard({
-  id,
+  id: _id,
   title,
   price,
   rating,
@@ -184,9 +184,9 @@ export default function ProductCard({
   onDeleteClick
 }: ProductCardProps) {
   return (
-    <div 
+    <div
       onClick={onClick}
-      className="relative rounded-[16px] size-full cursor-pointer hover:opacity-90 transition-opacity" 
+      className="relative rounded-[16px] size-full cursor-pointer hover:opacity-90 transition-opacity"
       data-name="Card"
     >
       <div className="content-stretch flex flex-col items-start min-w-inherit overflow-clip relative rounded-[inherit] size-full">
@@ -194,7 +194,7 @@ export default function ProductCard({
         <Top image={image} showDelete={showDelete} onDeleteClick={onDeleteClick} />
 
         {/* Bottom Info Area */}
-        <div 
+        <div
           className="bg-[#f2f2f2] relative flex-1 w-full"
           onClick={(e) => {
             // Prevent card click when clicking on the bottom area (where cart button is)
@@ -203,7 +203,7 @@ export default function ProductCard({
         >
           <div className="box-border content-stretch flex flex-col gap-[20px] items-start p-[12px] relative w-full h-full">
             {/* Header: Badge, Rating, Bookmark */}
-            <Header 
+            <Header
               badgeText={badgeText}
               rating={rating}
               showBookmark={showBookmark}
@@ -211,18 +211,18 @@ export default function ProductCard({
               onBookmarkClick={onBookmarkClick}
               isInCart={isInCart} // Pass isInCart to Header
             />
-            
+
             {/* Body: Title */}
             <div className="content-stretch flex flex-col gap-[24px] items-start relative shrink-0 w-full">
               <p className="-webkit-box leading-[24px] h-[48px] overflow-ellipsis overflow-hidden relative shrink-0 text-[#0d0d0d] text-[16px] w-full line-clamp-2" style={{ fontVariationSettings: "'CTGR' 0, 'wdth' 100, 'wght' 400", display: '-webkit-box', WebkitLineClamp: 2, WebkitBoxOrient: 'vertical' }}>
                 {title}
               </p>
-              
+
               {/* Footer: Price, Cart Button */}
-              <Footer 
-                price={price} 
-                isInCart={isInCart} 
-                onCartClick={onCartClick} 
+              <Footer
+                price={price}
+                isInCart={isInCart}
+                onCartClick={onCartClick}
               />
             </div>
           </div>

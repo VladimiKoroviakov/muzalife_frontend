@@ -1,4 +1,4 @@
-import { ReactNode } from "react";
+import { ReactNode } from 'react';
 
 // Product types
 export type Product = {
@@ -6,7 +6,7 @@ export type Product = {
   title: string;
   price: number;
   rating: number;
-  type: "Сценарій" | "Квест" | "Поезія" | "Безкоштовний матеріал" | "Інше";
+  type: 'Сценарій' | 'Квест' | 'Поезія' | 'Безкоштовний матеріал' | 'Інше';
   image: string;
   ageCategory: string;
   events: string[];
@@ -86,11 +86,11 @@ export interface BoughtScenariosContentProps {
 }
 
 export interface Order {
-  id: number; 
+  id: number;
   name: string;
   date: string;
-  orderDate?: string; 
-  formattedDate?: string; 
+  orderDate?: string;
+  formattedDate?: string;
   materialType?: string;
 }
 

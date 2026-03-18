@@ -1,4 +1,4 @@
-import { ReactNode } from "react";
+import { ReactNode } from 'react';
 
 // Reusable table cell components
 interface TableCellProps {
@@ -7,11 +7,11 @@ interface TableCellProps {
   className?: string;
 }
 
-export function TableCell({ children, bg = "#f2f2f2", className = "" }: TableCellProps) {
+export function TableCell({ children, bg = '#f2f2f2', className = '' }: TableCellProps) {
   return (
-    <div 
-      className={`h-[40px] relative shrink-0 w-full ${className}`} 
-      style={{ backgroundColor: bg }} 
+    <div
+      className={`h-[40px] relative shrink-0 w-full ${className}`}
+      style={{ backgroundColor: bg }}
       data-name="Cell"
     >
       <div className="flex flex-row items-center size-full">
@@ -30,7 +30,7 @@ interface TextCellProps {
   className?: string;
 }
 
-export function TextCell({ text, bg, bold = false, color = "#0d0d0d", centered = false, className = "" }: TextCellProps) {
+export function TextCell({ text, bg, bold = false, color = '#0d0d0d', centered = false, className = '' }: TextCellProps) {
   return (
     <TableCell bg={bg} className={className}>
       <div className={`box-border content-stretch flex gap-[16px] h-[40px] items-center ${
@@ -38,10 +38,10 @@ export function TextCell({ text, bg, bold = false, color = "#0d0d0d", centered =
       } py-[10px] relative w-full`}>
         <p className={`${
           centered ? 'basis-0 grow min-h-px min-w-px text-center' : ''
-        } font-['Atkinson_Hyperlegible:${bold ? 'Bold' : 'Regular'}','Noto_Sans:${bold ? 'Bold' : 'Regular'}',sans-serif] leading-[normal] relative shrink-0 text-[16px] text-nowrap whitespace-pre`} 
-          style={{ 
+        } font-['Atkinson_Hyperlegible:${bold ? 'Bold' : 'Regular'}','Noto_Sans:${bold ? 'Bold' : 'Regular'}',sans-serif] leading-[normal] relative shrink-0 text-[16px] text-nowrap whitespace-pre`}
+          style={{
             fontVariationSettings: `'CTGR' 0, 'wdth' 100, 'wght' ${bold ? 700 : 400}`,
-            color 
+            color
           }}
         >
           {text}
@@ -51,21 +51,21 @@ export function TextCell({ text, bg, bold = false, color = "#0d0d0d", centered =
   );
 }
 
-export function ActionCell({ text, bg, bold = false, color = "#5e89e8", onClick }: { 
-  text: string; 
-  bg?: string; 
-  bold?: boolean; 
+export function ActionCell({ text, bg, bold = false, color = '#5e89e8', onClick }: {
+  text: string;
+  bg?: string;
+  bold?: boolean;
   color?: string;
   onClick?: () => void;
 }) {
   return (
     <TableCell bg={bg}>
       <div className="box-border content-stretch flex gap-[16px] h-[40px] items-center px-[16px] py-[10px] relative w-full">
-        <p 
-          className={`[text-underline-position:from-font] decoration-solid font-['Atkinson_Hyperlegible:${bold ? 'Bold' : 'Regular'}','Noto_Sans:${bold ? 'Bold' : 'Regular'}',sans-serif] leading-[normal] relative shrink-0 text-[16px] text-nowrap underline whitespace-pre cursor-pointer hover:opacity-70 transition-opacity`} 
-          style={{ 
+        <p
+          className={`[text-underline-position:from-font] decoration-solid font-['Atkinson_Hyperlegible:${bold ? 'Bold' : 'Regular'}','Noto_Sans:${bold ? 'Bold' : 'Regular'}',sans-serif] leading-[normal] relative shrink-0 text-[16px] text-nowrap underline whitespace-pre cursor-pointer hover:opacity-70 transition-opacity`}
+          style={{
             fontVariationSettings: `'CTGR' 0, 'wdth' 100, 'wght' ${bold ? 700 : 400}`,
-            color 
+            color
           }}
           onClick={onClick}
         >
@@ -96,29 +96,29 @@ interface TableColumnProps {
   columnIndex?: number;
 }
 
-export function TableColumn({ 
-  header, 
-  width, 
-  minWidth = '100px', 
-  children, 
-  isFirst = false, 
+export function TableColumn({
+  header,
+  width,
+  minWidth = '100px',
+  children,
+  isFirst = false,
   isLast = false,
   onResize,
-  columnIndex 
+  columnIndex
 }: TableColumnProps) {
   return (
-    <div 
-      className="content-stretch flex flex-col items-start relative" 
+    <div
+      className="content-stretch flex flex-col items-start relative"
       data-name="Column"
-      style={{ 
-        flexBasis: width, 
+      style={{
+        flexBasis: width,
         flexGrow: typeof width === 'number' ? 1 : 0,
-        flexShrink: 1, 
-        minWidth 
+        flexShrink: 1,
+        minWidth
       }}
     >
       <div aria-hidden="true" className="absolute border-[0px_1px_0px_0px] border-solid border-white bottom-0 left-0 pointer-events-none right-[-1px] top-0" />
-      
+
       {/* Header */}
       <div className={`bg-[#5e89e8] h-[40px] shrink-0 sticky top-0 w-full z-10 ${
         isFirst ? 'rounded-tl-[12px]' : isLast ? 'rounded-tr-[12px]' : ''
@@ -137,7 +137,7 @@ export function TableColumn({
           )}
         </div>
       </div>
-      
+
       {/* Cells */}
       {children}
     </div>

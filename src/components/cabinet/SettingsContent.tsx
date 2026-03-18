@@ -1,42 +1,42 @@
-import { useState, useEffect, useRef } from "react";
-import { toast } from "sonner";
-import { apiService } from "../../services/api";
-import { Skeleton } from "../ui/skeleton";
-import { AuthUser } from "../../types";
-import { 
-  Dialog, 
-  DialogContent, 
-  DialogDescription, 
-  DialogFooter, 
-  DialogHeader, 
-  DialogTitle 
-} from "../ui/dialog";
-import { Input } from "../ui/input";
-import { Label } from "../ui/label";
-import { Button } from "../ui/button";
-import svgPaths from "../ui/icons/svgIconPaths";
-import { VerificationCodeModal } from "../auth/VerificationModal";
+import { useState, useEffect, useRef } from 'react';
+import { toast } from 'sonner';
+import { apiService } from '../../services/api';
+import { Skeleton } from '../ui/skeleton';
+import { AuthUser } from '../../types';
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle
+} from '../ui/dialog';
+import { Input } from '../ui/input';
+import { Label } from '../ui/label';
+import { Button } from '../ui/button';
+import svgPaths from '../ui/icons/svgIconPaths';
+import { VerificationCodeModal } from '../auth/VerificationModal';
 
 interface SettingsContentProps {
   onShowFAQ: () => void;
 }
 
 export function SettingsContent({ onShowFAQ }: SettingsContentProps) {
-  const [userName, setUserName] = useState("Користувач");
-  const [userEmail, setUserEmail] = useState("example@email.com");
+  const [userName, setUserName] = useState('Користувач');
+  const [userEmail, setUserEmail] = useState('example@email.com');
   const [userImage, setUserImage] = useState<string | null>(null);
   const [imageLoaded, setImageLoaded] = useState(false);
   const [imageError, setImageError] = useState(false);
   const [authProvider, setAuthProvider] = useState<string | null>(null);
   const [isLoadingProfile, setIsLoadingProfile] = useState(true);
-  
+
   const userInitials = userName
     .split(' ')
-    .filter(word => word.length > 0)
+    .filter((word) => word.length > 0)
     .slice(0, 2)
-    .map(word => word[0].toUpperCase())
+    .map((word) => word[0].toUpperCase())
     .join('');
-  
+
   const [editNameOpen, setEditNameOpen] = useState(false);
   const [editEmailOpen, setEditEmailOpen] = useState(false);
   const [editPasswordOpen, setEditPasswordOpen] = useState(false);
@@ -47,13 +47,13 @@ export function SettingsContent({ onShowFAQ }: SettingsContentProps) {
     newEmail: string;
   } | null>(null);
   const [showEmailVerificationModal, setShowEmailVerificationModal] = useState(false);
-  
-  const [tempName, setTempName] = useState("");
-  const [tempEmail, setTempEmail] = useState("");
-  const [oldPassword, setOldPassword] = useState("");
-  const [newPassword, setNewPassword] = useState("");
-  const [confirmPassword, setConfirmPassword] = useState("");
-  const [deleteEmailConfirm, setDeleteEmailConfirm] = useState("");
+
+  const [tempName, setTempName] = useState('');
+  const [tempEmail, setTempEmail] = useState('');
+  const [oldPassword, setOldPassword] = useState('');
+  const [newPassword, setNewPassword] = useState('');
+  const [confirmPassword, setConfirmPassword] = useState('');
+  const [deleteEmailConfirm, setDeleteEmailConfirm] = useState('');
 
   const fileInputRef = useRef<HTMLInputElement>(null);
   const isEmailPasswordUser = authProvider === 'email';
@@ -128,13 +128,13 @@ export function SettingsContent({ onShowFAQ }: SettingsContentProps) {
       toast.success("Ім'я успішно оновлено!");
     } catch (error) {
       console.log('Error saving name:', error);
-      toast.error("Помилка при оновленні імені");
+      toast.error('Помилка при оновленні імені');
     }
   };
 
   const handleEditEmail = () => {
     if (!isEmailPasswordUser) {
-      toast.error("Email не може бути змінено для користувачів, зареєстрованих через соціальні мережі");
+      toast.error('Email не може бути змінено для користувачів, зареєстрованих через соціальні мережі');
       return;
     }
 
@@ -144,13 +144,13 @@ export function SettingsContent({ onShowFAQ }: SettingsContentProps) {
 
   const handleSaveEmail = async () => {
     if (!tempEmail.trim()) {
-      toast.error("Будь ласка, введіть email");
+      toast.error('Будь ласка, введіть email');
       return;
     }
 
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
     if (!emailRegex.test(tempEmail)) {
-      toast.error("Будь ласка, введіть дійсну email адресу");
+      toast.error('Будь ласка, введіть дійсну email адресу');
       return;
     }
 
@@ -166,7 +166,7 @@ export function SettingsContent({ onShowFAQ }: SettingsContentProps) {
     }
 
     if (!userId) {
-      toast.error("Не вдалося знайти ваш профіль");
+      toast.error('Не вдалося знайти ваш профіль');
       return;
     }
 
@@ -177,14 +177,14 @@ export function SettingsContent({ onShowFAQ }: SettingsContentProps) {
         setEmailChangePending({ newEmail: tempEmail });
         setShowEmailVerificationModal(true);
 
-        toast.success("На ваш новий email надіслано код підтвердження");
+        toast.success('На ваш новий email надіслано код підтвердження');
         setEditEmailOpen(false);
       } else {
-        toast.error(response.error || "Не вдалося оновити email");
+        toast.error(response.error || 'Не вдалося оновити email');
       }
     } catch (error) {
       console.log('Error saving email:', error);
-      toast.error("Помилка при оновленні email");
+      toast.error('Помилка при оновленні email');
     }
   };
 
@@ -201,29 +201,29 @@ export function SettingsContent({ onShowFAQ }: SettingsContentProps) {
       }
     }
 
-    if (!emailChangePending) return;
+    if (!emailChangePending) {return;}
     if (!userId) {
-      toast.error("Не вдалося знайти ваш профіль");
+      toast.error('Не вдалося знайти ваш профіль');
       return;
     }
 
     const result = await apiService.verifyEmailChange(
-      code, 
-      emailChangePending.newEmail, 
+      code,
+      emailChangePending.newEmail,
       userId
     );
-    
+
     if (!result.success) {
-      throw new Error(result.error || "Невірний код");
+      throw new Error(result.error || 'Невірний код');
     }
 
     setUserEmail(emailChangePending.newEmail);
 
-    const cached = localStorage.getItem("userProfile");
+    const cached = localStorage.getItem('userProfile');
     if (cached) {
       const profile = JSON.parse(cached);
       profile.email = emailChangePending.newEmail;
-      localStorage.setItem("userProfile", JSON.stringify(profile));
+      localStorage.setItem('userProfile', JSON.stringify(profile));
     }
 
     setEmailChangePending(null);
@@ -231,46 +231,46 @@ export function SettingsContent({ onShowFAQ }: SettingsContentProps) {
   };
 
   const handleResendVerificationCode = async () => {
-    if (!emailChangePending) return;
-    
+    if (!emailChangePending) {return;}
+
     try {
       const response = await apiService.resendEmailChangeCode(emailChangePending.newEmail);
       if (response.success) {
-        toast.success("Код підтвердження надіслано повторно");
+        toast.success('Код підтвердження надіслано повторно');
       } else {
-        toast.error(response.error || "Не вдалося надіслати код повторно");
+        toast.error(response.error || 'Не вдалося надіслати код повторно');
       }
     } catch (error: any) {
       console.error('Error resending verification code:', error);
-      toast.error("Помилка при повторному надсиланні коду");
+      toast.error('Помилка при повторному надсиланні коду');
     }
   };
 
   const handleEditPassword = () => {
     if (!isEmailPasswordUser) {
-      toast.error("Пароль не може бути змінено для користувачів, зареєстрованих через соціальні мережі");
+      toast.error('Пароль не може бути змінено для користувачів, зареєстрованих через соціальні мережі');
       return;
     }
 
-    setOldPassword("");
-    setNewPassword("");
-    setConfirmPassword("");
+    setOldPassword('');
+    setNewPassword('');
+    setConfirmPassword('');
     setEditPasswordOpen(true);
   };
 
   const handleSavePassword = async () => {
     if (!oldPassword || !newPassword || !confirmPassword) {
-      toast.error("Будь ласка, заповніть всі поля");
+      toast.error('Будь ласка, заповніть всі поля');
       return;
     }
 
     if (newPassword.length < 6) {
-      toast.error("Пароль має бути мінімум 6 символів");
+      toast.error('Пароль має бути мінімум 6 символів');
       return;
     }
 
     if (newPassword !== confirmPassword) {
-      toast.error("Паролі не співпадають");
+      toast.error('Паролі не співпадають');
       return;
     }
 
@@ -279,14 +279,14 @@ export function SettingsContent({ onShowFAQ }: SettingsContentProps) {
       await apiService.changePassword(oldPassword, newPassword);
 
       setEditPasswordOpen(false);
-      setOldPassword("");
-      setNewPassword("");
-      setConfirmPassword("");
-      toast.success("Пароль успішно змінено!");
+      setOldPassword('');
+      setNewPassword('');
+      setConfirmPassword('');
+      toast.success('Пароль успішно змінено!');
     } catch (error: any) {
       console.log('Error changing password:', error);
       // Use the error message if available
-      toast.error(error.message || "Помилка при зміні пароля");
+      toast.error(error.message || 'Помилка при зміні пароля');
     }
   };
 
@@ -305,7 +305,7 @@ export function SettingsContent({ onShowFAQ }: SettingsContentProps) {
 
   const handleFileChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
-    if (!file) return;
+    if (!file) {return;}
 
     try {
       const response = await apiService.uploadProfileImage(file);
@@ -323,13 +323,13 @@ export function SettingsContent({ onShowFAQ }: SettingsContentProps) {
         }
 
         setUserImage(response.imageUrl);
-        toast.success("Зображення успішно оновлено!");
+        toast.success('Зображення успішно оновлено!');
       } else {
-        toast.error("Не вдалося завантажити зображення");
+        toast.error('Не вдалося завантажити зображення');
       }
     } catch (error) {
       console.log('Error uploading image:', error);
-      toast.error("Помилка при завантаженні зображення");
+      toast.error('Помилка при завантаженні зображення');
     }
   };
 
@@ -349,21 +349,21 @@ export function SettingsContent({ onShowFAQ }: SettingsContentProps) {
       }
 
       setUserImage(null);
-      toast.success("Зображення видалено");
+      toast.success('Зображення видалено');
     } catch (error: any) {
       console.log('Error removing image:', error);
-      toast.error(error.message || "Помилка при видаленні зображення");
+      toast.error(error.message || 'Помилка при видаленні зображення');
     }
   };
 
   const handleDeleteAccount = () => {
-    setDeleteEmailConfirm("");
+    setDeleteEmailConfirm('');
     setDeleteAccountOpen(true);
   };
 
   const handleConfirmDelete = async () => {
     if (deleteEmailConfirm !== userEmail) {
-      toast.error("Email не співпадає");
+      toast.error('Email не співпадає');
       return;
     }
 
@@ -371,7 +371,7 @@ export function SettingsContent({ onShowFAQ }: SettingsContentProps) {
       // This returns void
       await apiService.deleteAccount();
 
-      toast.success("Кабінет успішно видалено");
+      toast.success('Кабінет успішно видалено');
       setDeleteAccountOpen(false);
 
       localStorage.removeItem('userProfile');
@@ -384,7 +384,7 @@ export function SettingsContent({ onShowFAQ }: SettingsContentProps) {
       }, 1000);
     } catch (error: any) {
       console.log('Error deleting account:', error);
-      toast.error(error.message || "Помилка при видаленні кабінету");
+      toast.error(error.message || 'Помилка при видаленні кабінету');
     }
   };
 
@@ -434,7 +434,7 @@ export function SettingsContent({ onShowFAQ }: SettingsContentProps) {
                     {/* Image */}
                     <div className="basis-0 bg-white grow h-full min-h-px min-w-px relative rounded-[100px] shrink-0 overflow-hidden" data-name="Image">
                       <div aria-hidden="true" className="absolute border border-[#4d4d4d] border-solid inset-0 pointer-events-none rounded-[100px]" />
-                      
+
                       {/* Fallback initials - shown when no image, image error, or while loading */}
                       {(!userImage || imageError) && (
                         <div className="flex flex-col items-center justify-center size-full">
@@ -445,12 +445,12 @@ export function SettingsContent({ onShowFAQ }: SettingsContentProps) {
                           </div>
                         </div>
                       )}
-                      
+
                       {/* Image - hidden while loading or if there's an error */}
                       {userImage && !imageError && (
-                        <img 
-                          src={userImage} 
-                          alt="Profile" 
+                        <img
+                          src={userImage}
+                          alt="Profile"
                           crossOrigin="anonymous"
                           referrerPolicy="no-referrer"
                           className={`w-full h-full object-cover transition-opacity duration-300 ${
@@ -474,7 +474,7 @@ export function SettingsContent({ onShowFAQ }: SettingsContentProps) {
                       <div className="relative shrink-0 size-[20px]" data-name="frame_person">
                         <svg className="block size-full" fill="none" preserveAspectRatio="none" viewBox="0 0 20 20">
                           <g id="frame_person">
-                            <mask height="20" id="mask0_63_1062" maskUnits="userSpaceOnUse" style={{ maskType: "alpha" }} width="20" x="0" y="0">
+                            <mask height="20" id="mask0_63_1062" maskUnits="userSpaceOnUse" style={{ maskType: 'alpha' }} width="20" x="0" y="0">
                               <rect fill="var(--fill-0, #D9D9D9)" height="20" id="Bounding box" width="20" />
                             </mask>
                             <g mask="url(#mask0_63_1062)">
@@ -523,16 +523,16 @@ export function SettingsContent({ onShowFAQ }: SettingsContentProps) {
                                 <div className="basis-0 flex flex-col font-['Atkinson_Hyperlegible:Regular','Noto_Sans:Regular',sans-serif] grow justify-end leading-[0] min-h-px min-w-px overflow-ellipsis overflow-hidden relative shrink-0 text-[#4d4d4d] text-[16px] text-nowrap" style={{ fontVariationSettings: "'CTGR' 0, 'wdth' 100, 'wght' 400" }}>
                                   <p className="[white-space-collapse:collapse] leading-[normal] overflow-ellipsis overflow-hidden">{userEmail}</p>
                                 </div>
-                                <div 
-                                  onClick={isEmailPasswordUser ? handleEditEmail : undefined} 
-                                  className={`relative shrink-0 size-[24px] z-10 ${isEmailPasswordUser 
-                                      ? 'cursor-pointer hover:opacity-70 transition-opacity' 
-                                      : 'cursor-default tooltip-hover'}`}                                  
+                                <div
+                                  onClick={isEmailPasswordUser ? handleEditEmail : undefined}
+                                  className={`relative shrink-0 size-[24px] z-10 ${isEmailPasswordUser
+                                      ? 'cursor-pointer hover:opacity-70 transition-opacity'
+                                      : 'cursor-default tooltip-hover'}`}
                                   data-name="icon edit"
-                                  data-tooltip={!isEmailPasswordUser ? "Email не може бути змінено для користувачів, зареєстрованих через google або facebook" : undefined}
+                                  data-tooltip={!isEmailPasswordUser ? 'Email не може бути змінено для користувачів, зареєстрованих через google або facebook' : undefined}
                                 >
-                                  <div 
-                                    className="absolute inset-[12.5%] mask-alpha mask-intersect mask-no-clip mask-no-repeat mask-position-[-3px] mask-size-[24px_24px]" 
+                                  <div
+                                    className="absolute inset-[12.5%] mask-alpha mask-intersect mask-no-clip mask-no-repeat mask-position-[-3px] mask-size-[24px_24px]"
                                     data-name="edit"
                                     style={{ opacity: isEmailPasswordUser ? 1 : 0.5 }}
                                     >
@@ -552,16 +552,16 @@ export function SettingsContent({ onShowFAQ }: SettingsContentProps) {
                                 <div className="basis-0 flex flex-col font-['Atkinson_Hyperlegible:Regular','Noto_Sans:Regular',sans-serif] grow justify-end leading-[0] min-h-px min-w-px overflow-ellipsis overflow-hidden relative shrink-0 text-[#4d4d4d] text-[16px] text-nowrap" style={{ fontVariationSettings: "'CTGR' 0, 'wdth' 100, 'wght' 400" }}>
                                   <p className="[white-space-collapse:collapse] leading-[normal] overflow-ellipsis overflow-hidden">Пароль</p>
                                 </div>
-                                <div 
-                                  onClick={isEmailPasswordUser ? handleEditPassword : undefined} 
-                                  className={`relative shrink-0 size-[24px] z-10 ${isEmailPasswordUser 
-                                      ? 'cursor-pointer hover:opacity-70 transition-opacity' 
+                                <div
+                                  onClick={isEmailPasswordUser ? handleEditPassword : undefined}
+                                  className={`relative shrink-0 size-[24px] z-10 ${isEmailPasswordUser
+                                      ? 'cursor-pointer hover:opacity-70 transition-opacity'
                                       : 'cursor-default tooltip-hover'}`}
                                   data-name="icon edit"
-                                  data-tooltip={!isEmailPasswordUser ? "Пароль не може бути змінено для користувачів, зареєстрованих через google або facebook" : undefined}
+                                  data-tooltip={!isEmailPasswordUser ? 'Пароль не може бути змінено для користувачів, зареєстрованих через google або facebook' : undefined}
                                   >
-                                  <div 
-                                  className="absolute inset-[12.5%] mask-alpha mask-intersect mask-no-clip mask-no-repeat mask-position-[-3px] mask-size-[24px_24px]" 
+                                  <div
+                                  className="absolute inset-[12.5%] mask-alpha mask-intersect mask-no-clip mask-no-repeat mask-position-[-3px] mask-size-[24px_24px]"
                                   data-name="edit"
                                   style={{ opacity: isEmailPasswordUser ? 1 : 0.5 }}
                                   >
@@ -630,7 +630,7 @@ export function SettingsContent({ onShowFAQ }: SettingsContentProps) {
               <span>
                 {tempName.trim().length === 0 && "Ім'я не може бути порожнім"}
               </span>
-              <span className={tempName.length > 255 ? "text-red-500" : ""}>
+              <span className={tempName.length > 255 ? 'text-red-500' : ''}>
                 {tempName.length}/255
               </span>
             </div>
@@ -640,8 +640,8 @@ export function SettingsContent({ onShowFAQ }: SettingsContentProps) {
           <Button variant="outline" onClick={() => setEditNameOpen(false)} className="cursor-pointer">
             Скасувати
           </Button>
-          <Button 
-            onClick={handleSaveName} 
+          <Button
+            onClick={handleSaveName}
             className="cursor-pointer"
             disabled={tempName.trim().length === 0 || tempName.length > 255}
           >
@@ -732,7 +732,7 @@ export function SettingsContent({ onShowFAQ }: SettingsContentProps) {
             <Button variant="outline" onClick={() => setEditPasswordOpen(false)} className="cursor-pointer">
               Скасувати
             </Button>
-            <Button 
+            <Button
               onClick={handleSavePassword}
               disabled={newPassword !== confirmPassword || newPassword.length < 6}
               className="cursor-pointer"
@@ -757,13 +757,13 @@ export function SettingsContent({ onShowFAQ }: SettingsContentProps) {
               <div className="grid gap-2">
                 <Label>Поточне зображення</Label>
                 <div className="flex items-center gap-4">
-                  <img 
-                    src={userImage} 
-                    alt="Current profile" 
+                  <img
+                    src={userImage}
+                    alt="Current profile"
                     className="w-20 h-20 rounded-full object-cover border border-[#4d4d4d]"
                   />
-                  <Button 
-                    variant="destructive" 
+                  <Button
+                    variant="destructive"
                     size="sm"
                     onClick={handleRemoveImage}
                     className="cursor-pointer"
@@ -775,8 +775,8 @@ export function SettingsContent({ onShowFAQ }: SettingsContentProps) {
             )}
             <div className="grid gap-2">
               <Label>Завантажити зображення</Label>
-              <Button 
-                variant="outline" 
+              <Button
+                variant="outline"
                 onClick={handleFileSelect}
                 className="w-full cursor-pointer"
               >
@@ -820,7 +820,7 @@ export function SettingsContent({ onShowFAQ }: SettingsContentProps) {
             <Button variant="outline" onClick={() => setDeleteAccountOpen(false)} className="cursor-pointer">
               Скасувати
             </Button>
-            <Button 
+            <Button
               variant="destructive"
               onClick={handleConfirmDelete}
               disabled={deleteEmailConfirm !== userEmail}

@@ -1,11 +1,11 @@
-import { 
-  CACHE_DURATIONS, 
-  CACHE_KEYS, 
-  HTTP_STATUS_CODES, 
-  ORDER_STATUS, 
+import {
+  CACHE_DURATIONS,
+  CACHE_KEYS,
+  HTTP_STATUS_CODES,
+  ORDER_STATUS,
   ORDER_STATUS_COLORS,
   ORDER_STATUS_TEXT,
-  CONTENT_TYPES 
+  CONTENT_TYPES
 } from '../constants';
 
 const config = {
@@ -14,7 +14,7 @@ const config = {
   appName: import.meta.env.VITE_APP_NAME || 'MuzaLife',
   isDevelopment: import.meta.env.DEV,
   isProduction: import.meta.env.PROD,
-  
+
   // Constants
   cacheDurations: CACHE_DURATIONS,
   cacheKeys: CACHE_KEYS,
@@ -23,19 +23,19 @@ const config = {
   orderStatusColors: ORDER_STATUS_COLORS,
   orderStatusText: ORDER_STATUS_TEXT,
   contentTypes: CONTENT_TYPES,
-  
-  
+
+
   // Default headers
   defaultHeaders: {
     'Content-Type': CONTENT_TYPES.JSON,
   },
-  
+
   // Feature flags
   features: {
     enableCache: true,
     enableOfflineMode: false,
   },
-  
+
   // API endpoints
   endpoints: {
     auth: {

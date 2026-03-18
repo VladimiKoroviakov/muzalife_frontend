@@ -1,6 +1,6 @@
 import { useState } from 'react';
-import imgFacebookLogo from "../../assets/images/Facebook-logo.png";
-import { useAuth } from "../../hooks/useAuth"; 
+import imgFacebookLogo from '../../assets/images/Facebook-logo.png';
+import { useAuth } from '../../hooks/useAuth';
 
 type FacebookLoginButtonProps = {
   isLoading?: boolean;
@@ -10,10 +10,10 @@ type FacebookLoginButtonProps = {
   onError?: (error: string) => void;
 };
 
-export function FacebookLoginButton({ 
-  isLoading, 
-  defaultText = "Продовжити з",
-  loadingText = "Вхід...",
+export function FacebookLoginButton({
+  isLoading,
+  defaultText = 'Продовжити з',
+  loadingText = 'Вхід...',
   onSuccess,
   onError
 }: FacebookLoginButtonProps) {
@@ -22,11 +22,11 @@ export function FacebookLoginButton({
 
   const handleFacebookLogin = async () => {
     setFacebookLoading(true);
-    
+
     try {
       // Initialize Facebook SDK
       await initFacebookSDK();
-      
+
       // Use Promise-based FB.login
       const response = await new Promise<any>((resolve, reject) => {
         FB.login((response) => {
@@ -35,22 +35,22 @@ export function FacebookLoginButton({
           } else {
             reject(new Error('Facebook login was cancelled or failed'));
           }
-        }, { 
+        }, {
           scope: 'email,public_profile',
           return_scopes: true
         });
       });
-      
+
       const accessToken = response.authResponse.accessToken;
       console.log(`AccessToken Facebook: ${accessToken}`);
-      
+
       if (accessToken) {
-        const userInfo = await getFacebookUserInfo(accessToken);
+        await getFacebookUserInfo(accessToken);
         await handleBackendLogin(accessToken);
       } else {
         throw new Error('No access token received from Facebook');
       }
-      
+
     } catch (error) {
       console.error('Facebook login error:', error);
       setFacebookLoading(false);
@@ -81,8 +81,8 @@ export function FacebookLoginButton({
 
   const handleBackendLogin = async (accessToken: string) => {
     try {
-      const { error } = await signInWithOAuth("facebook", accessToken);
-      
+      const { error } = await signInWithOAuth('facebook', accessToken);
+
       if (error) {
         onError?.(error);
       } else {
@@ -90,7 +90,7 @@ export function FacebookLoginButton({
       }
     } catch (error) {
       onError?.(
-        error instanceof Error ? error.message : "Backend login failed"
+        error instanceof Error ? error.message : 'Backend login failed'
       );
     } finally {
       setFacebookLoading(false);
@@ -109,16 +109,16 @@ export function FacebookLoginButton({
     >
       {/* Border overlay */}
       <div aria-hidden="true" className="absolute border border-[#b3b3b3] border-solid inset-0 pointer-events-none rounded-[16px]" />
-      
+
       {/* Logo */}
       <div className="relative shrink-0 size-[27px]" data-name="Facebook-Logo">
-        <img 
-          alt="Facebook" 
-          className="absolute inset-0 max-w-none object-50%-50% object-cover pointer-events-none size-full" 
-          src={imgFacebookLogo} 
+        <img
+          alt="Facebook"
+          className="absolute inset-0 max-w-none object-50%-50% object-cover pointer-events-none size-full"
+          src={imgFacebookLogo}
         />
       </div>
-      
+
       {/* Text */}
       <div className="flex flex-col justify-end leading-[0] relative shrink-0 text-[#0d0d0d] text-[0px] text-nowrap" style={{ fontVariationSettings: "'CTGR' 0, 'wdth' 100, 'wght' 400" }}>
         <p className="leading-[normal] whitespace-pre">
@@ -151,7 +151,7 @@ function initFacebookSDK(): Promise<void> {
         xfbml: true,
         version: 'v18.0'
       });
-      
+
       resolve();
     };
 
@@ -162,11 +162,11 @@ function initFacebookSDK(): Promise<void> {
       script.async = true;
       script.defer = true;
       script.crossOrigin = 'anonymous';
-      
+
       script.onerror = () => {
         reject(new Error('Failed to load Facebook SDK'));
       };
-      
+
       document.head.appendChild(script);
     } else {
       let attempts = 0;

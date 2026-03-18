@@ -1,4 +1,4 @@
-import svgPaths from "../ui/icons/svgIconPaths";
+import svgPaths from '../ui/icons/svgIconPaths';
 
 interface TabsProps {
   activeSection: string;
@@ -20,7 +20,7 @@ export function Tabs({ activeSection, onSectionChange }: TabsProps) {
       {tabs.map((tab) => {
         const isActive = activeSection === tab.id;
         const isHome = tab.id === 'main';
-        
+
         return (
           <div
             key={tab.id}
@@ -29,7 +29,7 @@ export function Tabs({ activeSection, onSectionChange }: TabsProps) {
             data-name="Tab"
           >
             <div className={`relative shrink-0 ${isHome ? 'size-[20px]' : 'size-[18px]'}`} data-name={`icon ${tab.icon}`}>
-              <div 
+              <div
                 className={`absolute ${
                 isHome ? 'inset-[12.5%_16.67%] mask-position-[-4px_-3px]' :
                 tab.icon === 'work_history' ? 'inset-[8.33%_4.17%_4.17%_8.33%] mask-position-[-2px]' :
@@ -41,14 +41,14 @@ export function Tabs({ activeSection, onSectionChange }: TabsProps) {
                 data-name={tab.icon}
               >
                 <svg className="block size-full" fill="none" preserveAspectRatio="none" viewBox={
-                isHome ? "0 0 14 15" :
-                tab.icon === 'work_history' ? "0 0 16 16" :
-                tab.icon === 'bookmarks' ? "0 0 12 15" :
-                tab.icon === 'contract_edit' ? "0 0 15 15" :
-                tab.icon === 'bar_chart' ? "0 0 12 12" :
-                "0 0 16 16"
+                isHome ? '0 0 14 15' :
+                tab.icon === 'work_history' ? '0 0 16 16' :
+                tab.icon === 'bookmarks' ? '0 0 12 15' :
+                tab.icon === 'contract_edit' ? '0 0 15 15' :
+                tab.icon === 'bar_chart' ? '0 0 12 12' :
+                '0 0 16 16'
                 }>
-                  <path 
+                  <path
                     d={
                     isHome ? svgPaths.p298cd00 :
                     tab.icon === 'work_history' ? svgPaths.p7e1c800 :
@@ -57,7 +57,7 @@ export function Tabs({ activeSection, onSectionChange }: TabsProps) {
                     tab.icon === 'bar_chart' ? svgPaths.p18e8cd30 :
                     svgPaths.p1fd0af80
                     }
-                    fill={isActive ? "var(--fill-0, #0D0D0D)" : "var(--fill-0, #4D4D4D)"}
+                    fill={isActive ? 'var(--fill-0, #0D0D0D)' : 'var(--fill-0, #4D4D4D)'}
                     id={tab.icon}
                   />
                 </svg>
