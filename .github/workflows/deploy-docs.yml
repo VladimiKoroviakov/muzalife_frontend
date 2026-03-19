@@ -60,6 +60,8 @@ jobs:
         run: |
           mkdir -p docs-site/typedoc
           cp -r docs/typedoc/* docs-site/typedoc/
+          # VitePress uses index.md as directory index, TypeDoc outputs README.md
+          cp docs-site/typedoc/README.md docs-site/typedoc/index.md
 
       - name: Install VitePress
         run: npm install --save-dev vitepress --legacy-peer-deps
