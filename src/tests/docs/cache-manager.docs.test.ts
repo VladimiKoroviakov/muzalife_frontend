@@ -8,7 +8,7 @@
  * @module tests/docs/cache-manager.docs
  */
 
-import { describe, it, expect, beforeEach, vi } from 'vitest';
+import { describe, it, expect, beforeEach } from 'vitest';
 import { CacheManager } from '../../utils/cache-manager';
 
 // ── Minimal localStorage mock ─────────────────────────────────────────────
@@ -43,7 +43,7 @@ Object.defineProperty(globalThis, 'localStorage', {
   writable: true,
 });
 
-beforeEach(() => localStorageMock.clear());
+beforeEach(() => (localStorageMock as any).clear());
 
 // ─────────────────────────────────────────────────────────────────────────────
 // setItem / getItem  — basic round-trip
