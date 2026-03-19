@@ -1,0 +1,26 @@
+{
+  "entryPoints": [
+    "src/types.ts",
+    "src/context/AuthContext.tsx",
+    "src/hooks/useAuth.ts",
+    "src/hooks/useFAQs.ts",
+    "src/hooks/useSingleProduct.ts",
+    "src/hooks/useVerificationCode.ts",
+    "src/services/api.ts",
+    "src/utils/cache-manager.ts",
+    "src/lib/utils.ts"
+  ],
+  "out": "docs/typedoc",
+  "name": "MuzaLife Frontend",
+  "readme": "README.md",
+  "includeVersion": true,
+  "excludePrivate": false,
+  "excludeProtected": false,
+  "excludeExternals": true,
+  "skipErrorChecking": true,
+  "plugin": ["typedoc-plugin-markdown"],
+  "theme": "default",
+  "navigationLinks": {
+    "GitHub": "https://github.com/VladimiKoroviakov/muzalife_frontend"
+  }
+}

@@ -1,3 +1,19 @@
+/**
+ * @fileoverview Global TypeScript types and interfaces for the MuzaLife frontend.
+ *
+ * This module is the single source of truth for all shared data shapes used
+ * across components, hooks, services, and pages.
+ *
+ * **Conventions:**
+ * - Types that mirror a backend entity (product, user, review, …) are named
+ *   after the entity.
+ * - Component prop types are suffixed with `Props` (e.g. `ProductCardProps`).
+ * - Hook return types are suffixed with the hook name (e.g. `UseSingleProduct`).
+ * - API response envelopes are suffixed with `ApiResponse`.
+ *
+ * @module types
+ */
+
 import { ReactNode } from 'react';
 
 // Product types

@@ -1,3 +1,7 @@
+**MuzaLife Frontend v0.1.0**
+
+***
+
 ![React](https://img.shields.io/badge/React-18-blue)
 ![TypeScript](https://img.shields.io/badge/TypeScript-5.x-blue)
 ![License](https://img.shields.io/badge/License-MIT-green)
@@ -10,7 +14,6 @@ Frontend application for MuzaLife - a modern web experience powered by React and
 
 This repository contains the source code for the client-side of the MuzaLife project. It provides UI, routing, styles, and integration with backend (APIs) used by the MuzaLife ecosystem.
 
-
 ## Features
 
 Built with:
@@ -19,7 +22,6 @@ Built with:
 - TypeScript for type safety
 - Tailwind and CSS modules for styling
 - Modular, scalable frontend architecture
-
 
 ## Getting Started
 
@@ -36,7 +38,6 @@ git clone https://github.com/VladimiKoroviakov/muzalife_frontend.git
 cd muzalife_frontend
 npm install
 ```
-
 
 ## Project Structure
 
@@ -58,7 +59,6 @@ src/
 ├── main.tsx         # Application entry point (ReactDOM render)
 ├── types.ts         # Global TypeScript types and interfaces
 ```
-
 
 ## Configuration
 
@@ -84,56 +84,6 @@ Run `npm i` to install the dependencies.
 
 Run `npm run dev` to start the development server.
 
-
-## Contributing
-
-## Documentation
-
-### Documentation standard
-
-All exported modules, hooks, services, context providers, and utility classes use **TSDoc** comments.  Every contributor must follow the same standard so the auto-generated reference stays accurate.
-
-**Minimum required tags for every exported symbol:**
-
-| Tag | Purpose |
-|---|---|
-| `@fileoverview` + `@module` | File-level description and module name (first comment in file) |
-| `@param name` | Each function / hook parameter |
-| `@returns` | Return value description |
-| `@example` | At least one usage example |
-
-**Document in the description body (not just tags):**
-- Why the hook / component / utility exists (architectural or business reason)
-- Component interaction patterns (e.g. which context it consumes)
-- Edge-case handling (e.g. why empty FAQ list is an error state)
-
-### Generating documentation
-
-```bash
-# Install dependencies (only needed once)
-npm install
-
-# Generate Markdown docs → docs/typedoc/
-npm run docs
-
-# Clean output and regenerate
-npm run docs:clean
-```
-
-### Linting docs quality
-
-```bash
-npm run lint
-```
-
-JSDoc-related warnings indicate missing documentation.  Fix all warnings before opening a Pull Request.
-
-### Detailed guide
-
-See [`docs/generate_docs.md`](./docs/generate_docs.md) for the full documentation guide including TSDoc examples.
-
----
-
 ## Contributing
 
 Contributions are welcome! Follow these steps:
@@ -145,18 +95,15 @@ Contributions are welcome! Follow these steps:
 
 Please make sure your code follows existing style conventions and includes relevant tests when applicable.
 
-
 ## Contact
 
 If you want to reach out:
 - GitHub: https://github.com/VladimiKoroviakov
 - Email: v.korovyakov@student.sumdu.edu.ua
 
-
 ## License
 
 This project is licensed under the MIT License - see the LICENSE file for details.
-
 
 ## Support
 

@@ -60,11 +60,14 @@
     "@types/react-router-dom": "^5.3.3",
     "@vitejs/plugin-react-swc": "^3.10.2",
     "eslint": "^9.39.4",
+    "eslint-plugin-jsdoc": "^62.8.0",
     "eslint-plugin-react": "^7.37.5",
     "eslint-plugin-react-hooks": "^7.0.1",
     "eslint-plugin-react-refresh": "^0.5.2",
     "husky": "^9.1.7",
     "lint-staged": "^16.4.0",
+    "typedoc": "^0.28.17",
+    "typedoc-plugin-markdown": "^4.11.0",
     "typescript": "^5.9.3",
     "typescript-eslint": "^8.57.1",
     "vite": "6.3.5"
@@ -75,6 +78,8 @@
     "lint": "eslint src/",
     "lint:fix": "eslint src/ --fix",
     "type-check": "tsc --noEmit",
+    "docs": "typedoc",
+    "docs:clean": "rm -rf docs/typedoc && typedoc",
     "check": "npm run lint && npm run type-check",
     "prepare": "husky"
   },

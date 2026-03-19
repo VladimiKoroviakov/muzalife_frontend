@@ -1,7 +1,46 @@
+/**
+ * @fileoverview Core authentication hook for MuzaLife Frontend.
+ *
+ * Contains the main stateful logic for managing authentication in the
+ * application.  It is consumed by {@link AuthProvider} and exposed
+ * application-wide through {@link useAuthContext}.
+ *
+ * **State management:** a single `authState` object holds `user`,
+ * `isLoading`, and `error`.  All mutation functions derive from
+ * `apiService` calls and update this state atomically.
+ *
+ * **Duplicate-request prevention:** two refs (`authCheckInProgress`,
+ * `authCheckCalled`) ensure `checkAuth` is never called twice on mount,
+ * which would double-count network requests in React StrictMode.
+ *
+ * @module hooks/useAuth
+ */
+
 import { useState, useEffect, useRef } from 'react';
 import { apiService } from '../services/api';
 import { AuthState, AuthUser } from '../types';
 
+/**
+ * Core authentication hook.
+ *
+ * Manages the full authentication lifecycle:
+ * - Reads the stored JWT from `localStorage` on mount and validates it
+ *   against `/api/users/profile`.
+ * - Exposes sign-in (email + OAuth), sign-up (two-step with OTP), and
+ *   sign-out actions.
+ * - Maps raw API user objects to the typed {@link AuthUser} shape.
+ *
+ * **Business logic:** the hook intentionally does not hard-redirect on auth
+ * failure — it just clears the user state.  Routing guards
+ * (`ProtectedRoute`, `PublicRoute`) are responsible for redirects.
+ *
+ * @returns The current auth state merged with action functions.
+ *
+ * @example
+ * // Used inside AuthProvider — don't call directly in components
+ * const auth = useAuth();
+ * return <AuthContext.Provider value={auth}>{children}</AuthContext.Provider>;
+ */
 export function useAuth() {
   const [authState, setAuthState] = useState<AuthState>({
     user: null,
