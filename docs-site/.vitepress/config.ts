@@ -8,6 +8,9 @@
 import { defineConfig } from 'vitepress';
 
 export default defineConfig({
+  // TypeDoc files are copied into dist after the build — skip dead-link check
+  ignoreDeadLinks: true,
+
   title: 'MuzaLife Frontend',
   description: 'Документація React SPA платформи MuzaLife',
   lang: 'uk',
