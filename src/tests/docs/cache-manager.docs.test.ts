@@ -12,16 +12,31 @@ import { describe, it, expect, beforeEach, vi } from 'vitest';
 import { CacheManager } from '../../utils/cache-manager';
 
 // ── Minimal localStorage mock ─────────────────────────────────────────────
+// Backed by a plain `store` record.  The outer Proxy makes `Object.keys()`
+// return the store's *data* keys (not the mock's method names), which is
+// required for `CacheManager.clearUserCache()` to work correctly in tests.
 const store: Record<string, string> = {};
 
-const localStorageMock = {
-  getItem:    (key: string) => store[key] ?? null,
-  setItem:    (key: string, value: string) => { store[key] = value; },
-  removeItem: (key: string) => { delete store[key]; },
-  get length() { return Object.keys(store).length; },
-  key:        (i: number) => Object.keys(store)[i] ?? null,
-  clear:      () => { Object.keys(store).forEach((k) => delete store[k]); },
-};
+const localStorageMock = new Proxy(
+  {
+    getItem:    (key: string): string | null => store[key] ?? null,
+    setItem:    (key: string, value: string): void => { store[key] = value; },
+    removeItem: (key: string): void => { delete store[key]; },
+    get length(): number { return Object.keys(store).length; },
+    key:        (i: number): string | null => Object.keys(store)[i] ?? null,
+    clear:      (): void => { Object.keys(store).forEach((k) => delete store[k]); },
+  },
+  {
+    // `Object.keys(localStorage)` in clearUserCache() must see store keys.
+    ownKeys: (): string[] => Object.keys(store),
+    getOwnPropertyDescriptor: (_t: object, k: string | symbol) => {
+      if (Object.prototype.hasOwnProperty.call(store, k)) {
+        return { enumerable: true, configurable: true, value: store[k as string] };
+      }
+      return undefined;
+    },
+  }
+);
 
 Object.defineProperty(globalThis, 'localStorage', {
   value: localStorageMock,
