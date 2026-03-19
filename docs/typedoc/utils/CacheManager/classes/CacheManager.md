@@ -6,7 +6,7 @@
 
 # Class: CacheManager
 
-Defined in: [utils/cache-manager.ts:32](https://github.com/VladimiKoroviakov/muzalife_frontend/blob/5cab5ef5face696086f2c86c863fd56b4f379878/src/utils/cache-manager.ts#L32)
+Defined in: [utils/cache-manager.ts:32](https://github.com/VladimiKoroviakov/muzalife_frontend/blob/9c0fec3f6979eba20064bba7a66f4e4dbf58c9ae/src/utils/cache-manager.ts#L32)
 
 Static utility class for `localStorage`-backed data caching.
 
@@ -39,7 +39,7 @@ if (CacheManager.isCacheValid('cachedProducts', 5 * 60 * 1000)) {
 
 > `static` **clearUserCache**(): `void`
 
-Defined in: [utils/cache-manager.ts:145](https://github.com/VladimiKoroviakov/muzalife_frontend/blob/5cab5ef5face696086f2c86c863fd56b4f379878/src/utils/cache-manager.ts#L145)
+Defined in: [utils/cache-manager.ts:145](https://github.com/VladimiKoroviakov/muzalife_frontend/blob/9c0fec3f6979eba20064bba7a66f4e4dbf58c9ae/src/utils/cache-manager.ts#L145)
 
 Removes all user-specific cache entries from `localStorage`.
 
@@ -67,7 +67,7 @@ CacheManager.clearUserCache();
 
 > `static` **getItem**\<`T`\>(`key`): `T` \| `null`
 
-Defined in: [utils/cache-manager.ts:66](https://github.com/VladimiKoroviakov/muzalife_frontend/blob/5cab5ef5face696086f2c86c863fd56b4f379878/src/utils/cache-manager.ts#L66)
+Defined in: [utils/cache-manager.ts:66](https://github.com/VladimiKoroviakov/muzalife_frontend/blob/9c0fec3f6979eba20064bba7a66f4e4dbf58c9ae/src/utils/cache-manager.ts#L66)
 
 Reads and deserialises the value stored under `key`.
 
@@ -108,7 +108,7 @@ if (profile) { ... }
 
 > `static` **isCacheValid**(`key`, `duration`): `boolean`
 
-Defined in: [utils/cache-manager.ts:125](https://github.com/VladimiKoroviakov/muzalife_frontend/blob/5cab5ef5face696086f2c86c863fd56b4f379878/src/utils/cache-manager.ts#L125)
+Defined in: [utils/cache-manager.ts:125](https://github.com/VladimiKoroviakov/muzalife_frontend/blob/9c0fec3f6979eba20064bba7a66f4e4dbf58c9ae/src/utils/cache-manager.ts#L125)
 
 Returns `true` if the cached entry under `key` was written within the
 last `duration` milliseconds.
@@ -151,7 +151,7 @@ if (CacheManager.isCacheValid('cachedProducts', 5 * 60 * 1000)) {
 
 > `static` **removeItem**(`key`): `void`
 
-Defined in: [utils/cache-manager.ts:84](https://github.com/VladimiKoroviakov/muzalife_frontend/blob/5cab5ef5face696086f2c86c863fd56b4f379878/src/utils/cache-manager.ts#L84)
+Defined in: [utils/cache-manager.ts:84](https://github.com/VladimiKoroviakov/muzalife_frontend/blob/9c0fec3f6979eba20064bba7a66f4e4dbf58c9ae/src/utils/cache-manager.ts#L84)
 
 Removes the entry stored under `key` from `localStorage`.
 
@@ -179,7 +179,7 @@ CacheManager.removeItem('userProfile');
 
 > `static` **setItem**\<`T`\>(`key`, `value`): `void`
 
-Defined in: [utils/cache-manager.ts:45](https://github.com/VladimiKoroviakov/muzalife_frontend/blob/5cab5ef5face696086f2c86c863fd56b4f379878/src/utils/cache-manager.ts#L45)
+Defined in: [utils/cache-manager.ts:45](https://github.com/VladimiKoroviakov/muzalife_frontend/blob/9c0fec3f6979eba20064bba7a66f4e4dbf58c9ae/src/utils/cache-manager.ts#L45)
 
 Serialises `value` to JSON and writes it to `localStorage` under `key`.
 
@@ -223,7 +223,7 @@ CacheManager.setItem('userProfile', { id: 1, name: 'Alice' });
 
 > `static` **setWithTimestamp**(`key`, `value`): `void`
 
-Defined in: [utils/cache-manager.ts:103](https://github.com/VladimiKoroviakov/muzalife_frontend/blob/5cab5ef5face696086f2c86c863fd56b4f379878/src/utils/cache-manager.ts#L103)
+Defined in: [utils/cache-manager.ts:103](https://github.com/VladimiKoroviakov/muzalife_frontend/blob/9c0fec3f6979eba20064bba7a66f4e4dbf58c9ae/src/utils/cache-manager.ts#L103)
 
 Stores `value` under `key` and records the current timestamp under
 `<key>_timestamp` so that freshness can be checked later with

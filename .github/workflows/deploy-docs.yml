@@ -1,12 +1,15 @@
 # .github/workflows/deploy-docs.yml
 #
-# Builds the MuzaLife Frontend documentation (VitePress + TypeDoc).
+# Builds and deploys the MuzaLife Frontend documentation to GitHub Pages.
 #
 # What it does:
 #   1. Run living-documentation tests (npm run test:docs)
 #   2. Generate TypeDoc Markdown (npm run docs)
 #   3. Build a VitePress site from the generated Markdown + docs-site/
-#   4. Upload built site as an artifact (for manual review)
+#   4. Copy TypeDoc output into the built site as /typedoc/
+#   5. Deploy to GitHub Pages
+#
+# Live at: https://vladimikoroviakov.github.io/muzalife_frontend/
 
 name: Deploy Docs to GitHub Pages
 
@@ -17,6 +20,8 @@ on:
 
 permissions:
   contents: read
+  pages: write
+  id-token: write
 
 concurrency:
   group: pages
@@ -64,9 +69,19 @@ jobs:
           mkdir -p docs-site/.vitepress/dist/typedoc
           cp -r docs/typedoc/* docs-site/.vitepress/dist/typedoc/
 
-      - name: Upload built docs artifact
-        uses: actions/upload-artifact@v4
+      - name: Upload Pages artifact
+        uses: actions/upload-pages-artifact@v3
         with:
-          name: docs-site
           path: docs-site/.vitepress/dist
-          retention-days: 7
+
+  deploy:
+    name: Deploy to GitHub Pages
+    needs: build
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - name: Deploy to GitHub Pages
+        id: deployment
+        uses: actions/deploy-pages@v4

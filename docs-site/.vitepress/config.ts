@@ -2,7 +2,7 @@
  * VitePress configuration for the MuzaLife Frontend documentation site.
  *
  * Deployed to GitHub Pages via .github/workflows/deploy-docs.yml.
- * Live at: https://<org>.github.io/muzalife-frontend/
+ * Live at: https://vladimikoroviakov.github.io/muzalife_frontend/
  */
 
 import { defineConfig } from 'vitepress';
@@ -11,7 +11,7 @@ export default defineConfig({
   title: 'MuzaLife Frontend',
   description: 'Документація React SPA платформи MuzaLife',
   lang: 'uk',
-  base: '/muzalife-frontend/',
+  base: '/muzalife_frontend/',
 
   head: [
     ['meta', { name: 'theme-color', content: '#646cff' }],
@@ -66,7 +66,7 @@ export default defineConfig({
     ],
 
     socialLinks: [
-      { icon: 'github', link: 'https://github.com/your-org/muzalife-frontend' },
+      { icon: 'github', link: 'https://github.com/VladimiKoroviakov/muzalife_frontend' },
     ],
 
     footer: {

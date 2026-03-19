@@ -6,7 +6,7 @@
 
 # Interface: ErrorStateProps
 
-Defined in: [types.ts:149](https://github.com/VladimiKoroviakov/muzalife_frontend/blob/5cab5ef5face696086f2c86c863fd56b4f379878/src/types.ts#L149)
+Defined in: [types.ts:149](https://github.com/VladimiKoroviakov/muzalife_frontend/blob/9c0fec3f6979eba20064bba7a66f4e4dbf58c9ae/src/types.ts#L149)
 
 ## Properties
 
@@ -14,4 +14,4 @@ Defined in: [types.ts:149](https://github.com/VladimiKoroviakov/muzalife_fronten
 
 > **error**: `string`
 
-Defined in: [types.ts:150](https://github.com/VladimiKoroviakov/muzalife_frontend/blob/5cab5ef5face696086f2c86c863fd56b4f379878/src/types.ts#L150)
+Defined in: [types.ts:150](https://github.com/VladimiKoroviakov/muzalife_frontend/blob/9c0fec3f6979eba20064bba7a66f4e4dbf58c9ae/src/types.ts#L150)

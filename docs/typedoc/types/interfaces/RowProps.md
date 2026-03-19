@@ -6,7 +6,7 @@
 
 # Interface: RowProps
 
-Defined in: [types.ts:264](https://github.com/VladimiKoroviakov/muzalife_frontend/blob/5cab5ef5face696086f2c86c863fd56b4f379878/src/types.ts#L264)
+Defined in: [types.ts:264](https://github.com/VladimiKoroviakov/muzalife_frontend/blob/9c0fec3f6979eba20064bba7a66f4e4dbf58c9ae/src/types.ts#L264)
 
 ## Properties
 
@@ -14,7 +14,7 @@ Defined in: [types.ts:264](https://github.com/VladimiKoroviakov/muzalife_fronten
 
 > **hasSelection**: `boolean`
 
-Defined in: [types.ts:268](https://github.com/VladimiKoroviakov/muzalife_frontend/blob/5cab5ef5face696086f2c86c863fd56b4f379878/src/types.ts#L268)
+Defined in: [types.ts:268](https://github.com/VladimiKoroviakov/muzalife_frontend/blob/9c0fec3f6979eba20064bba7a66f4e4dbf58c9ae/src/types.ts#L268)
 
 ***
 
@@ -22,7 +22,7 @@ Defined in: [types.ts:268](https://github.com/VladimiKoroviakov/muzalife_fronten
 
 > **onVote**: () => `void`
 
-Defined in: [types.ts:267](https://github.com/VladimiKoroviakov/muzalife_frontend/blob/5cab5ef5face696086f2c86c863fd56b4f379878/src/types.ts#L267)
+Defined in: [types.ts:267](https://github.com/VladimiKoroviakov/muzalife_frontend/blob/9c0fec3f6979eba20064bba7a66f4e4dbf58c9ae/src/types.ts#L267)
 
 #### Returns
 
@@ -34,7 +34,7 @@ Defined in: [types.ts:267](https://github.com/VladimiKoroviakov/muzalife_fronten
 
 > **voteCount**: `number`
 
-Defined in: [types.ts:265](https://github.com/VladimiKoroviakov/muzalife_frontend/blob/5cab5ef5face696086f2c86c863fd56b4f379878/src/types.ts#L265)
+Defined in: [types.ts:265](https://github.com/VladimiKoroviakov/muzalife_frontend/blob/9c0fec3f6979eba20064bba7a66f4e4dbf58c9ae/src/types.ts#L265)
 
 ***
 
@@ -42,4 +42,4 @@ Defined in: [types.ts:265](https://github.com/VladimiKoroviakov/muzalife_fronten
 
 > **voters**: [`VoterData`](VoterData.md)[]
 
-Defined in: [types.ts:266](https://github.com/VladimiKoroviakov/muzalife_frontend/blob/5cab5ef5face696086f2c86c863fd56b4f379878/src/types.ts#L266)
+Defined in: [types.ts:266](https://github.com/VladimiKoroviakov/muzalife_frontend/blob/9c0fec3f6979eba20064bba7a66f4e4dbf58c9ae/src/types.ts#L266)

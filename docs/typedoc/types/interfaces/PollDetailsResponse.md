@@ -6,7 +6,7 @@
 
 # Interface: PollDetailsResponse
 
-Defined in: [types.ts:236](https://github.com/VladimiKoroviakov/muzalife_frontend/blob/5cab5ef5face696086f2c86c863fd56b4f379878/src/types.ts#L236)
+Defined in: [types.ts:236](https://github.com/VladimiKoroviakov/muzalife_frontend/blob/9c0fec3f6979eba20064bba7a66f4e4dbf58c9ae/src/types.ts#L236)
 
 ## Properties
 
@@ -14,7 +14,7 @@ Defined in: [types.ts:236](https://github.com/VladimiKoroviakov/muzalife_fronten
 
 > `optional` **error?**: `string`
 
-Defined in: [types.ts:239](https://github.com/VladimiKoroviakov/muzalife_frontend/blob/5cab5ef5face696086f2c86c863fd56b4f379878/src/types.ts#L239)
+Defined in: [types.ts:239](https://github.com/VladimiKoroviakov/muzalife_frontend/blob/9c0fec3f6979eba20064bba7a66f4e4dbf58c9ae/src/types.ts#L239)
 
 ***
 
@@ -22,7 +22,7 @@ Defined in: [types.ts:239](https://github.com/VladimiKoroviakov/muzalife_fronten
 
 > **poll**: [`ApiPoll`](ApiPoll.md)
 
-Defined in: [types.ts:238](https://github.com/VladimiKoroviakov/muzalife_frontend/blob/5cab5ef5face696086f2c86c863fd56b4f379878/src/types.ts#L238)
+Defined in: [types.ts:238](https://github.com/VladimiKoroviakov/muzalife_frontend/blob/9c0fec3f6979eba20064bba7a66f4e4dbf58c9ae/src/types.ts#L238)
 
 ***
 
@@ -30,4 +30,4 @@ Defined in: [types.ts:238](https://github.com/VladimiKoroviakov/muzalife_fronten
 
 > **success**: `boolean`
 
-Defined in: [types.ts:237](https://github.com/VladimiKoroviakov/muzalife_frontend/blob/5cab5ef5face696086f2c86c863fd56b4f379878/src/types.ts#L237)
+Defined in: [types.ts:237](https://github.com/VladimiKoroviakov/muzalife_frontend/blob/9c0fec3f6979eba20064bba7a66f4e4dbf58c9ae/src/types.ts#L237)
