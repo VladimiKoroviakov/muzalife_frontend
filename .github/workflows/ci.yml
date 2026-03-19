@@ -1,0 +1,93 @@
+# .github/workflows/ci.yml
+#
+# Continuous Integration pipeline for MuzaLife Frontend.
+# Runs on every push and pull request to main.
+#
+# Pipeline stages:
+#   lint       → ESLint + TypeScript type-check
+#   test       → Vitest living-documentation tests
+#   docs       → TypeDoc generation
+#   build      → Vite production build
+
+name: CI
+
+on:
+  push:
+    branches: [main, develop]
+  pull_request:
+    branches: [main]
+
+jobs:
+  # ── Stage 1: Lint + Type-check ────────────────────────────────────────────
+  lint:
+    name: Lint & Type-check
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: 'npm'
+      - run: npm ci --legacy-peer-deps
+      - name: ESLint
+        run: npm run lint
+      - name: TypeScript type-check
+        run: npm run type-check
+
+  # ── Stage 2: Living-documentation tests ───────────────────────────────────
+  test:
+    name: Tests
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: 'npm'
+      - run: npm ci --legacy-peer-deps
+      - name: Run living-documentation tests
+        run: npm run test:docs
+      - name: Upload test results
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: test-results
+          path: docs/test-results/
+
+  # ── Stage 3: Documentation generation ────────────────────────────────────
+  docs:
+    name: Build Docs
+    runs-on: ubuntu-latest
+    needs: [lint, test]
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: 'npm'
+      - run: npm ci --legacy-peer-deps
+      - name: Generate TypeDoc
+        run: npm run docs
+      - name: Create documentation archive
+        run: npm run docs:archive
+      - name: Upload docs artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: typedoc-markdown
+          path: docs/typedoc/
+          retention-days: 30
+
+  # ── Stage 4: Vite production build ────────────────────────────────────────
+  build:
+    name: Production Build
+    runs-on: ubuntu-latest
+    needs: [lint]
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: 'npm'
+      - run: npm ci --legacy-peer-deps
+      - name: Vite build
+        run: npm run build

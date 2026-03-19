@@ -8,9 +8,9 @@ import { SavedScenariosContentProps } from '../../types';
 
 export function SavedScenariosContent({
   onBack: _onBack,
-  addToCart: _addToCart,
+  addToCart,
   products = [],
-  onBookmarkedProductsChange: _onBookmarkedProductsChange
+  onBookmarkedProductsChange
 }: SavedScenariosContentProps) {
   const [itemToRemove, setItemToRemove] = useState<number | null>(null);
   const [savedProductIds, setSavedProductIds] = useState<number[]>([]);

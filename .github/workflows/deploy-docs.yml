@@ -1,0 +1,86 @@
+# .github/workflows/deploy-docs.yml
+#
+# Builds and deploys the MuzaLife Frontend documentation to GitHub Pages.
+#
+# What it does:
+#   1. Run living-documentation tests (npm run test:docs)
+#   2. Generate TypeDoc Markdown (npm run docs)
+#   3. Build a VitePress site from the generated Markdown + docs-site/
+#   4. Deploy to GitHub Pages
+#
+# Deployed URL:  https://<owner>.github.io/muzalife-frontend/
+
+name: Deploy Docs to GitHub Pages
+
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+concurrency:
+  group: pages
+  cancel-in-progress: true
+
+jobs:
+  build:
+    name: Build Documentation
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Set up Node.js 20
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: 'npm'
+
+      - name: Install dependencies
+        run: npm ci --legacy-peer-deps
+
+      - name: Type check
+        run: npm run type-check
+
+      - name: Run living-documentation tests
+        run: npm run test:docs
+
+      - name: Generate TypeDoc
+        run: npm run docs
+
+      - name: Create docs archive
+        run: npm run docs:archive
+
+      - name: Install VitePress
+        run: npm install --save-dev vitepress --legacy-peer-deps
+
+      - name: Build VitePress site
+        run: npx vitepress build docs-site
+        env:
+          NODE_ENV: production
+
+      - name: Copy TypeDoc into VitePress output
+        run: |
+          mkdir -p docs-site/.vitepress/dist/typedoc
+          cp -r docs/typedoc/* docs-site/.vitepress/dist/typedoc/
+
+      - name: Upload Pages artifact
+        uses: actions/upload-pages-artifact@v3
+        with:
+          path: docs-site/.vitepress/dist
+
+  deploy:
+    name: Deploy to GitHub Pages
+    needs: build
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - name: Deploy to GitHub Pages
+        id: deployment
+        uses: actions/deploy-pages@v4

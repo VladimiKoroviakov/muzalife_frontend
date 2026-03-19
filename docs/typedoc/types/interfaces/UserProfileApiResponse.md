@@ -6,7 +6,7 @@
 
 # Interface: UserProfileApiResponse
 
-Defined in: [types.ts:287](https://github.com/VladimiKoroviakov/muzalife_frontend/blob/5eabe4507b7ea8311ed8dd2ccce33cd1be6a2052/src/types.ts#L287)
+Defined in: [types.ts:287](https://github.com/VladimiKoroviakov/muzalife_frontend/blob/821ccbf9db79ead771a747dfddddf23ce92a666e/src/types.ts#L287)
 
 ## Properties
 
@@ -14,7 +14,7 @@ Defined in: [types.ts:287](https://github.com/VladimiKoroviakov/muzalife_fronten
 
 > **user**: `object`
 
-Defined in: [types.ts:288](https://github.com/VladimiKoroviakov/muzalife_frontend/blob/5eabe4507b7ea8311ed8dd2ccce33cd1be6a2052/src/types.ts#L288)
+Defined in: [types.ts:288](https://github.com/VladimiKoroviakov/muzalife_frontend/blob/821ccbf9db79ead771a747dfddddf23ce92a666e/src/types.ts#L288)
 
 #### authProvider
 

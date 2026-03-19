@@ -86,6 +86,55 @@ Run `npm run dev` to start the development server.
 
 ## Contributing
 
+## Documentation
+
+### Documentation standard
+
+All exported modules, hooks, services, context providers, and utility classes use **TSDoc** comments.  Every contributor must follow the same standard so the auto-generated reference stays accurate.
+
+**Minimum required tags for every exported symbol:**
+
+| Tag | Purpose |
+|---|---|
+| `@fileoverview` + `@module` | File-level description and module name (first comment in file) |
+| `@param name` | Each function / hook parameter |
+| `@returns` | Return value description |
+| `@example` | At least one usage example |
+
+**Document in the description body (not just tags):**
+- Why the hook / component / utility exists (architectural or business reason)
+- Component interaction patterns (e.g. which context it consumes)
+- Edge-case handling (e.g. why empty FAQ list is an error state)
+
+### Generating documentation
+
+```bash
+# Install dependencies (only needed once)
+npm install
+
+# Generate Markdown docs → docs/typedoc/
+npm run docs
+
+# Clean output and regenerate
+npm run docs:clean
+```
+
+### Linting docs quality
+
+```bash
+npm run lint
+```
+
+JSDoc-related warnings indicate missing documentation.  Fix all warnings before opening a Pull Request.
+
+### Detailed guide
+
+See [`docs/generate_docs.md`](_media/generate_docs.md) for the full documentation guide including TSDoc examples.
+
+---
+
+## Contributing
+
 Contributions are welcome! Follow these steps:
 1.	Fork it
 2.	Create your feature branch (git checkout -b feature/your-feature)

@@ -8,7 +8,7 @@
 
 > **ProductCardProps** = `object`
 
-Defined in: [types.ts:72](https://github.com/VladimiKoroviakov/muzalife_frontend/blob/5eabe4507b7ea8311ed8dd2ccce33cd1be6a2052/src/types.ts#L72)
+Defined in: [types.ts:72](https://github.com/VladimiKoroviakov/muzalife_frontend/blob/821ccbf9db79ead771a747dfddddf23ce92a666e/src/types.ts#L72)
 
 ## Properties
 
@@ -16,7 +16,7 @@ Defined in: [types.ts:72](https://github.com/VladimiKoroviakov/muzalife_frontend
 
 > `optional` **badgeColor?**: `string`
 
-Defined in: [types.ts:79](https://github.com/VladimiKoroviakov/muzalife_frontend/blob/5eabe4507b7ea8311ed8dd2ccce33cd1be6a2052/src/types.ts#L79)
+Defined in: [types.ts:79](https://github.com/VladimiKoroviakov/muzalife_frontend/blob/821ccbf9db79ead771a747dfddddf23ce92a666e/src/types.ts#L79)
 
 ***
 
@@ -24,7 +24,7 @@ Defined in: [types.ts:79](https://github.com/VladimiKoroviakov/muzalife_frontend
 
 > **badgeText**: `string`
 
-Defined in: [types.ts:78](https://github.com/VladimiKoroviakov/muzalife_frontend/blob/5eabe4507b7ea8311ed8dd2ccce33cd1be6a2052/src/types.ts#L78)
+Defined in: [types.ts:78](https://github.com/VladimiKoroviakov/muzalife_frontend/blob/821ccbf9db79ead771a747dfddddf23ce92a666e/src/types.ts#L78)
 
 ***
 
@@ -32,7 +32,7 @@ Defined in: [types.ts:78](https://github.com/VladimiKoroviakov/muzalife_frontend
 
 > **id**: `number`
 
-Defined in: [types.ts:73](https://github.com/VladimiKoroviakov/muzalife_frontend/blob/5eabe4507b7ea8311ed8dd2ccce33cd1be6a2052/src/types.ts#L73)
+Defined in: [types.ts:73](https://github.com/VladimiKoroviakov/muzalife_frontend/blob/821ccbf9db79ead771a747dfddddf23ce92a666e/src/types.ts#L73)
 
 ***
 
@@ -40,7 +40,7 @@ Defined in: [types.ts:73](https://github.com/VladimiKoroviakov/muzalife_frontend
 
 > **image**: `string`
 
-Defined in: [types.ts:77](https://github.com/VladimiKoroviakov/muzalife_frontend/blob/5eabe4507b7ea8311ed8dd2ccce33cd1be6a2052/src/types.ts#L77)
+Defined in: [types.ts:77](https://github.com/VladimiKoroviakov/muzalife_frontend/blob/821ccbf9db79ead771a747dfddddf23ce92a666e/src/types.ts#L77)
 
 ***
 
@@ -48,7 +48,7 @@ Defined in: [types.ts:77](https://github.com/VladimiKoroviakov/muzalife_frontend
 
 > `optional` **isBookmarked?**: `boolean`
 
-Defined in: [types.ts:81](https://github.com/VladimiKoroviakov/muzalife_frontend/blob/5eabe4507b7ea8311ed8dd2ccce33cd1be6a2052/src/types.ts#L81)
+Defined in: [types.ts:81](https://github.com/VladimiKoroviakov/muzalife_frontend/blob/821ccbf9db79ead771a747dfddddf23ce92a666e/src/types.ts#L81)
 
 ***
 
@@ -56,7 +56,7 @@ Defined in: [types.ts:81](https://github.com/VladimiKoroviakov/muzalife_frontend
 
 > `optional` **isInCart?**: `boolean`
 
-Defined in: [types.ts:80](https://github.com/VladimiKoroviakov/muzalife_frontend/blob/5eabe4507b7ea8311ed8dd2ccce33cd1be6a2052/src/types.ts#L80)
+Defined in: [types.ts:80](https://github.com/VladimiKoroviakov/muzalife_frontend/blob/821ccbf9db79ead771a747dfddddf23ce92a666e/src/types.ts#L80)
 
 ***
 
@@ -64,7 +64,7 @@ Defined in: [types.ts:80](https://github.com/VladimiKoroviakov/muzalife_frontend
 
 > `optional` **onBookmarkClick?**: () => `void`
 
-Defined in: [types.ts:88](https://github.com/VladimiKoroviakov/muzalife_frontend/blob/5eabe4507b7ea8311ed8dd2ccce33cd1be6a2052/src/types.ts#L88)
+Defined in: [types.ts:88](https://github.com/VladimiKoroviakov/muzalife_frontend/blob/821ccbf9db79ead771a747dfddddf23ce92a666e/src/types.ts#L88)
 
 #### Returns
 
@@ -76,7 +76,7 @@ Defined in: [types.ts:88](https://github.com/VladimiKoroviakov/muzalife_frontend
 
 > `optional` **onCartClick?**: () => `void`
 
-Defined in: [types.ts:87](https://github.com/VladimiKoroviakov/muzalife_frontend/blob/5eabe4507b7ea8311ed8dd2ccce33cd1be6a2052/src/types.ts#L87)
+Defined in: [types.ts:87](https://github.com/VladimiKoroviakov/muzalife_frontend/blob/821ccbf9db79ead771a747dfddddf23ce92a666e/src/types.ts#L87)
 
 #### Returns
 
@@ -88,7 +88,7 @@ Defined in: [types.ts:87](https://github.com/VladimiKoroviakov/muzalife_frontend
 
 > `optional` **onClick?**: () => `void`
 
-Defined in: [types.ts:86](https://github.com/VladimiKoroviakov/muzalife_frontend/blob/5eabe4507b7ea8311ed8dd2ccce33cd1be6a2052/src/types.ts#L86)
+Defined in: [types.ts:86](https://github.com/VladimiKoroviakov/muzalife_frontend/blob/821ccbf9db79ead771a747dfddddf23ce92a666e/src/types.ts#L86)
 
 #### Returns
 
@@ -100,7 +100,7 @@ Defined in: [types.ts:86](https://github.com/VladimiKoroviakov/muzalife_frontend
 
 > `optional` **onDeleteClick?**: () => `void`
 
-Defined in: [types.ts:89](https://github.com/VladimiKoroviakov/muzalife_frontend/blob/5eabe4507b7ea8311ed8dd2ccce33cd1be6a2052/src/types.ts#L89)
+Defined in: [types.ts:89](https://github.com/VladimiKoroviakov/muzalife_frontend/blob/821ccbf9db79ead771a747dfddddf23ce92a666e/src/types.ts#L89)
 
 #### Returns
 
@@ -112,7 +112,7 @@ Defined in: [types.ts:89](https://github.com/VladimiKoroviakov/muzalife_frontend
 
 > **price**: `number`
 
-Defined in: [types.ts:75](https://github.com/VladimiKoroviakov/muzalife_frontend/blob/5eabe4507b7ea8311ed8dd2ccce33cd1be6a2052/src/types.ts#L75)
+Defined in: [types.ts:75](https://github.com/VladimiKoroviakov/muzalife_frontend/blob/821ccbf9db79ead771a747dfddddf23ce92a666e/src/types.ts#L75)
 
 ***
 
@@ -120,7 +120,7 @@ Defined in: [types.ts:75](https://github.com/VladimiKoroviakov/muzalife_frontend
 
 > **rating**: `number`
 
-Defined in: [types.ts:76](https://github.com/VladimiKoroviakov/muzalife_frontend/blob/5eabe4507b7ea8311ed8dd2ccce33cd1be6a2052/src/types.ts#L76)
+Defined in: [types.ts:76](https://github.com/VladimiKoroviakov/muzalife_frontend/blob/821ccbf9db79ead771a747dfddddf23ce92a666e/src/types.ts#L76)
 
 ***
 
@@ -128,7 +128,7 @@ Defined in: [types.ts:76](https://github.com/VladimiKoroviakov/muzalife_frontend
 
 > `optional` **showBookmark?**: `boolean`
 
-Defined in: [types.ts:82](https://github.com/VladimiKoroviakov/muzalife_frontend/blob/5eabe4507b7ea8311ed8dd2ccce33cd1be6a2052/src/types.ts#L82)
+Defined in: [types.ts:82](https://github.com/VladimiKoroviakov/muzalife_frontend/blob/821ccbf9db79ead771a747dfddddf23ce92a666e/src/types.ts#L82)
 
 ***
 
@@ -136,7 +136,7 @@ Defined in: [types.ts:82](https://github.com/VladimiKoroviakov/muzalife_frontend
 
 > `optional` **showDelete?**: `boolean`
 
-Defined in: [types.ts:83](https://github.com/VladimiKoroviakov/muzalife_frontend/blob/5eabe4507b7ea8311ed8dd2ccce33cd1be6a2052/src/types.ts#L83)
+Defined in: [types.ts:83](https://github.com/VladimiKoroviakov/muzalife_frontend/blob/821ccbf9db79ead771a747dfddddf23ce92a666e/src/types.ts#L83)
 
 ***
 
@@ -144,4 +144,4 @@ Defined in: [types.ts:83](https://github.com/VladimiKoroviakov/muzalife_frontend
 
 > **title**: `string`
 
-Defined in: [types.ts:74](https://github.com/VladimiKoroviakov/muzalife_frontend/blob/5eabe4507b7ea8311ed8dd2ccce33cd1be6a2052/src/types.ts#L74)
+Defined in: [types.ts:74](https://github.com/VladimiKoroviakov/muzalife_frontend/blob/821ccbf9db79ead771a747dfddddf23ce92a666e/src/types.ts#L74)

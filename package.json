@@ -59,6 +59,7 @@
     "@types/node": "^20.19.26",
     "@types/react-router-dom": "^5.3.3",
     "@vitejs/plugin-react-swc": "^3.10.2",
+    "@vitest/coverage-v8": "^4.1.0",
     "eslint": "^9.39.4",
     "eslint-plugin-jsdoc": "^62.8.0",
     "eslint-plugin-react": "^7.37.5",
@@ -70,17 +71,29 @@
     "typedoc-plugin-markdown": "^4.11.0",
     "typescript": "^5.9.3",
     "typescript-eslint": "^8.57.1",
-    "vite": "6.3.5"
+    "vite": "6.3.5",
+    "vitest": "^4.1.0"
   },
   "scripts": {
     "dev": "vite",
     "build": "vite build",
     "lint": "eslint src/",
     "lint:fix": "eslint src/ --fix",
+    "lint:docs": "eslint src/ --rule 'jsdoc/require-jsdoc: warn'",
     "type-check": "tsc --noEmit",
+
+    "test": "vitest run",
+    "test:docs": "vitest run src/tests/docs/",
+    "test:watch": "vitest",
+    "test:coverage": "vitest run --coverage",
+
     "docs": "typedoc",
     "docs:clean": "rm -rf docs/typedoc && typedoc",
-    "check": "npm run lint && npm run type-check",
+    "docs:archive": "zip -r /tmp/typedoc_out.zip docs/typedoc/ && cp /tmp/typedoc_out.zip docs/typedoc.zip && echo 'Archive: docs/typedoc.zip'",
+    "docs:site": "vitepress dev docs-site",
+    "docs:site:build": "vitepress build docs-site",
+
+    "check": "npm run lint && npm run type-check && npm run test:docs",
     "prepare": "husky"
   },
   "lint-staged": {
