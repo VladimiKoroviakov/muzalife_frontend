@@ -6,7 +6,7 @@
 
 # Interface: PollsResponse
 
-Defined in: [types.ts:224](https://github.com/VladimiKoroviakov/muzalife_frontend/blob/821ccbf9db79ead771a747dfddddf23ce92a666e/src/types.ts#L224)
+Defined in: [types.ts:224](https://github.com/VladimiKoroviakov/muzalife_frontend/blob/88c52f0512df1b7458f81e89c6855f0efb418e77/src/types.ts#L224)
 
 ## Properties
 
@@ -14,4 +14,4 @@ Defined in: [types.ts:224](https://github.com/VladimiKoroviakov/muzalife_fronten
 
 > **polls**: [`ApiPoll`](ApiPoll.md)[]
 
-Defined in: [types.ts:225](https://github.com/VladimiKoroviakov/muzalife_frontend/blob/821ccbf9db79ead771a747dfddddf23ce92a666e/src/types.ts#L225)
+Defined in: [types.ts:225](https://github.com/VladimiKoroviakov/muzalife_frontend/blob/88c52f0512df1b7458f81e89c6855f0efb418e77/src/types.ts#L225)

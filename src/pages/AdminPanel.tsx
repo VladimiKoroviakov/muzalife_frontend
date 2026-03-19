@@ -56,7 +56,7 @@ export default function AdminPanel({
     };
 
     loadProducts();
-  }, [products]);
+  }, [_products]);
 
   useEffect(() => {
     const fetchProfile = async () => {
@@ -81,7 +81,8 @@ export default function AdminPanel({
           }
         }
 
-        const response = await apiService.getProfile();
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        const response: any = await apiService.getProfile();
 
         // Handle different response formats
         let profileData = null;

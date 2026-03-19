@@ -80,7 +80,7 @@
     "lint": "eslint src/",
     "lint:fix": "eslint src/ --fix",
     "lint:docs": "eslint src/ --rule 'jsdoc/require-jsdoc: warn'",
-    "type-check": "tsc --noEmit",
+    "type-check": "tsc --noEmit -p tsconfig.check.json",
 
     "test": "vitest run",
     "test:docs": "vitest run src/tests/docs/",

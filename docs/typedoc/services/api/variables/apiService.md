@@ -8,4 +8,4 @@
 
 > `const` **apiService**: `ApiService`
 
-Defined in: [services/api.ts:788](https://github.com/VladimiKoroviakov/muzalife_frontend/blob/821ccbf9db79ead771a747dfddddf23ce92a666e/src/services/api.ts#L788)
+Defined in: [services/api.ts:788](https://github.com/VladimiKoroviakov/muzalife_frontend/blob/88c52f0512df1b7458f81e89c6855f0efb418e77/src/services/api.ts#L788)

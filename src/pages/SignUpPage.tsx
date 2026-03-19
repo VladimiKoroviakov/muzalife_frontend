@@ -330,7 +330,7 @@ export default function SignUpPage() {
           handleSignUpSuccess();
         }}
         onResend={() =>
-          apiService.resendVerificationCode(pendingRegistration.email)
+          apiService.resendVerificationCode(pendingRegistration.email).then(() => undefined)
         }
         onClose={handleModalClose}
       />
