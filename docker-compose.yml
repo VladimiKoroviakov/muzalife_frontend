@@ -1,0 +1,32 @@
+# =============================================================================
+# MuzaLife Frontend — Docker Compose
+#
+# Builds and serves the React SPA using Nginx.
+#
+# Usage:
+#   docker compose up -d --build
+#   docker compose down
+# =============================================================================
+
+version: "3.9"
+
+services:
+  frontend:
+    build:
+      context: .
+      dockerfile: Dockerfile
+      args:
+        VITE_API_URL: ${VITE_API_URL:-https://localhost:5001/api}
+        VITE_APP_NAME: ${VITE_APP_NAME:-MuzaLife}
+        VITE_GOOGLE_CLIENT_ID: ${VITE_GOOGLE_CLIENT_ID:-}
+        VITE_FACEBOOK_APP_ID: ${VITE_FACEBOOK_APP_ID:-}
+    container_name: muzalife-frontend
+    restart: unless-stopped
+    ports:
+      - "80:80"
+      - "443:443"
+    healthcheck:
+      test: ["CMD", "wget", "-qO-", "http://localhost:80/"]
+      interval: 30s
+      timeout: 5s
+      retries: 3

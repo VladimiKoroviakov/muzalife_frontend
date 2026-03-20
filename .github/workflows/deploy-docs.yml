@@ -5,11 +5,10 @@
 # What it does:
 #   1. Run living-documentation tests (npm run test:docs)
 #   2. Generate TypeDoc Markdown (npm run docs)
-#   3. Copy TypeDoc Markdown into docs-site/typedoc/ (so VitePress renders it as HTML)
-#   4. Build the VitePress site (TypeDoc pages included)
-#   5. Deploy to GitHub Pages
+#   3. Build a VitePress site from the generated Markdown + docs-site/
+#   4. Deploy to GitHub Pages
 #
-# Live at: https://vladimikoroviakov.github.io/muzalife_frontend/
+# Deployed URL:  https://<owner>.github.io/muzalife-frontend/
 
 name: Deploy Docs to GitHub Pages
 
@@ -56,13 +55,6 @@ jobs:
       - name: Create docs archive
         run: npm run docs:archive
 
-      - name: Copy TypeDoc into VitePress source
-        run: |
-          mkdir -p docs-site/typedoc
-          cp -r docs/typedoc/* docs-site/typedoc/
-          # VitePress uses index.md as directory index, TypeDoc outputs README.md
-          cp docs-site/typedoc/README.md docs-site/typedoc/index.md
-
       - name: Install VitePress
         run: npm install --save-dev vitepress --legacy-peer-deps
 
@@ -70,6 +62,11 @@ jobs:
         run: npx vitepress build docs-site
         env:
           NODE_ENV: production
+
+      - name: Copy TypeDoc into VitePress output
+        run: |
+          mkdir -p docs-site/.vitepress/dist/typedoc
+          cp -r docs/typedoc/* docs-site/.vitepress/dist/typedoc/
 
       - name: Upload Pages artifact
         uses: actions/upload-pages-artifact@v3
