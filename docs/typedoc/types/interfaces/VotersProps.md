@@ -6,7 +6,7 @@
 
 # Interface: VotersProps
 
-Defined in: [types.ts:255](https://github.com/VladimiKoroviakov/muzalife_frontend/blob/88c52f0512df1b7458f81e89c6855f0efb418e77/src/types.ts#L255)
+Defined in: [types.ts:255](https://github.com/VladimiKoroviakov/muzalife_frontend/blob/a2b554aa5eceb322b09e7392eb12556651b0f442/src/types.ts#L255)
 
 ## Properties
 
@@ -14,4 +14,4 @@ Defined in: [types.ts:255](https://github.com/VladimiKoroviakov/muzalife_fronten
 
 > **voters**: [`VoterData`](VoterData.md)[]
 
-Defined in: [types.ts:256](https://github.com/VladimiKoroviakov/muzalife_frontend/blob/88c52f0512df1b7458f81e89c6855f0efb418e77/src/types.ts#L256)
+Defined in: [types.ts:256](https://github.com/VladimiKoroviakov/muzalife_frontend/blob/a2b554aa5eceb322b09e7392eb12556651b0f442/src/types.ts#L256)

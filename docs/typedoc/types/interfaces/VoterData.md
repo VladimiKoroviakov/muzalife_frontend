@@ -6,7 +6,7 @@
 
 # Interface: VoterData
 
-Defined in: [types.ts:195](https://github.com/VladimiKoroviakov/muzalife_frontend/blob/88c52f0512df1b7458f81e89c6855f0efb418e77/src/types.ts#L195)
+Defined in: [types.ts:195](https://github.com/VladimiKoroviakov/muzalife_frontend/blob/a2b554aa5eceb322b09e7392eb12556651b0f442/src/types.ts#L195)
 
 ## Properties
 
@@ -14,7 +14,7 @@ Defined in: [types.ts:195](https://github.com/VladimiKoroviakov/muzalife_fronten
 
 > **imageUrl**: `string` \| `null`
 
-Defined in: [types.ts:197](https://github.com/VladimiKoroviakov/muzalife_frontend/blob/88c52f0512df1b7458f81e89c6855f0efb418e77/src/types.ts#L197)
+Defined in: [types.ts:197](https://github.com/VladimiKoroviakov/muzalife_frontend/blob/a2b554aa5eceb322b09e7392eb12556651b0f442/src/types.ts#L197)
 
 ***
 
@@ -22,4 +22,4 @@ Defined in: [types.ts:197](https://github.com/VladimiKoroviakov/muzalife_fronten
 
 > **name**: `string`
 
-Defined in: [types.ts:196](https://github.com/VladimiKoroviakov/muzalife_frontend/blob/88c52f0512df1b7458f81e89c6855f0efb418e77/src/types.ts#L196)
+Defined in: [types.ts:196](https://github.com/VladimiKoroviakov/muzalife_frontend/blob/a2b554aa5eceb322b09e7392eb12556651b0f442/src/types.ts#L196)

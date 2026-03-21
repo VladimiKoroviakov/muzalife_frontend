@@ -6,7 +6,7 @@
 
 # Interface: IconBookmarksProps
 
-Defined in: [types.ts:158](https://github.com/VladimiKoroviakov/muzalife_frontend/blob/88c52f0512df1b7458f81e89c6855f0efb418e77/src/types.ts#L158)
+Defined in: [types.ts:158](https://github.com/VladimiKoroviakov/muzalife_frontend/blob/a2b554aa5eceb322b09e7392eb12556651b0f442/src/types.ts#L158)
 
 ## Properties
 
@@ -14,4 +14,4 @@ Defined in: [types.ts:158](https://github.com/VladimiKoroviakov/muzalife_fronten
 
 > **isBookmarked**: `boolean`
 
-Defined in: [types.ts:159](https://github.com/VladimiKoroviakov/muzalife_frontend/blob/88c52f0512df1b7458f81e89c6855f0efb418e77/src/types.ts#L159)
+Defined in: [types.ts:159](https://github.com/VladimiKoroviakov/muzalife_frontend/blob/a2b554aa5eceb322b09e7392eb12556651b0f442/src/types.ts#L159)
