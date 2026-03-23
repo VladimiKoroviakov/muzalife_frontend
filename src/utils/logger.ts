@@ -35,13 +35,13 @@ type LogLevel = keyof typeof LOG_LEVELS;
 const resolveLevel = (): LogLevel => {
   try {
     const stored = localStorage.getItem('logLevel') as LogLevel | null;
-    if (stored && stored in LOG_LEVELS) return stored;
+    if (stored && stored in LOG_LEVELS) { return stored; }
   } catch {
     // localStorage may be unavailable in certain contexts
   }
 
   const envLevel = import.meta.env.VITE_LOG_LEVEL as LogLevel | undefined;
-  if (envLevel && envLevel in LOG_LEVELS) return envLevel;
+  if (envLevel && envLevel in LOG_LEVELS) { return envLevel; }
 
   return import.meta.env.MODE === 'development' ? 'debug' : 'warn';
 };
@@ -109,10 +109,11 @@ const activeLevel = resolveLevel();
  * also sends to the backend.
  */
 const log = (level: LogLevel, message: string, context: LogContext = {}): void => {
-  if (LOG_LEVELS[level] < LOG_LEVELS[activeLevel]) return;
+  if (LOG_LEVELS[level] < LOG_LEVELS[activeLevel]) { return; }
 
   const entry = buildEntry(level, message, context);
 
+  /* eslint-disable no-console */
   switch (level) {
     case 'debug':
       console.debug('[MuzaLife]', message, context);
@@ -129,6 +130,7 @@ const log = (level: LogLevel, message: string, context: LogContext = {}): void =
       sendRemoteError(entry);
       break;
   }
+  /* eslint-enable no-console */
 };
 
 // ── Public API ────────────────────────────────────────────────────────────────

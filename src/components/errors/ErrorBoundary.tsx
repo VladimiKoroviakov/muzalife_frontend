@@ -91,9 +91,9 @@ class ErrorBoundary extends Component<Props, State> {
     const { hasError, error, errorId } = this.state;
     const { children, fallback } = this.props;
 
-    if (!hasError || !error) return children;
+    if (!hasError || !error) { return children; }
 
-    if (fallback) return fallback(error, this.reset);
+    if (fallback) { return fallback(error, this.reset); }
 
     const m = MESSAGES;
 
