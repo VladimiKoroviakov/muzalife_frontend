@@ -5,6 +5,7 @@ import { AuthProvider } from './context/AuthContext';
 import ProtectedRoute from './components/auth/ProtectedRoute';
 import PublicRoute from './components/auth/PublicRoute';
 import AdminRoute from './components/auth/AdminRoute';
+import ErrorBoundary from './components/errors/ErrorBoundary';
 
 // Pages imports
 import HomePage from './pages/HomePage';
@@ -15,64 +16,71 @@ import UserCabinet from './pages/UserCabinet';
 import SingleProductPage from './pages/SingleProductPage';
 import AdminPanel from './pages/AdminPanel';
 import AdminLoginPage from './pages/AdminLoginPage';
+import NotFoundPage from './pages/NotFoundPage';
 
 function App() {
   return (
-    <GoogleOAuthProvider clientId={import.meta.env.VITE_GOOGLE_CLIENT_ID}>
-      <AuthProvider>
-        <Router>
-          <div className="app">
-            <Routes>
-              <Route path="/" element={<HomePage />} />
-              <Route path="/faqs" element={<FAQsPage />} />
-              <Route path="/product/:id" element={<SingleProductPage/>} />
-              <Route
-                  path="/adminlogin"
+    // ErrorBoundary wraps the entire app to catch any unhandled React errors.
+    // If a component tree crashes, the user sees a friendly bilingual error
+    // page instead of a blank screen, and the error is logged automatically.
+    <ErrorBoundary>
+      <GoogleOAuthProvider clientId={import.meta.env.VITE_GOOGLE_CLIENT_ID}>
+        <AuthProvider>
+          <Router>
+            <div className="app">
+              <Routes>
+                <Route path="/" element={<HomePage />} />
+                <Route path="/faqs" element={<FAQsPage />} />
+                <Route path="/product/:id" element={<SingleProductPage/>} />
+                <Route
+                    path="/adminlogin"
+                    element={
+                      <PublicRoute>
+                        <AdminLoginPage />
+                      </PublicRoute>
+                    }
+                  />
+                <Route
+                  path="/login"
                   element={
                     <PublicRoute>
-                      <AdminLoginPage />
+                      <LoginPage />
                     </PublicRoute>
                   }
                 />
-              <Route
-                path="/login"
-                element={
-                  <PublicRoute>
-                    <LoginPage />
-                  </PublicRoute>
-                }
-              />
-              <Route
-                path="/signup"
-                element={
-                  <PublicRoute>
-                    <SignUpPage />
-                  </PublicRoute>
-                }
-              />
-              <Route
-                path="/cabinet"
-                element={
-                  <ProtectedRoute>
-                    <UserCabinet />
-                  </ProtectedRoute>
-                }
-              />
-              <Route
-                path="/admin"
-                element={
-                  <AdminRoute>
-                    <AdminPanel />
-                  </AdminRoute>
-                }
-              />
-              <Route path="*" element={<Navigate to="/" replace />} />
-            </Routes>
-            <Toaster />
-          </div>
-        </Router>
-      </AuthProvider>
-    </GoogleOAuthProvider>
+                <Route
+                  path="/signup"
+                  element={
+                    <PublicRoute>
+                      <SignUpPage />
+                    </PublicRoute>
+                  }
+                />
+                <Route
+                  path="/cabinet"
+                  element={
+                    <ProtectedRoute>
+                      <UserCabinet />
+                    </ProtectedRoute>
+                  }
+                />
+                <Route
+                  path="/admin"
+                  element={
+                    <AdminRoute>
+                      <AdminPanel />
+                    </AdminRoute>
+                  }
+                />
+                {/* 404 — custom page instead of silent redirect to home */}
+                <Route path="*" element={<NotFoundPage />} />
+              </Routes>
+              <Toaster />
+            </div>
+          </Router>
+        </AuthProvider>
+      </GoogleOAuthProvider>
+    </ErrorBoundary>
   );
 }
 
