@@ -64,6 +64,61 @@
     build: {
       target: 'esnext',
       outDir: 'build',
+      // ── Code splitting & tree shaking ──────────────────────────────────────
+      // Split vendor chunks so the browser can cache them independently from
+      // application code.  React/ReactDOM change rarely → long-lived cache.
+      // Heavy charting / UI libs are separated so they are only downloaded
+      // when the routes that use them are first visited.
+      rollupOptions: {
+        output: {
+          manualChunks: {
+            // Core React runtime — almost never changes
+            'vendor-react': ['react', 'react-dom', 'react-router-dom'],
+            // Charting — only needed on analytics/admin pages
+            'vendor-charts': ['recharts'],
+            // All Radix UI primitives bundled together (tree-shaken per import)
+            'vendor-radix': [
+              '@radix-ui/react-accordion',
+              '@radix-ui/react-alert-dialog',
+              '@radix-ui/react-avatar',
+              '@radix-ui/react-checkbox',
+              '@radix-ui/react-collapsible',
+              '@radix-ui/react-context-menu',
+              '@radix-ui/react-dialog',
+              '@radix-ui/react-dropdown-menu',
+              '@radix-ui/react-hover-card',
+              '@radix-ui/react-label',
+              '@radix-ui/react-menubar',
+              '@radix-ui/react-navigation-menu',
+              '@radix-ui/react-popover',
+              '@radix-ui/react-progress',
+              '@radix-ui/react-radio-group',
+              '@radix-ui/react-scroll-area',
+              '@radix-ui/react-select',
+              '@radix-ui/react-separator',
+              '@radix-ui/react-slider',
+              '@radix-ui/react-slot',
+              '@radix-ui/react-switch',
+              '@radix-ui/react-tabs',
+              '@radix-ui/react-toggle',
+              '@radix-ui/react-toggle-group',
+              '@radix-ui/react-tooltip',
+            ],
+            // Utility libraries
+            'vendor-utils': [
+              'clsx',
+              'tailwind-merge',
+              'class-variance-authority',
+              'lucide-react',
+            ],
+          },
+        },
+      },
+      // Enable source maps for production profiling (optional: set to false
+      // in CI if you do not need them)
+      sourcemap: false,
+      // Chunk size warning threshold (Vite default is 500 kB)
+      chunkSizeWarningLimit: 600,
     },
     server: {
       ...(fs.existsSync(path.resolve(__dirname, 'localhost-key.pem')) && fs.existsSync(path.resolve(__dirname, 'localhost.pem'))
