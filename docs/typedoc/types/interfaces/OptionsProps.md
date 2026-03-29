@@ -6,7 +6,7 @@
 
 # Interface: OptionsProps
 
-Defined in: [types.ts:249](https://github.com/VladimiKoroviakov/muzalife_frontend/blob/365e67c70bc7b9e01755e323412cff096ddbd74c/src/types.ts#L249)
+Defined in: [types.ts:249](https://github.com/VladimiKoroviakov/muzalife_frontend/blob/6996ace12d584a887223cea5e343c7d1430f4daa/src/types.ts#L249)
 
 ## Properties
 
@@ -14,7 +14,7 @@ Defined in: [types.ts:249](https://github.com/VladimiKoroviakov/muzalife_fronten
 
 > **onSelectOption**: (`index`) => `void`
 
-Defined in: [types.ts:252](https://github.com/VladimiKoroviakov/muzalife_frontend/blob/365e67c70bc7b9e01755e323412cff096ddbd74c/src/types.ts#L252)
+Defined in: [types.ts:252](https://github.com/VladimiKoroviakov/muzalife_frontend/blob/6996ace12d584a887223cea5e343c7d1430f4daa/src/types.ts#L252)
 
 #### Parameters
 
@@ -32,7 +32,7 @@ Defined in: [types.ts:252](https://github.com/VladimiKoroviakov/muzalife_fronten
 
 > **options**: `string`[]
 
-Defined in: [types.ts:250](https://github.com/VladimiKoroviakov/muzalife_frontend/blob/365e67c70bc7b9e01755e323412cff096ddbd74c/src/types.ts#L250)
+Defined in: [types.ts:250](https://github.com/VladimiKoroviakov/muzalife_frontend/blob/6996ace12d584a887223cea5e343c7d1430f4daa/src/types.ts#L250)
 
 ***
 
@@ -40,4 +40,4 @@ Defined in: [types.ts:250](https://github.com/VladimiKoroviakov/muzalife_fronten
 
 > **selectedOption**: `number` \| `null`
 
-Defined in: [types.ts:251](https://github.com/VladimiKoroviakov/muzalife_frontend/blob/365e67c70bc7b9e01755e323412cff096ddbd74c/src/types.ts#L251)
+Defined in: [types.ts:251](https://github.com/VladimiKoroviakov/muzalife_frontend/blob/6996ace12d584a887223cea5e343c7d1430f4daa/src/types.ts#L251)
