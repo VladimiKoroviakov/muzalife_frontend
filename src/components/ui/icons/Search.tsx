@@ -1,4 +1,4 @@
-import svgPaths from './svgIconPaths';
+import { iconPaths } from './iconPaths';
 
 export function Search() {
   return (
@@ -9,7 +9,7 @@ export function Search() {
             <rect fill="var(--fill-0, #D9D9D9)" height="24" id="Bounding box" width="24" />
           </mask>
           <g mask="url(#mask0_1_1764)">
-            <path d={svgPaths.pc423380} fill="var(--fill-0, #4D4D4D)" id="search_2" />
+            <path d={iconPaths.search} fill="var(--fill-0, #4D4D4D)" id="search_2" />
           </g>
         </g>
       </svg>

@@ -1,4 +1,4 @@
-import svgPaths from './icons/svgIconPaths';
+import { iconPaths } from './icons/iconPaths';
 import { ProductCardProps } from '../../types';
 import { IconBookmarks } from '../ui/icons/IconBookmarks';
 import Badge from '../ui/badge';
@@ -20,7 +20,7 @@ function Delete({ onClick }: { onClick?: () => void }) {
             <rect fill="var(--fill-0, #D9D9D9)" height="28" id="Bounding box" width="28" />
           </mask>
           <g mask="url(#mask0_1_1724)">
-            <path d={svgPaths.p3e6c88f0} fill="var(--fill-0, #4D4D4D)" id="local_mall_2" />
+            <path d={iconPaths.trash} fill="var(--fill-0, #4D4D4D)" id="local_mall_2" />
           </g>
         </g>
       </svg>
@@ -48,7 +48,7 @@ function Star() {
   return (
     <div className="relative shrink-0 size-[24px]" data-name="star">
       <svg className="block size-full" fill="none" preserveAspectRatio="none" viewBox="0 0 24 24">
-        <path d={svgPaths.p37caf400} fill="#E9CF0C" />
+        <path d={iconPaths.star} fill="#E9CF0C" />
       </svg>
     </div>
   );

@@ -1,4 +1,4 @@
-import svgPaths from './icons/svgIconPaths';
+import { iconPaths } from './icons/iconPaths';
 
 export function ArrowBackIosNew() {
   return (
@@ -9,7 +9,7 @@ export function ArrowBackIosNew() {
             <rect fill="var(--fill-0, #D9D9D9)" height="20" id="Bounding box" width="20" />
           </mask>
           <g mask="url(#mask0_1_1748)">
-            <path d={svgPaths.p3253d580} fill="var(--fill-0, #4D4D4D)" id="arrow_back_ios_new_2" />
+            <path d={iconPaths.arrowBack} fill="var(--fill-0, #4D4D4D)" id="arrow_back_ios_new_2" />
           </g>
         </g>
       </svg>

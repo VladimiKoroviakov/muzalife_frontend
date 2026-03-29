@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import  svgPaths from '../ui/icons/svgIconPaths';
+import { iconPaths } from '../ui/icons/iconPaths';
 import { toast } from 'sonner';
 
 function Top({ materialName }: { materialName: string }) {
@@ -89,7 +89,7 @@ function Row1({ onCancel, onSubmit, isSubmitting }: { onCancel: () => void; onSu
               <div className="absolute inset-[8.33%_4.17%_8.33%_12.5%] mask-alpha mask-intersect mask-no-clip mask-no-repeat mask-position-[-3px_-2px] mask-size-[24px_24px]" data-name="contract_edit">
                 <div className="absolute inset-0" style={{ '--fill-0': 'rgba(255, 255, 255, 1)' } as React.CSSProperties}>
                   <svg className="block size-full" fill="none" preserveAspectRatio="none" viewBox="0 0 17 17">
-                    <path d={svgPaths.p7a22000} fill="var(--fill-0, white)" id="contract_edit" />
+                    <path d={iconPaths.contractEditSmall} fill="var(--fill-0, white)" id="contract_edit" />
                   </svg>
                 </div>
               </div>

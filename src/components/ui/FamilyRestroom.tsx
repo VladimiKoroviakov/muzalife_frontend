@@ -1,4 +1,4 @@
-import svgPaths from './icons/svgIconPaths';
+import { iconPaths } from './icons/iconPaths';
 
 export function FamilyRestroom() {
   return (
@@ -9,7 +9,7 @@ export function FamilyRestroom() {
             <rect fill="var(--fill-0, #D9D9D9)" height="16" id="Bounding box" width="16" />
           </mask>
           <g mask="url(#mask0_1_1760)">
-            <path d={svgPaths.p20da0280} fill="var(--fill-0, #4D4D4D)" id="family_restroom_2" />
+            <path d={iconPaths.familyRestroom} fill="var(--fill-0, #4D4D4D)" id="family_restroom_2" />
           </g>
         </g>
       </svg>

@@ -1,4 +1,4 @@
-import svgPaths from '../ui/icons/svgIconPaths';
+import { iconPaths } from '../ui/icons/iconPaths';
 
 export function Logout() {
   return (
@@ -9,7 +9,7 @@ export function Logout() {
             <rect fill="var(--fill-0, #D9D9D9)" height="18" id="Bounding box" width="18" />
           </mask>
           <g mask="url(#mask0_50_356)">
-            <path d={svgPaths.p3c737080} fill="var(--fill-0, #4D4D4D)" id="logout_2" />
+            <path d={iconPaths.logout} fill="var(--fill-0, #4D4D4D)" id="logout_2" />
           </g>
         </g>
       </svg>

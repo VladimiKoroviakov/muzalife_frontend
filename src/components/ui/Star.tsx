@@ -1,4 +1,4 @@
-import svgPaths from './icons/svgIconPaths';
+import { iconPaths } from './icons/iconPaths';
 
 export function Star() {
   return (
@@ -9,7 +9,7 @@ export function Star() {
             <rect fill="var(--fill-0, #D9D9D9)" height="24" id="Bounding box" width="24" />
           </mask>
           <g mask="url(#mask0_1_1712)">
-            <path d={svgPaths.p37caf400} fill="var(--fill-0, #E9CF0C)" id="star_2" />
+            <path d={iconPaths.star} fill="var(--fill-0, #E9CF0C)" id="star_2" />
           </g>
         </g>
       </svg>

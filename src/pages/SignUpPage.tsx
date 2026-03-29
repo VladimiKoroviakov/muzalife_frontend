@@ -9,7 +9,7 @@ import { AuthRedirectLink } from '../components/auth/AuthRedirectLink';
 import { GoogleLoginButton } from '../components/auth/GoogleLoginButton';
 import { FacebookLoginButton } from '../components/auth/FacebookLoginButton';
 import { InputField } from '../components/auth/InputField';
-import { CloseButton } from '../components/auth/CloseButton';
+import { CloseButton } from '../components/ui/icons/CloseButton';
 import { VerificationCodeModal } from '../components/auth/VerificationModal';
 
 // Add localStorage key for pending verification

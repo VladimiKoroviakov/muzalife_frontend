@@ -14,7 +14,7 @@ import {
 import { Input } from '../ui/input';
 import { Label } from '../ui/label';
 import { Button } from '../ui/button';
-import svgPaths from '../ui/icons/svgIconPaths';
+import { iconPaths } from '../ui/icons/iconPaths';
 import { VerificationCodeModal } from '../auth/VerificationModal';
 
 interface SettingsContentProps {
@@ -478,7 +478,7 @@ export function SettingsContent({ onShowFAQ }: SettingsContentProps) {
                               <rect fill="var(--fill-0, #D9D9D9)" height="20" id="Bounding box" width="20" />
                             </mask>
                             <g mask="url(#mask0_63_1062)">
-                              <path d={svgPaths.pe8e3e00} fill="var(--fill-0, #4D4D4D)" id="frame_person_2" />
+                              <path d={iconPaths.person} fill="var(--fill-0, #4D4D4D)" id="frame_person_2" />
                             </g>
                           </g>
                         </svg>
@@ -501,7 +501,7 @@ export function SettingsContent({ onShowFAQ }: SettingsContentProps) {
                     <div onClick={handleEditName} className="relative shrink-0 size-[24px] cursor-pointer hover:opacity-70 transition-opacity" data-name="icon edit">
                       <div className="absolute inset-[12.5%] mask-alpha mask-intersect mask-no-clip mask-no-repeat mask-position-[-3px] mask-size-[24px_24px]" data-name="edit">
                         <svg className="block size-full" fill="none" preserveAspectRatio="none" viewBox="0 0 18 18">
-                          <path d={svgPaths.p377f500} fill="var(--fill-0, #4D4D4D)" id="edit" />
+                          <path d={iconPaths.edit} fill="var(--fill-0, #4D4D4D)" id="edit" />
                         </svg>
                       </div>
                     </div>
@@ -537,7 +537,7 @@ export function SettingsContent({ onShowFAQ }: SettingsContentProps) {
                                     style={{ opacity: isEmailPasswordUser ? 1 : 0.5 }}
                                     >
                                     <svg className="block size-full" fill="none" preserveAspectRatio="none" viewBox="0 0 18 18">
-                                      <path d={svgPaths.p377f500} fill="var(--fill-0, #4D4D4D)" id="edit" />
+                                      <path d={iconPaths.edit} fill="var(--fill-0, #4D4D4D)" id="edit" />
                                     </svg>
                                   </div>
                                 </div>
@@ -566,7 +566,7 @@ export function SettingsContent({ onShowFAQ }: SettingsContentProps) {
                                   style={{ opacity: isEmailPasswordUser ? 1 : 0.5 }}
                                   >
                                     <svg className="block size-full" fill="none" preserveAspectRatio="none" viewBox="0 0 18 18">
-                                      <path d={svgPaths.p377f500} fill="var(--fill-0, #4D4D4D)" id="edit" />
+                                      <path d={iconPaths.edit} fill="var(--fill-0, #4D4D4D)" id="edit" />
                                     </svg>
                                   </div>
                                 </div>
@@ -589,7 +589,7 @@ export function SettingsContent({ onShowFAQ }: SettingsContentProps) {
                           <div className="relative shrink-0 size-[20px]" data-name="icon help">
                             <div className="absolute aspect-[23.3333/23.3333] left-[8.33%] mask-alpha mask-intersect mask-no-clip mask-no-repeat mask-position-[-2.333px] mask-size-[28px_28px] right-[8.33%] top-1/2 translate-y-[-50%]" data-name="help">
                               <svg className="block size-full" fill="none" preserveAspectRatio="none" viewBox="0 0 17 17">
-                                <path d={svgPaths.p2bd81d00} fill="var(--fill-0, #0D0D0D)" id="help" />
+                                <path d={iconPaths.helpCircle} fill="var(--fill-0, #0D0D0D)" id="help" />
                               </svg>
                             </div>
                           </div>

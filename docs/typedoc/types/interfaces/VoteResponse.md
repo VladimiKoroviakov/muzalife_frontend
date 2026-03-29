@@ -6,7 +6,7 @@
 
 # Interface: VoteResponse
 
-Defined in: [types.ts:232](https://github.com/VladimiKoroviakov/muzalife_frontend/blob/a2b554aa5eceb322b09e7392eb12556651b0f442/src/types.ts#L232)
+Defined in: [types.ts:232](https://github.com/VladimiKoroviakov/muzalife_frontend/blob/365e67c70bc7b9e01755e323412cff096ddbd74c/src/types.ts#L232)
 
 ## Properties
 
@@ -14,7 +14,7 @@ Defined in: [types.ts:232](https://github.com/VladimiKoroviakov/muzalife_fronten
 
 > `optional` **error?**: `string`
 
-Defined in: [types.ts:234](https://github.com/VladimiKoroviakov/muzalife_frontend/blob/a2b554aa5eceb322b09e7392eb12556651b0f442/src/types.ts#L234)
+Defined in: [types.ts:234](https://github.com/VladimiKoroviakov/muzalife_frontend/blob/365e67c70bc7b9e01755e323412cff096ddbd74c/src/types.ts#L234)
 
 ***
 
@@ -22,4 +22,4 @@ Defined in: [types.ts:234](https://github.com/VladimiKoroviakov/muzalife_fronten
 
 > **success**: `boolean`
 
-Defined in: [types.ts:233](https://github.com/VladimiKoroviakov/muzalife_frontend/blob/a2b554aa5eceb322b09e7392eb12556651b0f442/src/types.ts#L233)
+Defined in: [types.ts:233](https://github.com/VladimiKoroviakov/muzalife_frontend/blob/365e67c70bc7b9e01755e323412cff096ddbd74c/src/types.ts#L233)

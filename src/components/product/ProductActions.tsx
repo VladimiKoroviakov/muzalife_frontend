@@ -1,4 +1,4 @@
-import svgIconPaths from '../ui/icons/svgIconPaths';
+import { iconPaths } from '../ui/icons/iconPaths';
 import { Product } from '../../types';
 
 interface SaveButtonProps {
@@ -29,7 +29,7 @@ function SaveButton({ isBookmarked, onClick, canBookmark }: SaveButtonProps) {
       <div className="relative shrink-0 size-[20px]" data-name="icon bookmarks">
         <svg className="block size-full" fill="none" preserveAspectRatio="none" viewBox="0 0 20 20">
           <path
-            d={svgIconPaths.p2a584480}
+            d={iconPaths.bookmarkSingle}
             fill={isBookmarked ? '#5e89e8' : 'var(--fill-0, #0D0D0D)'}
           />
         </svg>
@@ -75,7 +75,7 @@ function BuyButton({ isInCart, onClick, onRemoveClick }: BuyButtonProps) {
       <div className="relative shrink-0 size-[20px]" data-name="icon bag">
         <svg className="block size-full" fill="none" preserveAspectRatio="none" viewBox="0 0 20 20">
           <path
-            d={svgIconPaths.p2fd02b00}
+            d={iconPaths.bag}
             fill={isInCart ? '#0D0D0D' : 'var(--fill-0, white)'}
           />
         </svg>

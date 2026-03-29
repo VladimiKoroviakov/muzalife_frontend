@@ -1,4 +1,4 @@
-import svgPaths from './icons/svgIconPaths';
+import { iconPaths } from './icons/iconPaths';
 
 export function RadioButtonChecked() {
   return (
@@ -9,7 +9,7 @@ export function RadioButtonChecked() {
             <rect fill="var(--fill-0, #D9D9D9)" height="20" id="Bounding box" width="20" />
           </mask>
           <g mask="url(#mask0_1_1756)">
-            <path d={svgPaths.p34ae8500} fill="var(--fill-0, #5E89E8)" id="radio_button_checked_2" />
+            <path d={iconPaths.radioButtonChecked} fill="var(--fill-0, #5E89E8)" id="radio_button_checked_2" />
           </g>
         </g>
       </svg>

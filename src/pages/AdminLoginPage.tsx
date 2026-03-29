@@ -5,7 +5,7 @@ import { useAuthContext } from '../context/AuthContext';
 import { AuthLogoTitle } from '../components/auth/AuthLogoTitle';
 import { InputField } from '../components/auth/InputField';
 import { LoginSubmitButton } from '../components/auth/LoginSubmitButton';
-import {CloseButton} from '../components/auth/CloseButton';
+import {CloseButton} from '../components/ui/icons/CloseButton';
 
 export default function AdminLoginPage() {
   const navigate = useNavigate();

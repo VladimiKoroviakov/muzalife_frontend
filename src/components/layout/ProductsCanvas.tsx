@@ -21,7 +21,7 @@ interface CanvasProps {
   cartItems: number[];
 }
 
-export function Canvas({
+export function ProductsCanvas({
   showFilters,
   setShowFilters,
   selectedAgeCategory,

@@ -1,4 +1,4 @@
-import svgIconPaths from '../ui/icons/svgIconPaths';
+import { iconPaths } from '../ui/icons/iconPaths';
 
 function IconUpload() {
   return (
@@ -9,7 +9,7 @@ function IconUpload() {
             <rect fill="var(--fill-0, #D9D9D9)" height="112" id="Bounding box" width="112" />
           </mask>
           <g mask="url(#mask0_5_1485)">
-            <path d={svgIconPaths.p342b8b80} fill="var(--fill-0, #1C1B1F)" id="drive_folder_upload" />
+            <path d={iconPaths.driveFolderUpload} fill="var(--fill-0, #1C1B1F)" id="drive_folder_upload" />
           </g>
         </g>
       </svg>
@@ -75,7 +75,7 @@ function IconArrowDown() {
             <rect fill="var(--fill-0, #D9D9D9)" height="24" id="Bounding box" width="24" />
           </mask>
           <g mask="url(#mask0_5_1473)">
-            <path d={svgIconPaths.p2b1b0180} fill="var(--fill-0, #4D4D4D)" id="keyboard_arrow_down" />
+            <path d={iconPaths.keyboardArrowDown} fill="var(--fill-0, #4D4D4D)" id="keyboard_arrow_down" />
           </g>
         </g>
       </svg>
@@ -108,7 +108,7 @@ function IconArrowDown1() {
             <rect fill="var(--fill-0, #D9D9D9)" height="24" id="Bounding box" width="24" />
           </mask>
           <g mask="url(#mask0_5_1473)">
-            <path d={svgIconPaths.p2b1b0180} fill="var(--fill-0, #4D4D4D)" id="keyboard_arrow_down" />
+            <path d={iconPaths.keyboardArrowDown} fill="var(--fill-0, #4D4D4D)" id="keyboard_arrow_down" />
           </g>
         </g>
       </svg>

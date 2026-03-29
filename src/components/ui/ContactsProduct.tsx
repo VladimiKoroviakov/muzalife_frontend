@@ -1,4 +1,4 @@
-import svgPaths from './icons/svgIconPaths';
+import { iconPaths } from './icons/iconPaths';
 
 interface ContactsProductProps {
   onClick?: () => void;
@@ -13,7 +13,7 @@ export function ContactsProduct({ onClick }: ContactsProductProps) {
             <rect fill="var(--fill-0, #D9D9D9)" height="28" id="Bounding box" width="28" />
           </mask>
           <g mask="url(#mask0_1_1740)">
-            <path d={svgPaths.p11586400} fill="var(--fill-0, #4D4D4D)" id="contacts_product_2" />
+            <path d={iconPaths.contacts} fill="var(--fill-0, #4D4D4D)" id="contacts_product_2" />
           </g>
         </g>
       </svg>

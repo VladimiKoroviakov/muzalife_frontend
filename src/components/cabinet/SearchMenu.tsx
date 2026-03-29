@@ -1,4 +1,4 @@
-import { Reply } from './Reply';
+import { BackButton } from '../ui/icons/BackButton';
 
 interface SearchMenuProps {
   onBackClick?: () => void;
@@ -17,7 +17,7 @@ export function SearchMenu({ onBackClick, title, userName, activeSection }: Sear
       </div>
       <div className="box-border content-stretch flex gap-[20px] items-center justify-center px-[20px] py-[12px] relative rounded-[16px] shrink-0 hover:opacity-70 transition-opacity" data-name="Close">
         <div aria-hidden="true" className="absolute border border-solid border-white inset-0 pointer-events-none rounded-[16px]" />
-        <Reply onClick={onBackClick} />
+        <BackButton onClick={onBackClick} />
       </div>
     </div>
   );

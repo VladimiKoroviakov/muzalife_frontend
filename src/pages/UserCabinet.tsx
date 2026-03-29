@@ -1,9 +1,32 @@
 import { useState, useEffect } from 'react';
+
+// Services & context
 import { apiService } from '../services/api';
 import { useAuthContext } from '../context/AuthContext';
+
+// Layout components & icons
+import { iconPaths } from '../components/ui/icons/iconPaths';
+import { DashboardCanvas } from '../components/layout/DashboardCanvas';
+import { SidebarTabs, TabItem } from '../components/layout/SidebarTabs';
+
+// Cabinet components
 import { Header } from '../components/cabinet/Header';
-import { Canvas } from '../components/cabinet/Canvas';
+import { RightSide } from '../components/cabinet/RightSide';
+import { PurchaseHistoryContent } from '../components/cabinet/PurchaseHistoryContent';
+import { SavedScenariosContent } from '../components/cabinet/SavedScenariosContent';
+import { PersonalOrdersContent } from '../components/cabinet/PersonalOrdersContent';
+import { QuestionnairesContent } from '../components/cabinet/QuestionnairesContent';
+import { SettingsContent } from '../components/cabinet/SettingsContent';
 import FAQs from './FAQsPage';
+
+const USER_TABS: TabItem[] = [
+  { id: 'main',           label: 'Головна',                  path: iconPaths.homeTab,          viewBox: '0 0 14 15'  },
+  { id: 'history',        label: 'Історія замовлень',         path: iconPaths.workHistoryTab,   viewBox: '0 0 16 16'  },
+  { id: 'saved',          label: 'Збережені матеріали',        path: iconPaths.bookmarksTab,     viewBox: '0 0 12 15'  },
+  { id: 'orders',         label: 'Персональні замовлення',     path: iconPaths.contractEditTab,  viewBox: '0 0 15 15'  },
+  { id: 'questionnaires', label: 'Опитування',                path: iconPaths.barChartTab,      viewBox: '0 0 12 12'  },
+  { id: 'settings',       label: 'Налаштування',              path: iconPaths.manufacturingTab, viewBox: '0 0 16 16'  },
+];
 
 export default function UserCabinet({
   onBackClick,
@@ -29,11 +52,9 @@ export default function UserCabinet({
     window.location.href = '/';
   });
 
-  // Load products if not provided as prop
   useEffect(() => {
     const loadProducts = async () => {
       if (products && products.length > 0) {
-        // Use provided products
         setLocalProducts(products);
         setProductsLoading(false);
         return;
@@ -62,7 +83,6 @@ export default function UserCabinet({
     loadProducts();
   }, [products]);
 
-  // Load user profile
   useEffect(() => {
     let isMounted = true;
 
@@ -70,24 +90,21 @@ export default function UserCabinet({
       setIsLoading(true);
 
       try {
-        // Prefer auth context (fast path)
         if (user?.name) {
-          if (isMounted) {setUserName(user.name);}
+          if (isMounted) { setUserName(user.name); }
           return;
         }
 
-        // Prefer cached profile
         const cached = getCachedProfile();
         if (cached?.name) {
-          if (isMounted) {setUserName(cached.name);}
+          if (isMounted) { setUserName(cached.name); }
           return;
         }
 
-        // Fetch from API (guaranteed ONE shape)
         const profile = await apiService.getProfile();
 
         if (isMounted) {
-           setUserName(profile.name);
+          setUserName(profile.name);
 
           const userProfileToStore = {
             id: profile.id,
@@ -101,9 +118,9 @@ export default function UserCabinet({
         }
 
       } catch {
-        if (isMounted) {setUserName(null);}
+        if (isMounted) { setUserName(null); }
       } finally {
-        if (isMounted) {setIsLoading(false);}
+        if (isMounted) { setIsLoading(false); }
       }
     };
 
@@ -117,10 +134,10 @@ export default function UserCabinet({
   const getCachedProfile = () => {
     try {
       const raw = localStorage.getItem('userProfile');
-      if (!raw) {return null;}
+      if (!raw) { return null; }
 
       const profile = JSON.parse(raw);
-      if (!profile.name || profile.name === 'Користувач') {return null;}
+      if (!profile.name || profile.name === 'Користувач') { return null; }
 
       return profile;
     } catch {
@@ -131,7 +148,6 @@ export default function UserCabinet({
 
   const handleLogout = async () => {
     try {
-      // Clear all cached data on logout
       localStorage.removeItem('userProfile');
       await signOut();
       window.location.href = '/';
@@ -139,6 +155,30 @@ export default function UserCabinet({
       console.error('Logout failed:', error);
       localStorage.clear();
       window.location.href = '/';
+    }
+  };
+
+  const renderContent = () => {
+    switch (activeSection) {
+      case 'history':
+        return <PurchaseHistoryContent onBack={() => setActiveSection('main')} products={localProducts} />;
+      case 'saved':
+        return (
+          <SavedScenariosContent
+            onBack={() => setActiveSection('main')}
+            addToCart={addToCart}
+            products={localProducts}
+            onBookmarkedProductsChange={onBookmarkedProductsChange}
+          />
+        );
+      case 'orders':
+        return <PersonalOrdersContent />;
+      case 'questionnaires':
+        return <QuestionnairesContent />;
+      case 'settings':
+        return <SettingsContent onShowFAQ={() => setShowFAQ(true)} />;
+      default:
+        return <RightSide activeSection={activeSection} onSectionChange={setActiveSection} />;
     }
   };
 
@@ -164,15 +204,12 @@ export default function UserCabinet({
             userName={userName ?? 'Користувач'}
             onSectionChange={setActiveSection}
           />
-          <Canvas
+          <DashboardCanvas
+            tabs={<SidebarTabs tabs={USER_TABS} activeSection={activeSection} onSectionChange={setActiveSection} />}
             onLogout={handleLogout}
-            activeSection={activeSection}
-            onSectionChange={setActiveSection}
-            addToCart={addToCart}
-            onShowFAQ={() => setShowFAQ(true)}
-            products={localProducts}
-            onBookmarkedProductsChange={onBookmarkedProductsChange}
-          />
+          >
+            {renderContent()}
+          </DashboardCanvas>
         </div>
       </div>
     </div>

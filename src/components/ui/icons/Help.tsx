@@ -1,4 +1,4 @@
-import svgPaths from './svgIconPaths';
+import { iconPaths } from './iconPaths';
 import { HelpProps } from '../../../types';
 
 export function Help({ onClick }: HelpProps) {
@@ -10,7 +10,7 @@ export function Help({ onClick }: HelpProps) {
             <rect fill="var(--fill-0, #D9D9D9)" height="28" id="Bounding box" width="28" />
           </mask>
           <g mask="url(#mask0_1_1744)">
-            <path d={svgPaths.p18efcd80} fill="var(--fill-0, #4D4D4D)" id="help_2" />
+            <path d={iconPaths.help} fill="var(--fill-0, #4D4D4D)" id="help_2" />
           </g>
         </g>
       </svg>

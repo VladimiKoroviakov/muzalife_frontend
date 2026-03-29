@@ -1,26 +1,46 @@
 import { useState, useEffect } from 'react';
-import { apiService } from '../services/api';
-import { useAuthContext } from '../context/AuthContext';
-import { Header } from '../components/cabinet/Header';
-import { Canvas } from '../components/cabinet/Canvas';
 import { useNavigate } from 'react-router-dom';
 
-export default function AdminPanel({
-  onBackClick: _onBackClick,
-  addToCart: _addToCart,
-  products: _products,
-  onBookmarkedProductsChange: _onBookmarkedProductsChange
-}: {
-  onBackClick?: () => void;
-  addToCart?: (productId: number) => void;
-  products?: any[];
-  onBookmarkedProductsChange?: (products: number[]) => void;
-}) {
+// Services and context
+import { apiService } from '../services/api';
+import { useAuthContext } from '../context/AuthContext';
+
+// Common components
+import { Header } from '../components/cabinet/Header';
+import { SettingsContent } from '../components/cabinet/SettingsContent';
+
+// Layout and UI components
+import { DashboardCanvas } from '../components/layout/DashboardCanvas';
+import { SidebarTabs, TabItem } from '../components/layout/SidebarTabs';
+import { iconPaths } from '../components/ui/icons/iconPaths';
+
+// Admin-specific components
+import { AdminRightSide } from '../components/admin/AdminRightSide';
+import { AdminMaterialsContent } from '../components/admin/AdminMaterialsContent';
+import { AdminAddMaterial } from '../components/admin/AdminAddMaterial';
+import { AdminEditMaterial } from '../components/admin/AdminEditMaterial';
+import { AdminOrdersContent } from '../components/admin/AdminOrdersContent';
+import { AdminOrderDetail } from '../components/admin/AdminOrderDetail';
+import { AdminAnalyticsContent } from '../components/admin/AdminAnalyticsContent';
+import { AdminPollsContent } from '../components/admin/AdminPollsContent';
+import { AdminCreateSurvey } from '../components/admin/AdminCreateSurvey';
+
+
+const ADMIN_TABS: TabItem[] = [
+  { id: 'main',      label: 'Головна',                    path: iconPaths.homeTab,          viewBox: '0 0 13.3333 15'    },
+  { id: 'materials', label: 'Всі матеріали',              path: iconPaths.homeStorageTab,   viewBox: '0 0 13.5 13.5'     },
+  { id: 'orders',    label: 'Персональні замовлення',     path: iconPaths.contractEditTab,  viewBox: '0 0 15 15'         },
+  { id: 'analytics', label: 'Аналітика',                  path: iconPaths.financeModeTab,   viewBox: '0 0 14.25 14.2875' },
+  { id: 'polls',     label: 'Опитування',                 path: iconPaths.barChartAdminTab, viewBox: '0 0 12 12'        },
+  { id: 'settings',  label: 'Налаштування',               path: iconPaths.settingsTab,      viewBox: '0 0 15.7125 15.75' },
+];
+
+export default function AdminPanel() {
   const [activeSection, setActiveSection] = useState<string>('main');
   const [userName, setUserName] = useState<string>('');
   const [isLoading, setIsLoading] = useState(true);
-  const [localProducts, setLocalProducts] = useState<any[]>([]);
-  const [productsLoading, setProductsLoading] = useState(true);
+  const [editingId, setEditingId] = useState<string | null>(null);
+  const [selectedOrderId, setSelectedOrderId] = useState<string | null>(null);
 
   const { signOut, user } = useAuthContext();
   const navigate = useNavigate();
@@ -33,30 +53,11 @@ export default function AdminPanel({
     navigate('/faqs');
   };
 
-  useEffect(() => {
-    const loadProducts = async () => {
-      try {
-        setProductsLoading(true);
-        const productsData = await apiService.getProducts();
-        setLocalProducts(productsData);
-      } catch (error) {
-        console.error('Error loading products:', error);
-        const cached = localStorage.getItem('cachedProducts');
-        if (cached) {
-          try {
-            const parsedProducts = JSON.parse(cached);
-            setLocalProducts(parsedProducts);
-          } catch (e) {
-            console.error('Error parsing cached products:', e);
-          }
-        }
-      } finally {
-        setProductsLoading(false);
-      }
-    };
-
-    loadProducts();
-  }, [_products]);
+  const handleSectionChange = (section: string) => {
+    setEditingId(null);
+    setSelectedOrderId(null);
+    setActiveSection(section);
+  };
 
   useEffect(() => {
     const fetchProfile = async () => {
@@ -84,7 +85,6 @@ export default function AdminPanel({
         // eslint-disable-next-line @typescript-eslint/no-explicit-any
         const response: any = await apiService.getProfile();
 
-        // Handle different response formats
         let profileData = null;
 
         if (response?.user) {
@@ -98,7 +98,6 @@ export default function AdminPanel({
         if (profileData?.name) {
           setUserName(profileData.name);
 
-          // Cache the complete profile data in FLAT format
           const cacheData = {
             name: profileData.name,
             email: profileData.email || profileData.user_email,
@@ -128,7 +127,48 @@ export default function AdminPanel({
     }
   };
 
-  if (isLoading || productsLoading) {
+  const renderContent = () => {
+    switch (activeSection) {
+      case 'materials':
+        return (
+          <AdminMaterialsContent
+            onSectionChange={setActiveSection}
+            onEditMaterial={(id) => {
+              setEditingId(id);
+              setActiveSection('materials-edit');
+            }}
+          />
+        );
+      case 'materials-add':
+        return <AdminAddMaterial onSectionChange={setActiveSection} />;
+      case 'materials-edit':
+        return <AdminEditMaterial onSectionChange={setActiveSection} materialId={editingId} />;
+      case 'orders':
+        return (
+          <AdminOrdersContent
+            onSectionChange={setActiveSection}
+            onViewOrder={(id) => {
+              setSelectedOrderId(id);
+              setActiveSection('orders-detail');
+            }}
+          />
+        );
+      case 'orders-detail':
+        return <AdminOrderDetail onSectionChange={setActiveSection} orderId={selectedOrderId} />;
+      case 'analytics':
+        return <AdminAnalyticsContent onSectionChange={setActiveSection} />;
+      case 'polls':
+        return <AdminPollsContent onSectionChange={setActiveSection} />;
+      case 'polls-create':
+        return <AdminCreateSurvey onBack={() => setActiveSection('polls')} />;
+      case 'settings':
+        return <SettingsContent onShowFAQ={handleShowFAQ} />;
+      default:
+        return <AdminRightSide onSectionChange={setActiveSection} />;
+    }
+  };
+
+  if (isLoading) {
     return (
       <div className="bg-[#e6e6e6] relative size-full flex items-center justify-center">
         <div className="text-lg">Завантаження...</div>
@@ -146,13 +186,12 @@ export default function AdminPanel({
             userName={userName}
             onSectionChange={setActiveSection}
           />
-          <Canvas
+          <DashboardCanvas
+            tabs={<SidebarTabs tabs={ADMIN_TABS} activeSection={activeSection} onSectionChange={handleSectionChange} />}
             onLogout={handleLogout}
-            activeSection={activeSection}
-            onSectionChange={setActiveSection}
-            onShowFAQ={handleShowFAQ}
-            products={localProducts}
-          />
+          >
+            {renderContent()}
+          </DashboardCanvas>
         </div>
       </div>
     </div>

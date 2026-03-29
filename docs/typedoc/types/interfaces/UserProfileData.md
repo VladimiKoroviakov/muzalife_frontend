@@ -6,7 +6,7 @@
 
 # Interface: UserProfileData
 
-Defined in: [types.ts:299](https://github.com/VladimiKoroviakov/muzalife_frontend/blob/a2b554aa5eceb322b09e7392eb12556651b0f442/src/types.ts#L299)
+Defined in: [types.ts:299](https://github.com/VladimiKoroviakov/muzalife_frontend/blob/365e67c70bc7b9e01755e323412cff096ddbd74c/src/types.ts#L299)
 
 ## Properties
 
@@ -14,7 +14,7 @@ Defined in: [types.ts:299](https://github.com/VladimiKoroviakov/muzalife_fronten
 
 > **authProvider**: `"email"` \| `"google"` \| `"facebook"`
 
-Defined in: [types.ts:304](https://github.com/VladimiKoroviakov/muzalife_frontend/blob/a2b554aa5eceb322b09e7392eb12556651b0f442/src/types.ts#L304)
+Defined in: [types.ts:304](https://github.com/VladimiKoroviakov/muzalife_frontend/blob/365e67c70bc7b9e01755e323412cff096ddbd74c/src/types.ts#L304)
 
 ***
 
@@ -22,7 +22,7 @@ Defined in: [types.ts:304](https://github.com/VladimiKoroviakov/muzalife_fronten
 
 > `optional` **avatar\_url?**: `string`
 
-Defined in: [types.ts:303](https://github.com/VladimiKoroviakov/muzalife_frontend/blob/a2b554aa5eceb322b09e7392eb12556651b0f442/src/types.ts#L303)
+Defined in: [types.ts:303](https://github.com/VladimiKoroviakov/muzalife_frontend/blob/365e67c70bc7b9e01755e323412cff096ddbd74c/src/types.ts#L303)
 
 ***
 
@@ -30,7 +30,7 @@ Defined in: [types.ts:303](https://github.com/VladimiKoroviakov/muzalife_fronten
 
 > **createdAt**: `string`
 
-Defined in: [types.ts:305](https://github.com/VladimiKoroviakov/muzalife_frontend/blob/a2b554aa5eceb322b09e7392eb12556651b0f442/src/types.ts#L305)
+Defined in: [types.ts:305](https://github.com/VladimiKoroviakov/muzalife_frontend/blob/365e67c70bc7b9e01755e323412cff096ddbd74c/src/types.ts#L305)
 
 ***
 
@@ -38,7 +38,7 @@ Defined in: [types.ts:305](https://github.com/VladimiKoroviakov/muzalife_fronten
 
 > **email**: `string`
 
-Defined in: [types.ts:302](https://github.com/VladimiKoroviakov/muzalife_frontend/blob/a2b554aa5eceb322b09e7392eb12556651b0f442/src/types.ts#L302)
+Defined in: [types.ts:302](https://github.com/VladimiKoroviakov/muzalife_frontend/blob/365e67c70bc7b9e01755e323412cff096ddbd74c/src/types.ts#L302)
 
 ***
 
@@ -46,7 +46,7 @@ Defined in: [types.ts:302](https://github.com/VladimiKoroviakov/muzalife_fronten
 
 > **id**: `number`
 
-Defined in: [types.ts:300](https://github.com/VladimiKoroviakov/muzalife_frontend/blob/a2b554aa5eceb322b09e7392eb12556651b0f442/src/types.ts#L300)
+Defined in: [types.ts:300](https://github.com/VladimiKoroviakov/muzalife_frontend/blob/365e67c70bc7b9e01755e323412cff096ddbd74c/src/types.ts#L300)
 
 ***
 
@@ -54,7 +54,7 @@ Defined in: [types.ts:300](https://github.com/VladimiKoroviakov/muzalife_fronten
 
 > `optional` **is\_admin?**: `boolean`
 
-Defined in: [types.ts:306](https://github.com/VladimiKoroviakov/muzalife_frontend/blob/a2b554aa5eceb322b09e7392eb12556651b0f442/src/types.ts#L306)
+Defined in: [types.ts:306](https://github.com/VladimiKoroviakov/muzalife_frontend/blob/365e67c70bc7b9e01755e323412cff096ddbd74c/src/types.ts#L306)
 
 ***
 
@@ -62,4 +62,4 @@ Defined in: [types.ts:306](https://github.com/VladimiKoroviakov/muzalife_fronten
 
 > **name**: `string`
 
-Defined in: [types.ts:301](https://github.com/VladimiKoroviakov/muzalife_frontend/blob/a2b554aa5eceb322b09e7392eb12556651b0f442/src/types.ts#L301)
+Defined in: [types.ts:301](https://github.com/VladimiKoroviakov/muzalife_frontend/blob/365e67c70bc7b9e01755e323412cff096ddbd74c/src/types.ts#L301)

@@ -1,4 +1,4 @@
-import svgPaths from '../../ui/icons/svgIconPaths';
+import { iconPaths } from '../../ui/icons/iconPaths';
 
 export function CloseIcon() {
   return (
@@ -9,7 +9,7 @@ export function CloseIcon() {
             <rect fill="var(--fill-0, #D9D9D9)" height="24" id="Bounding box" width="24" />
           </mask>
           <g mask="url(#mask0_1_5712)">
-            <path d={svgPaths.p2edaeb50} fill="var(--fill-0, #1C1B1F)" id="close_2" />
+            <path d={iconPaths.closeFAQ} fill="var(--fill-0, #1C1B1F)" id="close_2" />
           </g>
         </g>
       </svg>

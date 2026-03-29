@@ -6,7 +6,7 @@
 
 # Interface: LoginResponse
 
-Defined in: [types.ts:318](https://github.com/VladimiKoroviakov/muzalife_frontend/blob/a2b554aa5eceb322b09e7392eb12556651b0f442/src/types.ts#L318)
+Defined in: [types.ts:318](https://github.com/VladimiKoroviakov/muzalife_frontend/blob/365e67c70bc7b9e01755e323412cff096ddbd74c/src/types.ts#L318)
 
 ## Extends
 
@@ -22,7 +22,7 @@ Defined in: [types.ts:318](https://github.com/VladimiKoroviakov/muzalife_fronten
 
 > `optional` **message?**: `string`
 
-Defined in: [types.ts:314](https://github.com/VladimiKoroviakov/muzalife_frontend/blob/a2b554aa5eceb322b09e7392eb12556651b0f442/src/types.ts#L314)
+Defined in: [types.ts:314](https://github.com/VladimiKoroviakov/muzalife_frontend/blob/365e67c70bc7b9e01755e323412cff096ddbd74c/src/types.ts#L314)
 
 #### Inherited from
 
@@ -34,7 +34,7 @@ Defined in: [types.ts:314](https://github.com/VladimiKoroviakov/muzalife_fronten
 
 > `optional` **success?**: `boolean`
 
-Defined in: [types.ts:313](https://github.com/VladimiKoroviakov/muzalife_frontend/blob/a2b554aa5eceb322b09e7392eb12556651b0f442/src/types.ts#L313)
+Defined in: [types.ts:313](https://github.com/VladimiKoroviakov/muzalife_frontend/blob/365e67c70bc7b9e01755e323412cff096ddbd74c/src/types.ts#L313)
 
 #### Inherited from
 
@@ -46,7 +46,7 @@ Defined in: [types.ts:313](https://github.com/VladimiKoroviakov/muzalife_fronten
 
 > **token**: `string`
 
-Defined in: [types.ts:319](https://github.com/VladimiKoroviakov/muzalife_frontend/blob/a2b554aa5eceb322b09e7392eb12556651b0f442/src/types.ts#L319)
+Defined in: [types.ts:319](https://github.com/VladimiKoroviakov/muzalife_frontend/blob/365e67c70bc7b9e01755e323412cff096ddbd74c/src/types.ts#L319)
 
 #### Overrides
 
@@ -58,7 +58,7 @@ Defined in: [types.ts:319](https://github.com/VladimiKoroviakov/muzalife_fronten
 
 > **user**: [`AuthUser`](../type-aliases/AuthUser.md)
 
-Defined in: [types.ts:320](https://github.com/VladimiKoroviakov/muzalife_frontend/blob/a2b554aa5eceb322b09e7392eb12556651b0f442/src/types.ts#L320)
+Defined in: [types.ts:320](https://github.com/VladimiKoroviakov/muzalife_frontend/blob/365e67c70bc7b9e01755e323412cff096ddbd74c/src/types.ts#L320)
 
 #### Overrides
 

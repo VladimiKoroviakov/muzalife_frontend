@@ -1,4 +1,4 @@
-import svgPaths from './icons/svgIconPaths';
+import { iconPaths } from './icons/iconPaths';
 
 export function Celebration() {
   return (
@@ -9,7 +9,7 @@ export function Celebration() {
             <rect fill="var(--fill-0, #D9D9D9)" height="16" id="Bounding box" width="16" />
           </mask>
           <g mask="url(#mask0_1_1716)">
-            <path d={svgPaths.p1fbe1680} fill="var(--fill-0, #4D4D4D)" id="celebration_2" />
+            <path d={iconPaths.celebration} fill="var(--fill-0, #4D4D4D)" id="celebration_2" />
           </g>
         </g>
       </svg>

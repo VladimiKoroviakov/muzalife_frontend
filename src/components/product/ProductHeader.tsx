@@ -1,5 +1,5 @@
 import { Logo } from '../ui/Logo';
-import svgIconPaths from '../ui/icons/svgIconPaths';
+import { iconPaths } from '../ui/icons/iconPaths';
 
 export function ProductHeader({ onClose }: { onClose?: () => void }) {
   return (
@@ -19,7 +19,7 @@ export function ProductHeader({ onClose }: { onClose?: () => void }) {
                   <rect fill="var(--fill-0, #D9D9D9)" height="28" id="Bounding box" width="28" />
                 </mask>
                 <g mask="url(#mask0_1_6337)">
-                  <path d={svgIconPaths.p8905cb1} fill="var(--fill-0, #4D4D4D)" id="reply_2" />
+                  <path d={iconPaths.reply} fill="var(--fill-0, #4D4D4D)" id="reply_2" />
                 </g>
               </g>
             </svg>

@@ -11,14 +11,23 @@ interface HeaderProps {
 export function Header({ onBackClick, activeSection, userName, onSectionChange: _onSectionChange }: HeaderProps) {
   const getTitleForSection = (section: string): string => {
     const titles: Record<string, string> = {
+      // User cabinet sections
       'main': userName ? `Вітаємо ${userName}!` : 'Вітаємо!',
       'history': 'Ваша Історія замовлень',
       'saved': 'Збережені матеріали',
       'orders': 'Персональні замовлення',
       'questionnaires': 'Опитування для користувачів',
-      'settings': 'Налаштування профілю'
+      'settings': 'Налаштування профілю',
+      // Admin sections
+      'materials': 'Всі Матеріали',
+      'materials-add': 'Додати Матеріал',
+      'materials-edit': 'Редагувати Матеріал',
+      'orders-detail': 'Деталі Замовлення',
+      'analytics': 'Аналітика',
+      'polls': 'Опитування для клієнтів',
+      'polls-create': 'Створити опитування',
     };
-    return titles[section] || 'Особистий кабінет';
+    return titles[section] || 'Адміністратор';
   };
 
   const handleBackClick = () => {

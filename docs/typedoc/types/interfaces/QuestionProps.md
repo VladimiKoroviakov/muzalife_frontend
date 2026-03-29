@@ -6,7 +6,7 @@
 
 # Interface: QuestionProps
 
-Defined in: [types.ts:130](https://github.com/VladimiKoroviakov/muzalife_frontend/blob/a2b554aa5eceb322b09e7392eb12556651b0f442/src/types.ts#L130)
+Defined in: [types.ts:130](https://github.com/VladimiKoroviakov/muzalife_frontend/blob/365e67c70bc7b9e01755e323412cff096ddbd74c/src/types.ts#L130)
 
 ## Properties
 
@@ -14,7 +14,7 @@ Defined in: [types.ts:130](https://github.com/VladimiKoroviakov/muzalife_fronten
 
 > **answer**: `string`
 
-Defined in: [types.ts:132](https://github.com/VladimiKoroviakov/muzalife_frontend/blob/a2b554aa5eceb322b09e7392eb12556651b0f442/src/types.ts#L132)
+Defined in: [types.ts:132](https://github.com/VladimiKoroviakov/muzalife_frontend/blob/365e67c70bc7b9e01755e323412cff096ddbd74c/src/types.ts#L132)
 
 ***
 
@@ -22,7 +22,7 @@ Defined in: [types.ts:132](https://github.com/VladimiKoroviakov/muzalife_fronten
 
 > **isOpen**: `boolean`
 
-Defined in: [types.ts:133](https://github.com/VladimiKoroviakov/muzalife_frontend/blob/a2b554aa5eceb322b09e7392eb12556651b0f442/src/types.ts#L133)
+Defined in: [types.ts:133](https://github.com/VladimiKoroviakov/muzalife_frontend/blob/365e67c70bc7b9e01755e323412cff096ddbd74c/src/types.ts#L133)
 
 ***
 
@@ -30,7 +30,7 @@ Defined in: [types.ts:133](https://github.com/VladimiKoroviakov/muzalife_fronten
 
 > **onClick**: () => `void`
 
-Defined in: [types.ts:134](https://github.com/VladimiKoroviakov/muzalife_frontend/blob/a2b554aa5eceb322b09e7392eb12556651b0f442/src/types.ts#L134)
+Defined in: [types.ts:134](https://github.com/VladimiKoroviakov/muzalife_frontend/blob/365e67c70bc7b9e01755e323412cff096ddbd74c/src/types.ts#L134)
 
 #### Returns
 
@@ -42,4 +42,4 @@ Defined in: [types.ts:134](https://github.com/VladimiKoroviakov/muzalife_fronten
 
 > **question**: `string`
 
-Defined in: [types.ts:131](https://github.com/VladimiKoroviakov/muzalife_frontend/blob/a2b554aa5eceb322b09e7392eb12556651b0f442/src/types.ts#L131)
+Defined in: [types.ts:131](https://github.com/VladimiKoroviakov/muzalife_frontend/blob/365e67c70bc7b9e01755e323412cff096ddbd74c/src/types.ts#L131)

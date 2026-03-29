@@ -1,5 +1,5 @@
 import { useState, useEffect, useCallback, useRef } from 'react';
-import svgPaths from '../ui/icons/svgIconPaths';
+import { iconPaths } from '../ui/icons/iconPaths';
 import { Table, TextCell, EmptyCell, TableCell } from './TableComponents';
 import { apiService } from '../../services/api';
 import { PersonalOrder } from '../../types';
@@ -493,7 +493,7 @@ const isActionBold = (status: string): boolean => {
                 <div className="relative shrink-0 size-[20px]" data-name="icon order">
                   <div className="absolute inset-[8.33%_4.17%_8.33%_12.5%] mask-alpha mask-intersect mask-no-clip mask-no-repeat mask-position-[-3px_-2px] mask-size-[24px_24px]" data-name="contract_edit">
                     <svg className="block size-full" fill="none" preserveAspectRatio="none" viewBox="0 0 17 17">
-                      <path d={svgPaths.p7a22000} fill="var(--fill-0, #0D0D0D)" id="contract_edit" />
+                      <path d={iconPaths.contractEditSmall} fill="var(--fill-0, #0D0D0D)" id="contract_edit" />
                     </svg>
                   </div>
                 </div>
@@ -541,7 +541,7 @@ const isActionBold = (status: string): boolean => {
                 <div className="relative shrink-0 size-[20px]" data-name="icon order">
                   <div className="absolute inset-[8.33%_4.17%_8.33%_12.5%] mask-alpha mask-intersect mask-no-clip mask-no-repeat mask-position-[-3px_-2px] mask-size-[24px_24px]" data-name="contract_edit">
                     <svg className="block size-full" fill="none" preserveAspectRatio="none" viewBox="0 0 17 17">
-                      <path d={svgPaths.p7a22000} fill="var(--fill-0, #0D0D0D)" id="contract_edit" />
+                      <path d={iconPaths.contractEditSmall} fill="var(--fill-0, #0D0D0D)" id="contract_edit" />
                     </svg>
                   </div>
                 </div>
@@ -609,7 +609,7 @@ const isActionBold = (status: string): boolean => {
               <div className="relative shrink-0 size-[20px]" data-name="icon order">
                 <div className="absolute inset-[8.33%_4.17%_8.33%_12.5%] mask-alpha mask-intersect mask-no-clip mask-no-repeat mask-position-[-3px_-2px] mask-size-[24px_24px]" data-name="contract_edit">
                   <svg className="block size-full" fill="none" preserveAspectRatio="none" viewBox="0 0 17 17">
-                    <path d={svgPaths.p7a22000} fill="var(--fill-0, #0D0D0D)" id="contract_edit" />
+                    <path d={iconPaths.contractEditSmall} fill="var(--fill-0, #0D0D0D)" id="contract_edit" />
                   </svg>
                 </div>
               </div>

@@ -9,7 +9,7 @@ import { GoogleLoginButton } from '../components/auth/GoogleLoginButton';
 import { FacebookLoginButton } from '../components/auth/FacebookLoginButton';
 import { InputField } from '../components/auth/InputField';
 import { LoginSubmitButton } from '../components/auth/LoginSubmitButton';
-import { CloseButton } from '../components/auth/CloseButton';
+import { CloseButton } from '../components/ui/icons/CloseButton';
 
 export default function LoginPage() {
   const navigate = useNavigate();

@@ -1,11 +1,11 @@
 import { Product } from '../../types';
-import svgIconPaths from '../ui/icons/svgIconPaths';
+import { iconPaths } from '../ui/icons/iconPaths';
 
 function CloseViewer() {
   return (
     <div className="relative shrink-0 size-[28px]" data-name="close">
       <svg className="block size-full" fill="none" preserveAspectRatio="none" viewBox="0 0 28 28">
-        <path d={svgIconPaths.p2e879500} fill="var(--fill-0, #F2F2F2)" />
+        <path d={iconPaths.imageViewerClose} fill="var(--fill-0, #F2F2F2)" />
       </svg>
     </div>
   );
@@ -19,8 +19,8 @@ function KeyboardArrowLeftViewer({ onClick }: { onClick: () => void }) {
       data-name="keyboard_arrow_left"
     >
       <svg className="block size-full" fill="none" preserveAspectRatio="none" viewBox="0 0 32 76">
-        <path d={svgIconPaths.p2a8cf580} fill="var(--fill-0, #E6E6E6)" />
-        <path d={svgIconPaths.p3c24ee00} fill="var(--fill-0, #4D4D4D)" />
+        <path d={iconPaths.imageViewerNavBg1} fill="var(--fill-0, #E6E6E6)" />
+        <path d={iconPaths.imageViewerNavArrow1} fill="var(--fill-0, #4D4D4D)" />
       </svg>
     </div>
   );
@@ -34,8 +34,8 @@ function KeyboardArrowRightViewer({ onClick }: { onClick: () => void }) {
       data-name="keyboard_arrow_right"
     >
       <svg className="block size-full" fill="none" preserveAspectRatio="none" viewBox="0 0 32 76">
-        <path d={svgIconPaths.p38d93c30} fill="var(--fill-0, #F2F2F2)" />
-        <path d={svgIconPaths.p33a95500} fill="var(--fill-0, #0D0D0D)" />
+        <path d={iconPaths.imageViewerNavBg2} fill="var(--fill-0, #F2F2F2)" />
+        <path d={iconPaths.imageViewerNavArrow2} fill="var(--fill-0, #0D0D0D)" />
       </svg>
     </div>
   );

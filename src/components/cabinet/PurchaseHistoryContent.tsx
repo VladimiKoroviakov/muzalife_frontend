@@ -1,6 +1,6 @@
 import { useState, useEffect, useRef, useCallback } from 'react';
 import { toast } from 'sonner';
-import svgPaths from '../ui/icons/svgIconPaths';
+import { iconPaths } from '../ui/icons/iconPaths';
 import { Table, TextCell, EmptyCell, TableCell } from './TableComponents';
 import { Skeleton } from '../ui/skeleton';
 import { apiService } from '../../services/api';
@@ -340,7 +340,7 @@ export function PurchaseHistoryContent({
                   >
                     <div className="absolute inset-[16.667%] mask-alpha mask-intersect mask-no-clip mask-no-repeat mask-position-[-4px] mask-size-[24px_24px]" data-name="download">
                       <svg className="block size-full" fill="none" preserveAspectRatio="none" viewBox="0 0 16 16">
-                        <path d={svgPaths.p13494900} fill="var(--fill-0, #0D0D0D)" id="download" />
+                        <path d={iconPaths.download} fill="var(--fill-0, #0D0D0D)" id="download" />
                       </svg>
                     </div>
                   </div>
@@ -356,7 +356,7 @@ export function PurchaseHistoryContent({
                   >
                     <div className="absolute inset-[8.333%] mask-alpha mask-intersect mask-no-clip mask-no-repeat mask-position-[-2px] mask-size-[24px_24px]" data-name="comment">
                       <svg className="block size-full" fill="none" preserveAspectRatio="none" viewBox="0 0 20 20">
-                        <path d={svgPaths.p159e6480} fill="var(--fill-0, #4D4D4D)" id="comment" />
+                        <path d={iconPaths.comment} fill="var(--fill-0, #4D4D4D)" id="comment" />
                       </svg>
                     </div>
                   </div>

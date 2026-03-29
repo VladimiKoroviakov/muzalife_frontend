@@ -1,7 +1,7 @@
 import { useState, useEffect, useCallback } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Header } from '../components/layout/Header';
-import { Canvas } from '../components/layout/Canvas';
+import { ProductsCanvas } from '../components/layout/ProductsCanvas';
 import { Cart } from '../components/features/Cart';
 import { LoginRequiredModal } from '../components/auth/LoginRequiredModal';
 import { apiService } from '../services/api';
@@ -315,7 +315,7 @@ export default function HomePage() {
           ) : error ? (
             <div className="flex-grow flex items-center justify-center text-lg text-red-600">{error}</div>
           ) : (
-            <Canvas
+            <ProductsCanvas
               showFilters={showFilters}
               setShowFilters={setShowFilters}
               selectedAgeCategory={selectedAgeCategory}

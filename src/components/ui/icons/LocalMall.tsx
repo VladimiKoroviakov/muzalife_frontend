@@ -1,4 +1,4 @@
-import svgPaths from './svgIconPaths';
+import { iconPaths } from './iconPaths';
 import { LocalMallProps } from '../../../types';
 
 export function LocalMall({ count }: LocalMallProps) {
@@ -10,7 +10,7 @@ export function LocalMall({ count }: LocalMallProps) {
             <rect fill="var(--fill-0, #D9D9D9)" height="28" id="Bounding box" width="28" />
           </mask>
           <g mask="url(#mask0_1_1724)">
-            <path d={svgPaths.pd62e280} fill="var(--fill-0, #4D4D4D)" id="local_mall_2" />
+            <path d={iconPaths.localMall} fill="var(--fill-0, #4D4D4D)" id="local_mall_2" />
           </g>
         </g>
       </svg>

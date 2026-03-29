@@ -1,5 +1,5 @@
 import { Product } from '../../types';
-import svgIconPaths from '../ui/icons/svgIconPaths';
+import { iconPaths } from '../ui/icons/iconPaths';
 
 function KeyboardArrowLeft({ onClick }: { onClick: () => void }) {
   return (
@@ -13,7 +13,7 @@ function KeyboardArrowLeft({ onClick }: { onClick: () => void }) {
         <div className="box-border content-stretch flex gap-[10px] items-center justify-center px-[8px] py-[6px] relative size-full">
           <div className="h-[12px] relative shrink-0 w-[7.4px]" data-name="keyboard_arrow_left">
             <svg className="block size-full" fill="none" preserveAspectRatio="none" viewBox="0 0 8 12">
-              <path d={svgIconPaths.p1cc3a100} fill="var(--fill-0, #4D4D4D)" id="keyboard_arrow_left" />
+              <path d={iconPaths.arrowLeft} fill="var(--fill-0, #4D4D4D)" id="keyboard_arrow_left" />
             </svg>
           </div>
         </div>
@@ -33,7 +33,7 @@ function KeyboardArrowRight({ onClick }: { onClick: () => void }) {
         <div className="box-border content-stretch flex gap-[10px] items-center justify-center px-[8px] py-[6px] relative size-full">
           <div className="h-[12px] relative shrink-0 w-[7.4px]" data-name="keyboard_arrow_right">
             <svg className="block size-full" fill="none" preserveAspectRatio="none" viewBox="0 0 8 12">
-              <path d={svgIconPaths.p33166380} fill="var(--fill-0, #0D0D0D)" id="keyboard_arrow_right" />
+              <path d={iconPaths.arrowRight} fill="var(--fill-0, #0D0D0D)" id="keyboard_arrow_right" />
             </svg>
           </div>
         </div>
