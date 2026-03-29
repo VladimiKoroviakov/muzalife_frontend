@@ -65,7 +65,6 @@ export default function HomePage() {
         const token = localStorage.getItem('authToken');
 
         if (!token) {
-          console.log('No auth token found, skipping auth check');
           setIsAuthenticated(false);
           return;
         }
@@ -73,15 +72,12 @@ export default function HomePage() {
         const user = await apiService.getProfile();
 
         if (user) {
-          console.log('User is authenticated on homepage load');
           setIsAuthenticated(true);
           await loadSavedProducts();
         } else {
-          console.log('User is not authenticated on homepage load');
           setIsAuthenticated(false);
         }
-      } catch (error) {
-        console.log('User is not authenticated or token invalid:', error);
+      } catch {
         setIsAuthenticated(false);
         localStorage.removeItem('authToken');
       }
@@ -234,20 +230,16 @@ export default function HomePage() {
       }
 
       const user = await apiService.getProfile();
-      console.log('Profile icon clicked. Is authenticated:', !!user);
 
       if (user) {
-        console.log('Navigating to profile');
         navigate('/cabinet');
       } else {
-        console.log('Navigating to login');
         navigate('/login');
       }
     } catch (error: any) {
       if (error.status === 401) {
         localStorage.removeItem('authToken');
       }
-      console.log('User not authenticated, navigating to login');
       navigate('/login');
     }
   };

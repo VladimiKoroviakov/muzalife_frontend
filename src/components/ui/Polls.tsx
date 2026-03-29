@@ -1,5 +1,7 @@
 import { useState, useEffect } from 'react';
 import { iconPaths } from '../ui/icons/iconPaths';
+import { RadioButtonChecked } from './RadioButtonChecked';
+import { RadioButtonUnchecked } from './RadioButtonUnchecked';
 import { apiService } from '../../services/api';
 import {
   Poll,
@@ -25,40 +27,6 @@ function CheckCircle() {
           </mask>
           <g mask="url(#mask0_103_258)">
             <path d={iconPaths.checkCircle} fill="var(--fill-0, #4CAF50)" id="check_circle_2" />
-          </g>
-        </g>
-      </svg>
-    </div>
-  );
-}
-
-function RadioButtonUnchecked() {
-  return (
-    <div className="relative shrink-0 size-[24px]" data-name="radio_button_unchecked">
-      <svg className="block size-full" fill="none" preserveAspectRatio="none" viewBox="0 0 24 24">
-        <g id="radio_button_unchecked">
-          <mask height="24" id="mask0_103_273" maskUnits="userSpaceOnUse" style={{ maskType: 'alpha' }} width="24" x="0" y="0">
-            <rect fill="var(--fill-0, #D9D9D9)" height="24" id="Bounding box" width="24" />
-          </mask>
-          <g mask="url(#mask0_103_273)">
-            <path d={iconPaths.radioUnchecked} fill="var(--fill-0, #0D0D0D)" id="radio_button_unchecked_2" />
-          </g>
-        </g>
-      </svg>
-    </div>
-  );
-}
-
-function RadioButtonChecked() {
-  return (
-    <div className="relative shrink-0 size-[24px]" data-name="radio_button_checked">
-      <svg className="block size-full" fill="none" preserveAspectRatio="none" viewBox="0 0 24 24">
-        <g id="radio_button_checked">
-          <mask height="24" id="mask0_103_267" maskUnits="userSpaceOnUse" style={{ maskType: 'alpha' }} width="24" x="0" y="0">
-            <rect fill="var(--fill-0, #D9D9D9)" height="24" id="Bounding box" width="24" />
-          </mask>
-          <g mask="url(#mask0_103_267)">
-            <path d={iconPaths.radioChecked} fill="var(--fill-0, #5E89E8)" id="radio_button_checked_2" />
           </g>
         </g>
       </svg>

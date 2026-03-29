@@ -89,19 +89,15 @@ class ApiService {
 
     return data;
   }
-
   private async get<T>(endpoint: string): Promise<T> {
     return this.http<T>(endpoint, 'GET');
   }
-
   private async post<T>(endpoint: string, body: any): Promise<T> {
     return this.http<T>(endpoint, 'POST', body);
   }
-
   private async put<T>(endpoint: string, body: any): Promise<T> {
     return this.http<T>(endpoint, 'PUT', body);
   }
-
   private async delete<T>(endpoint: string): Promise<T> {
     return this.http<T>(endpoint, 'DELETE');
   }
@@ -120,11 +116,9 @@ class ApiService {
 
     return result;
   }
-
   async initiateRegistration(email: string, password: string, name: string): Promise<ApiResponse> {
     return this.post<ApiResponse>(config.endpoints.auth.register.initiate, { email, password, name });
   }
-
   async verifyRegistration(
     email: string,
     password: string,
@@ -135,11 +129,9 @@ class ApiService {
       email, password, name, verificationCode
     });
   }
-
   async resendVerificationCode(email: string): Promise<ApiResponse> {
     return this.post<ApiResponse>(config.endpoints.auth.register.resendCode, { email });
   }
-
   async login(
     email: string,
     password: string,
@@ -147,15 +139,12 @@ class ApiService {
   ): Promise<AuthResponse> {
     return this.authRequest<AuthResponse>(config.endpoints.auth.login, { email, password, loginType });
   }
-
   async googleLogin(accessToken: string): Promise<AuthResponse> {
     return this.authRequest<AuthResponse>(config.endpoints.auth.google, { accessToken });
   }
-
   async facebookLogin(accessToken: string): Promise<AuthResponse> {
     return this.authRequest<AuthResponse>(config.endpoints.auth.facebook, { accessToken });
   }
-
   async logout(): Promise<void> {
     this.clearUserData();
   }
@@ -197,7 +186,6 @@ class ApiService {
     CacheManager.setItem(config.cacheKeys.USER_PROFILE, profile);
     return profile;
   }
-
   async updateName(name: string): Promise<void> {
     await this.put(config.endpoints.users.name, { name });
 
@@ -208,11 +196,9 @@ class ApiService {
       CacheManager.setItem(config.cacheKeys.USER_PROFILE, cachedProfile);
     }
   }
-
   async initiateEmailChange(newEmail: string, id: number): Promise<ApiResponse> {
     return this.post<ApiResponse>(config.endpoints.users.email.change.initiate, { newEmail, id });
   }
-
   async verifyEmailChange(
     verificationCode: string,
     newEmail: string,
@@ -222,15 +208,12 @@ class ApiService {
       newEmail, verificationCode, userId
     });
   }
-
   async resendEmailChangeCode(email: string): Promise<ApiResponse> {
     return this.post<ApiResponse>(config.endpoints.users.email.change.resendCode, { email });
   }
-
   async changePassword(oldPassword: string, newPassword: string): Promise<void> {
     await this.post(config.endpoints.users.password, { oldPassword, newPassword });
   }
-
   async uploadProfileImage(file: File): Promise<{ imageUrl: string }> {
     const formData = new FormData();
     formData.append('image', file);
@@ -258,7 +241,6 @@ class ApiService {
 
     return data;
   }
-
   async removeProfileImage(): Promise<void> {
     await this.delete(config.endpoints.users.image);
 
@@ -269,7 +251,6 @@ class ApiService {
       CacheManager.setItem(config.cacheKeys.USER_PROFILE, cachedProfile);
     }
   }
-
   async deleteAccount(): Promise<void> {
     await this.delete(config.endpoints.users.account);
     this.clearUserData();
@@ -305,7 +286,6 @@ class ApiService {
       throw error;
     }
   }
-
   async getProductById(id: string): Promise<Product> {
     return this.get<Product>(`${config.endpoints.products}/${id}`);
   }
@@ -330,7 +310,6 @@ class ApiService {
       return cached || [];
     }
   }
-
   async saveProduct(productId: number): Promise<void> {
     const response = await this.post<ApiResponse<void>>(
       config.endpoints.savedProducts.base,
@@ -343,7 +322,6 @@ class ApiService {
 
     this.updateCachedArray<number>(config.cacheKeys.SAVED_PRODUCTS, productId, 'add');
   }
-
   async unsaveProduct(productId: number): Promise<void> {
     const response = await this.delete<ApiResponse<void>>(
       `${config.endpoints.savedProducts.base}/${productId}`
@@ -376,7 +354,6 @@ class ApiService {
       return cached || [];
     }
   }
-
   async buyProduct(productId: number): Promise<void> {
     const response = await this.post<ApiResponse<void>>(
       config.endpoints.boughtProducts.base,
@@ -394,7 +371,6 @@ class ApiService {
   private getCachedArray<T>(key: string): T[] | null {
     return CacheManager.getItem<T[]>(key);
   }
-
   private updateCachedArray<T>(
     key: string,
     item: T,
@@ -432,7 +408,6 @@ class ApiService {
       throw error;
     }
   }
-
   async getAllPersonalOrders(): Promise<PersonalOrder[]> {
     try {
       const response = await this.get<PersonalOrdersApiResponse>(config.endpoints.personalOrders.all);
@@ -449,7 +424,6 @@ class ApiService {
       throw error;
     }
   }
-
   async getPersonalOrderById(orderId: number): Promise<PersonalOrder> {
     try {
       const response = await this.get<PersonalOrdersApiResponse>(
@@ -468,7 +442,6 @@ class ApiService {
       throw error;
     }
   }
-
   async createPersonalOrder(orderData: CreatePersonalOrderData): Promise<PersonalOrder> {
     const dataToSend = {
       orderTitle: orderData.orderTitle,
@@ -491,7 +464,6 @@ class ApiService {
 
     throw new Error(response.error || 'Invalid response format');
   }
-
   async updatePersonalOrder(
     orderId: number,
     updateData: UpdatePersonalOrderData
@@ -515,7 +487,6 @@ class ApiService {
 
     throw new Error(response.error || 'Invalid update data provided');
   }
-
   async deletePersonalOrder(orderId: number): Promise<void> {
     const response = await this.delete<PersonalOrdersApiResponse>(
       `${config.endpoints.personalOrders.base}/${orderId}`
@@ -564,7 +535,6 @@ class ApiService {
       throw error;
     }
   }
-
   async getFAQById(id: number): Promise<FAQItem> {
     const response = await this.get<ApiResponse<FAQItem>>(`${config.endpoints.faqs}/${id}`);
 
@@ -625,7 +595,6 @@ class ApiService {
       throw error;
     }
   }
-
   async getPollDetails(pollId: number): Promise<ApiPoll> {
     try {
       const response = await this.get<{
@@ -646,7 +615,6 @@ class ApiService {
       throw error;
     }
   }
-
   async submitVote(pollId: number, voteId: number): Promise<void> {
     try {
       const response = await this.post<{
@@ -686,7 +654,6 @@ class ApiService {
       throw error;
     }
   }
-
   async getUserReviews(userId: number): Promise<Review[]> {
     try {
       const reviews = await this.get<Review[]>(`${config.endpoints.reviews}/user/${userId}`);
@@ -702,7 +669,6 @@ class ApiService {
       throw error;
     }
   }
-
   async submitReview(productId: number, rating: number, comment: string): Promise<Review> {
     try {
       const review = await this.post<Review>(
@@ -722,7 +688,6 @@ class ApiService {
       throw error;
     }
   }
-
   async updateReview(reviewId: number, rating?: number, comment?: string): Promise<Review> {
     const updateData: any = {};
     if (rating !== undefined) {updateData.rating = rating;}
@@ -738,7 +703,6 @@ class ApiService {
 
     return review;
   }
-
   async deleteReview(reviewId: number): Promise<void> {
     await this.delete(`${config.endpoints.reviews}/${reviewId}`);
 
@@ -759,11 +723,9 @@ class ApiService {
       minute: '2-digit'
     });
   }
-
   getOrderStatusColor(status: string): string {
     return config.orderStatusColors[status.toLowerCase()] || 'text-gray-600';
   }
-
   getOrderStatusText(status: string): string {
     return config.orderStatusText[status.toLowerCase()] || status;
   }
@@ -773,12 +735,10 @@ class ApiService {
     CacheManager.clearUserCache();
     this.setToken(null);
   }
-
   clearProductsCache(): void {
     CacheManager.removeItem(config.cacheKeys.PRODUCTS);
     CacheManager.removeItem(config.cacheKeys.PRODUCTS_TIMESTAMP);
   }
-
   clearAllCache(): void {
     CacheManager.clearUserCache();
   }

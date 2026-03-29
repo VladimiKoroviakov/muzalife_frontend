@@ -6,7 +6,7 @@
 
 # Interface: SavedScenariosContentProps
 
-Defined in: [types.ts:92](https://github.com/VladimiKoroviakov/muzalife_frontend/blob/6996ace12d584a887223cea5e343c7d1430f4daa/src/types.ts#L92)
+Defined in: [types.ts:92](https://github.com/VladimiKoroviakov/muzalife_frontend/blob/4624aee8b63690c88d220a5b24312b12672b1c17/src/types.ts#L92)
 
 ## Properties
 
@@ -14,7 +14,7 @@ Defined in: [types.ts:92](https://github.com/VladimiKoroviakov/muzalife_frontend
 
 > `optional` **addToCart?**: (`productId`) => `void`
 
-Defined in: [types.ts:94](https://github.com/VladimiKoroviakov/muzalife_frontend/blob/6996ace12d584a887223cea5e343c7d1430f4daa/src/types.ts#L94)
+Defined in: [types.ts:94](https://github.com/VladimiKoroviakov/muzalife_frontend/blob/4624aee8b63690c88d220a5b24312b12672b1c17/src/types.ts#L94)
 
 #### Parameters
 
@@ -32,7 +32,7 @@ Defined in: [types.ts:94](https://github.com/VladimiKoroviakov/muzalife_frontend
 
 > **onBack**: () => `void`
 
-Defined in: [types.ts:93](https://github.com/VladimiKoroviakov/muzalife_frontend/blob/6996ace12d584a887223cea5e343c7d1430f4daa/src/types.ts#L93)
+Defined in: [types.ts:93](https://github.com/VladimiKoroviakov/muzalife_frontend/blob/4624aee8b63690c88d220a5b24312b12672b1c17/src/types.ts#L93)
 
 #### Returns
 
@@ -44,7 +44,7 @@ Defined in: [types.ts:93](https://github.com/VladimiKoroviakov/muzalife_frontend
 
 > `optional` **onBookmarkedProductsChange?**: (`products`) => `void`
 
-Defined in: [types.ts:96](https://github.com/VladimiKoroviakov/muzalife_frontend/blob/6996ace12d584a887223cea5e343c7d1430f4daa/src/types.ts#L96)
+Defined in: [types.ts:96](https://github.com/VladimiKoroviakov/muzalife_frontend/blob/4624aee8b63690c88d220a5b24312b12672b1c17/src/types.ts#L96)
 
 #### Parameters
 
@@ -62,4 +62,4 @@ Defined in: [types.ts:96](https://github.com/VladimiKoroviakov/muzalife_frontend
 
 > `optional` **products?**: `any`[]
 
-Defined in: [types.ts:95](https://github.com/VladimiKoroviakov/muzalife_frontend/blob/6996ace12d584a887223cea5e343c7d1430f4daa/src/types.ts#L95)
+Defined in: [types.ts:95](https://github.com/VladimiKoroviakov/muzalife_frontend/blob/4624aee8b63690c88d220a5b24312b12672b1c17/src/types.ts#L95)

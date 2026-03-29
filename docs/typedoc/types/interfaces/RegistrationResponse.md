@@ -6,7 +6,7 @@
 
 # Interface: RegistrationResponse
 
-Defined in: [types.ts:323](https://github.com/VladimiKoroviakov/muzalife_frontend/blob/6996ace12d584a887223cea5e343c7d1430f4daa/src/types.ts#L323)
+Defined in: [types.ts:323](https://github.com/VladimiKoroviakov/muzalife_frontend/blob/4624aee8b63690c88d220a5b24312b12672b1c17/src/types.ts#L323)
 
 ## Extends
 
@@ -22,7 +22,7 @@ Defined in: [types.ts:323](https://github.com/VladimiKoroviakov/muzalife_fronten
 
 > **message**: `string`
 
-Defined in: [types.ts:324](https://github.com/VladimiKoroviakov/muzalife_frontend/blob/6996ace12d584a887223cea5e343c7d1430f4daa/src/types.ts#L324)
+Defined in: [types.ts:324](https://github.com/VladimiKoroviakov/muzalife_frontend/blob/4624aee8b63690c88d220a5b24312b12672b1c17/src/types.ts#L324)
 
 #### Overrides
 
@@ -34,7 +34,7 @@ Defined in: [types.ts:324](https://github.com/VladimiKoroviakov/muzalife_fronten
 
 > `optional` **requiresVerification?**: `boolean`
 
-Defined in: [types.ts:325](https://github.com/VladimiKoroviakov/muzalife_frontend/blob/6996ace12d584a887223cea5e343c7d1430f4daa/src/types.ts#L325)
+Defined in: [types.ts:325](https://github.com/VladimiKoroviakov/muzalife_frontend/blob/4624aee8b63690c88d220a5b24312b12672b1c17/src/types.ts#L325)
 
 ***
 
@@ -42,7 +42,7 @@ Defined in: [types.ts:325](https://github.com/VladimiKoroviakov/muzalife_fronten
 
 > `optional` **success?**: `boolean`
 
-Defined in: [types.ts:313](https://github.com/VladimiKoroviakov/muzalife_frontend/blob/6996ace12d584a887223cea5e343c7d1430f4daa/src/types.ts#L313)
+Defined in: [types.ts:313](https://github.com/VladimiKoroviakov/muzalife_frontend/blob/4624aee8b63690c88d220a5b24312b12672b1c17/src/types.ts#L313)
 
 #### Inherited from
 
@@ -54,7 +54,7 @@ Defined in: [types.ts:313](https://github.com/VladimiKoroviakov/muzalife_fronten
 
 > `optional` **token?**: `string`
 
-Defined in: [types.ts:311](https://github.com/VladimiKoroviakov/muzalife_frontend/blob/6996ace12d584a887223cea5e343c7d1430f4daa/src/types.ts#L311)
+Defined in: [types.ts:311](https://github.com/VladimiKoroviakov/muzalife_frontend/blob/4624aee8b63690c88d220a5b24312b12672b1c17/src/types.ts#L311)
 
 #### Inherited from
 
@@ -66,7 +66,7 @@ Defined in: [types.ts:311](https://github.com/VladimiKoroviakov/muzalife_fronten
 
 > `optional` **user?**: [`AuthUser`](../type-aliases/AuthUser.md)
 
-Defined in: [types.ts:312](https://github.com/VladimiKoroviakov/muzalife_frontend/blob/6996ace12d584a887223cea5e343c7d1430f4daa/src/types.ts#L312)
+Defined in: [types.ts:312](https://github.com/VladimiKoroviakov/muzalife_frontend/blob/4624aee8b63690c88d220a5b24312b12672b1c17/src/types.ts#L312)
 
 #### Inherited from
 

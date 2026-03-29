@@ -6,7 +6,7 @@
 
 # Interface: AuthResponse
 
-Defined in: [types.ts:310](https://github.com/VladimiKoroviakov/muzalife_frontend/blob/6996ace12d584a887223cea5e343c7d1430f4daa/src/types.ts#L310)
+Defined in: [types.ts:310](https://github.com/VladimiKoroviakov/muzalife_frontend/blob/4624aee8b63690c88d220a5b24312b12672b1c17/src/types.ts#L310)
 
 ## Extended by
 
@@ -24,7 +24,7 @@ Defined in: [types.ts:310](https://github.com/VladimiKoroviakov/muzalife_fronten
 
 > `optional` **message?**: `string`
 
-Defined in: [types.ts:314](https://github.com/VladimiKoroviakov/muzalife_frontend/blob/6996ace12d584a887223cea5e343c7d1430f4daa/src/types.ts#L314)
+Defined in: [types.ts:314](https://github.com/VladimiKoroviakov/muzalife_frontend/blob/4624aee8b63690c88d220a5b24312b12672b1c17/src/types.ts#L314)
 
 ***
 
@@ -32,7 +32,7 @@ Defined in: [types.ts:314](https://github.com/VladimiKoroviakov/muzalife_fronten
 
 > `optional` **success?**: `boolean`
 
-Defined in: [types.ts:313](https://github.com/VladimiKoroviakov/muzalife_frontend/blob/6996ace12d584a887223cea5e343c7d1430f4daa/src/types.ts#L313)
+Defined in: [types.ts:313](https://github.com/VladimiKoroviakov/muzalife_frontend/blob/4624aee8b63690c88d220a5b24312b12672b1c17/src/types.ts#L313)
 
 ***
 
@@ -40,7 +40,7 @@ Defined in: [types.ts:313](https://github.com/VladimiKoroviakov/muzalife_fronten
 
 > `optional` **token?**: `string`
 
-Defined in: [types.ts:311](https://github.com/VladimiKoroviakov/muzalife_frontend/blob/6996ace12d584a887223cea5e343c7d1430f4daa/src/types.ts#L311)
+Defined in: [types.ts:311](https://github.com/VladimiKoroviakov/muzalife_frontend/blob/4624aee8b63690c88d220a5b24312b12672b1c17/src/types.ts#L311)
 
 ***
 
@@ -48,4 +48,4 @@ Defined in: [types.ts:311](https://github.com/VladimiKoroviakov/muzalife_fronten
 
 > `optional` **user?**: [`AuthUser`](../type-aliases/AuthUser.md)
 
-Defined in: [types.ts:312](https://github.com/VladimiKoroviakov/muzalife_frontend/blob/6996ace12d584a887223cea5e343c7d1430f4daa/src/types.ts#L312)
+Defined in: [types.ts:312](https://github.com/VladimiKoroviakov/muzalife_frontend/blob/4624aee8b63690c88d220a5b24312b12672b1c17/src/types.ts#L312)

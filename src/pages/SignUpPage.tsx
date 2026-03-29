@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react'; // Added useEffect
 import { useNavigate } from 'react-router-dom';
 import { toast } from 'sonner';
-import { useAuth } from '../hooks/useAuth';
+import { useAuthContext } from '../context/AuthContext';
 import { apiService } from '../services/api';
 import { AuthLogoTitle } from '../components/auth/AuthLogoTitle';
 import { AuthDivider } from '../components/auth/AuthDivider';
@@ -21,7 +21,6 @@ export default function SignUpPage() {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [isLoading, setIsLoading] = useState(false);
-  const [_facebookLoading, _setFacebookLoading] = useState(false);
   const [showVerificationModal, setShowVerificationModal] = useState(false);
   const [pendingRegistration, setPendingRegistration] = useState<{
     email: string;
@@ -31,7 +30,7 @@ export default function SignUpPage() {
     timestamp: number;
   } | null>(null);
 
-  const { signUpWithEmail, completeRegistration } = useAuth();
+  const { signUpWithEmail, completeRegistration } = useAuthContext();
 
   // Check for pending verification on component mount
   useEffect(() => {

@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { toast } from 'sonner';
-import { useAuth } from '../hooks/useAuth';
+import { useAuthContext } from '../context/AuthContext';
 import { AuthLogoTitle } from '../components/auth/AuthLogoTitle';
 import { AuthDivider } from '../components/auth/AuthDivider';
 import { AuthRedirectLink } from '../components/auth/AuthRedirectLink';
@@ -15,7 +15,7 @@ export default function LoginPage() {
   const navigate = useNavigate();
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
-  const { signInWithEmail, isLoading } = useAuth();
+  const { signInWithEmail, isLoading } = useAuthContext();
 
   const handleClose = () => {
     navigate('/');

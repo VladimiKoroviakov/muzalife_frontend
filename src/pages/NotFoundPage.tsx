@@ -9,7 +9,7 @@
  * @module pages/NotFoundPage
  */
 
-import React, { useEffect } from 'react';
+import { useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import logger from '../utils/logger';
 
@@ -31,21 +31,13 @@ const MESSAGES = {
     code: '404',
     title: 'Page not found',
     body: 'Sorry, the page you are looking for does not exist or has been moved.',
-    action: 'What you can do:',
-    hints: [
-      'Check the URL for typos',
-      'Go back to the home page',
-      'Use the search to find the product you need',
-    ],
-    home: 'Go home',
-    back: 'Go back',
   },
 };
 
 /**
  * 404 Not Found page component.
  */
-const NotFoundPage: React.FC = () => {
+const NotFoundPage = () => {
   const navigate = useNavigate();
 
   useEffect(() => {

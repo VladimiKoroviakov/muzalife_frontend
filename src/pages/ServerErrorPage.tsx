@@ -8,7 +8,7 @@
  * @module pages/ServerErrorPage
  */
 
-import React, { useEffect } from 'react';
+import { useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import logger from '../utils/logger';
 
@@ -43,7 +43,7 @@ const MESSAGES = {
 /**
  * Renders a user-friendly 500 error page.
  */
-const ServerErrorPage: React.FC<ServerErrorPageProps> = ({ errorId, message }) => {
+const ServerErrorPage = ({ errorId, message }: ServerErrorPageProps) => {
   const navigate = useNavigate();
 
   useEffect(() => {

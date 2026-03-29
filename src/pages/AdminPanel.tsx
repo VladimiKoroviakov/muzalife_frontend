@@ -82,28 +82,15 @@ export default function AdminPanel() {
           }
         }
 
-        // eslint-disable-next-line @typescript-eslint/no-explicit-any
-        const response: any = await apiService.getProfile();
+        const profile = await apiService.getProfile();
 
-        let profileData = null;
-
-        if (response?.user) {
-          profileData = response.user;
-        } else if (response?.name) {
-          profileData = response;
-        } else if (response?.data) {
-          profileData = response.data;
-        }
-
-        if (profileData?.name) {
-          setUserName(profileData.name);
-
-          const cacheData = {
-            name: profileData.name,
-            email: profileData.email || profileData.user_email,
-            imageUrl: profileData.avatar_url || profileData.imageUrl || profileData.user_avatar_url,
-          };
-          localStorage.setItem('userProfile', JSON.stringify(cacheData));
+        if (profile?.name) {
+          setUserName(profile.name);
+          localStorage.setItem('userProfile', JSON.stringify({
+            name: profile.name,
+            email: profile.email,
+            imageUrl: profile.avatar_url,
+          }));
         }
       } catch {
         setUserName('Користувач');

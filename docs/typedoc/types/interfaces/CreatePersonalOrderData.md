@@ -6,7 +6,7 @@
 
 # Interface: CreatePersonalOrderData
 
-Defined in: [types.ts:52](https://github.com/VladimiKoroviakov/muzalife_frontend/blob/6996ace12d584a887223cea5e343c7d1430f4daa/src/types.ts#L52)
+Defined in: [types.ts:52](https://github.com/VladimiKoroviakov/muzalife_frontend/blob/4624aee8b63690c88d220a5b24312b12672b1c17/src/types.ts#L52)
 
 ## Properties
 
@@ -14,7 +14,7 @@ Defined in: [types.ts:52](https://github.com/VladimiKoroviakov/muzalife_frontend
 
 > `optional` **orderDeadline?**: `string`
 
-Defined in: [types.ts:59](https://github.com/VladimiKoroviakov/muzalife_frontend/blob/6996ace12d584a887223cea5e343c7d1430f4daa/src/types.ts#L59)
+Defined in: [types.ts:59](https://github.com/VladimiKoroviakov/muzalife_frontend/blob/4624aee8b63690c88d220a5b24312b12672b1c17/src/types.ts#L59)
 
 ***
 
@@ -22,7 +22,7 @@ Defined in: [types.ts:59](https://github.com/VladimiKoroviakov/muzalife_frontend
 
 > **orderDescription**: `string`
 
-Defined in: [types.ts:54](https://github.com/VladimiKoroviakov/muzalife_frontend/blob/6996ace12d584a887223cea5e343c7d1430f4daa/src/types.ts#L54)
+Defined in: [types.ts:54](https://github.com/VladimiKoroviakov/muzalife_frontend/blob/4624aee8b63690c88d220a5b24312b12672b1c17/src/types.ts#L54)
 
 ***
 
@@ -30,7 +30,7 @@ Defined in: [types.ts:54](https://github.com/VladimiKoroviakov/muzalife_frontend
 
 > **orderMaterialAgeCategory**: `string`
 
-Defined in: [types.ts:58](https://github.com/VladimiKoroviakov/muzalife_frontend/blob/6996ace12d584a887223cea5e343c7d1430f4daa/src/types.ts#L58)
+Defined in: [types.ts:58](https://github.com/VladimiKoroviakov/muzalife_frontend/blob/4624aee8b63690c88d220a5b24312b12672b1c17/src/types.ts#L58)
 
 ***
 
@@ -38,7 +38,7 @@ Defined in: [types.ts:58](https://github.com/VladimiKoroviakov/muzalife_frontend
 
 > **orderMaterialType**: `string`
 
-Defined in: [types.ts:57](https://github.com/VladimiKoroviakov/muzalife_frontend/blob/6996ace12d584a887223cea5e343c7d1430f4daa/src/types.ts#L57)
+Defined in: [types.ts:57](https://github.com/VladimiKoroviakov/muzalife_frontend/blob/4624aee8b63690c88d220a5b24312b12672b1c17/src/types.ts#L57)
 
 ***
 
@@ -46,7 +46,7 @@ Defined in: [types.ts:57](https://github.com/VladimiKoroviakov/muzalife_frontend
 
 > `optional` **orderPrice?**: `number`
 
-Defined in: [types.ts:56](https://github.com/VladimiKoroviakov/muzalife_frontend/blob/6996ace12d584a887223cea5e343c7d1430f4daa/src/types.ts#L56)
+Defined in: [types.ts:56](https://github.com/VladimiKoroviakov/muzalife_frontend/blob/4624aee8b63690c88d220a5b24312b12672b1c17/src/types.ts#L56)
 
 ***
 
@@ -54,7 +54,7 @@ Defined in: [types.ts:56](https://github.com/VladimiKoroviakov/muzalife_frontend
 
 > `optional` **orderStatus?**: `string`
 
-Defined in: [types.ts:55](https://github.com/VladimiKoroviakov/muzalife_frontend/blob/6996ace12d584a887223cea5e343c7d1430f4daa/src/types.ts#L55)
+Defined in: [types.ts:55](https://github.com/VladimiKoroviakov/muzalife_frontend/blob/4624aee8b63690c88d220a5b24312b12672b1c17/src/types.ts#L55)
 
 ***
 
@@ -62,4 +62,4 @@ Defined in: [types.ts:55](https://github.com/VladimiKoroviakov/muzalife_frontend
 
 > **orderTitle**: `string`
 
-Defined in: [types.ts:53](https://github.com/VladimiKoroviakov/muzalife_frontend/blob/6996ace12d584a887223cea5e343c7d1430f4daa/src/types.ts#L53)
+Defined in: [types.ts:53](https://github.com/VladimiKoroviakov/muzalife_frontend/blob/4624aee8b63690c88d220a5b24312b12672b1c17/src/types.ts#L53)

@@ -41,19 +41,34 @@ interface AuthContextType {
    */
   signInWithEmail: (email: string, password: string, type: 'regular' | 'admin') => Promise<{ error: any }>;
   /**
-   * Initiates email registration (sends OTP).
+   * Initiates email registration (sends OTP to the user's email).
    * @param email    - Desired email address.
    * @param password - Desired password.
    * @param name     - Display name.
-   * @param type     - Login type context (unused in registration, kept for symmetry).
+   * @returns `{ error }` on failure, or `{ error: null, requiresVerification: true }` when
+   *          the user must confirm via OTP before the account is activated.
    */
-  signUpWithEmail: (email: string, password: string, name: string, type: 'regular' | 'admin') => Promise<{ error: any }>;
+  signUpWithEmail: (
+    email: string,
+    password: string,
+    name: string
+  ) => Promise<{ error: any; requiresVerification?: boolean }>;
   /**
    * Signs in via Google or Facebook OAuth.
    * @param provider    - `'google'` or `'facebook'`.
    * @param accessToken - OAuth access token obtained from the provider's SDK.
    */
   signInWithOAuth: (provider: 'google' | 'facebook', accessToken: string) => Promise<{ error: any }>;
+  /**
+   * Completes the two-step email registration by verifying the OTP.
+   * Called after a successful {@link signUpWithEmail} that returns `requiresVerification: true`.
+   */
+  completeRegistration: (
+    email: string,
+    password: string,
+    name: string,
+    verificationCode: string
+  ) => Promise<{ error: any; user?: any }>;
   /** Signs the current user out and clears local auth state and cache. */
   signOut: () => Promise<void>;
   /** Clears the `error` field without affecting other auth state. */
