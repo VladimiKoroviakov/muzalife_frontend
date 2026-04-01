@@ -18,7 +18,7 @@ npm install --legacy-peer-deps
 ## Running
 
 ```bash
-npm run dev        # dev server at https://localhost:5173
+npm run dev        # dev server at https://localhost:3000
 npm run build      # production build
 npm run type-check # TypeScript check
 ```
