@@ -1,5 +1,6 @@
 import { useState } from 'react';
 import { iconPaths } from '../ui/icons/iconPaths';
+import { Table, TextCell, EmptyCell, TableCell } from '../cabinet/TableComponents';
 
 interface MaterialItem {
   id: string;
@@ -25,6 +26,8 @@ const MOCK_MATERIALS: MaterialItem[] = [
 
 const EMPTY_ROWS_COUNT = 20;
 
+const getRowBg = (index: number) => index % 2 === 0 ? '#f2f2f2' : '#e6e6e6';
+
 export function AdminMaterialsContent({ onSectionChange, onEditMaterial }: AdminMaterialsContentProps) {
   const [materials, setMaterials] = useState<MaterialItem[]>(MOCK_MATERIALS);
   const [deleteId, setDeleteId] = useState<string | null>(null);
@@ -36,116 +39,51 @@ export function AdminMaterialsContent({ onSectionChange, onEditMaterial }: Admin
     }
   };
 
-  return (
-    <div
-      className="basis-0 grow min-h-px min-w-px bg-[#f2f2f2] rounded-[16px] p-[24px] flex flex-col gap-[16px]"
-      data-name="AdminMaterialsContent"
-    >
-      {/* Table — scrolls vertically, header stays sticky */}
-      <div className="flex-1 min-h-0 border border-solid border-white rounded-[12px] overflow-y-auto flex">
-
-        {/* Column 1: Name */}
-        <div className="flex-1 min-w-0 border-r-2 border-solid border-white flex flex-col">
-          <div
-            className="h-[40px] bg-[#5e89e8] flex items-center px-[16px] text-white text-[18px] sticky top-0 z-10 shrink-0"
-            style={fontBold}
-          >
-            Назва Матеріалу
-          </div>
-          {materials.map((item, index) => (
-            <div
-              key={item.id}
-              className={`h-[40px] flex items-center px-[16px] text-[16px] text-[#0d0d0d] truncate shrink-0 ${
-                index % 2 === 0 ? 'bg-[#f2f2f2]' : 'bg-[#e6e6e6]'
-              }`}
-              style={fontRegular}
-            >
-              {item.title}
-            </div>
-          ))}
-          {Array.from({ length: EMPTY_ROWS_COUNT }).map((_, i) => (
-            <div
-              key={`empty-name-${i}`}
-              className={`h-[40px] shrink-0 ${
-                (materials.length + i) % 2 === 0 ? 'bg-[#f2f2f2]' : 'bg-[#e6e6e6]'
-              }`}
-            />
-          ))}
-        </div>
-
-        {/* Column 2: Type */}
-        <div className="w-[148px] shrink-0 border-r-2 border-solid border-white flex flex-col">
-          <div
-            className="h-[40px] bg-[#5e89e8] flex items-center justify-center text-white text-[18px] sticky top-0 z-10 shrink-0"
-            style={fontBold}
-          >
-            Тип Матеріалу
-          </div>
-          {materials.map((item, index) => (
-            <div
-              key={item.id}
-              className={`h-[40px] flex items-center justify-center text-[16px] text-[#0d0d0d] shrink-0 ${
-                index % 2 === 0 ? 'bg-[#f2f2f2]' : 'bg-[#e6e6e6]'
-              }`}
-              style={fontRegular}
-            >
-              {item.type}
-            </div>
-          ))}
-          {Array.from({ length: EMPTY_ROWS_COUNT }).map((_, i) => (
-            <div
-              key={`empty-type-${i}`}
-              className={`h-[40px] shrink-0 ${
-                (materials.length + i) % 2 === 0 ? 'bg-[#f2f2f2]' : 'bg-[#e6e6e6]'
-              }`}
-            />
-          ))}
-        </div>
-
-        {/* Column 3: Date */}
-        <div className="w-[155px] shrink-0 border-r-2 border-solid border-white flex flex-col">
-          <div
-            className="h-[40px] bg-[#5e89e8] flex items-center justify-center text-white text-[18px] sticky top-0 z-10 shrink-0"
-            style={fontBold}
-          >
-            Дата Публікації
-          </div>
-          {materials.map((item, index) => (
-            <div
-              key={item.id}
-              className={`h-[40px] flex items-center justify-center text-[16px] text-[#0d0d0d] shrink-0 ${
-                index % 2 === 0 ? 'bg-[#f2f2f2]' : 'bg-[#e6e6e6]'
-              }`}
-              style={fontRegular}
-            >
-              {item.date}
-            </div>
-          ))}
-          {Array.from({ length: EMPTY_ROWS_COUNT }).map((_, i) => (
-            <div
-              key={`empty-date-${i}`}
-              className={`h-[40px] shrink-0 ${
-                (materials.length + i) % 2 === 0 ? 'bg-[#f2f2f2]' : 'bg-[#e6e6e6]'
-              }`}
-            />
-          ))}
-        </div>
-
-        {/* Column 4: Actions */}
-        <div className="w-[96px] shrink-0 flex flex-col">
-          <div
-            className="h-[40px] bg-[#5e89e8] flex items-center justify-center text-white text-[18px] sticky top-0 z-10 shrink-0"
-            style={fontBold}
-          >
-            Дії
-          </div>
-          {materials.map((item, index) => (
-            <div
-              key={item.id}
-              className={`h-[40px] flex items-center justify-center gap-[16px] shrink-0 ${
-                index % 2 === 0 ? 'bg-[#f2f2f2]' : 'bg-[#e6e6e6]'
-              }`}
-            >
+  const tableColumns = [
+    {
+      header: 'Назва Матеріалу',
+      width: 1,
+      minWidth: '200px',
+      cells: [
+        ...materials.map((item, index) => (
+          <TextCell key={`name-${item.id}`} text={item.title} bg={getRowBg(index)} />
+        )),
+        ...Array.from({ length: EMPTY_ROWS_COUNT }, (_, i) => (
+          <EmptyCell key={`empty-name-${i}`} bg={getRowBg(materials.length + i)} />
+        ))
+      ]
+    },
+    {
+      header: 'Тип Матеріалу',
+      width: '148px',
+      cells: [
+        ...materials.map((item, index) => (
+          <TextCell key={`type-${item.id}`} text={item.type} bg={getRowBg(index)} centered />
+        )),
+        ...Array.from({ length: EMPTY_ROWS_COUNT }, (_, i) => (
+          <EmptyCell key={`empty-type-${i}`} bg={getRowBg(materials.length + i)} />
+        ))
+      ]
+    },
+    {
+      header: 'Дата Публікації',
+      width: '155px',
+      cells: [
+        ...materials.map((item, index) => (
+          <TextCell key={`date-${item.id}`} text={item.date} bg={getRowBg(index)} centered />
+        )),
+        ...Array.from({ length: EMPTY_ROWS_COUNT }, (_, i) => (
+          <EmptyCell key={`empty-date-${i}`} bg={getRowBg(materials.length + i)} />
+        ))
+      ]
+    },
+    {
+      header: 'Дії',
+      width: '96px',
+      cells: [
+        ...materials.map((item, index) => (
+          <TableCell key={`action-${item.id}`} bg={getRowBg(index)}>
+            <div className="flex items-center justify-center gap-[16px] w-full h-[40px]">
               <button
                 onClick={() => onEditMaterial(item.id)}
                 className="hover:opacity-70 transition-opacity cursor-pointer bg-transparent border-none p-0"
@@ -163,16 +101,23 @@ export function AdminMaterialsContent({ onSectionChange, onEditMaterial }: Admin
                 </svg>
               </button>
             </div>
-          ))}
-          {Array.from({ length: EMPTY_ROWS_COUNT }).map((_, i) => (
-            <div
-              key={`empty-actions-${i}`}
-              className={`h-[40px] shrink-0 ${
-                (materials.length + i) % 2 === 0 ? 'bg-[#f2f2f2]' : 'bg-[#e6e6e6]'
-              }`}
-            />
-          ))}
-        </div>
+          </TableCell>
+        )),
+        ...Array.from({ length: EMPTY_ROWS_COUNT }, (_, i) => (
+          <EmptyCell key={`empty-action-${i}`} bg={getRowBg(materials.length + i)} />
+        ))
+      ]
+    }
+  ];
+
+  return (
+    <div
+      className="basis-0 grow min-h-px min-w-px bg-[#f2f2f2] rounded-[16px] p-[24px] flex flex-col gap-[16px] self-stretch"
+      data-name="AdminMaterialsContent"
+    >
+      {/* Table */}
+      <div className="flex-1 min-h-0 relative rounded-[12px] overflow-y-auto">
+        <Table columns={tableColumns} />
       </div>
 
       {/* Add button */}

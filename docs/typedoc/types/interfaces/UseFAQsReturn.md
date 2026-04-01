@@ -6,7 +6,7 @@
 
 # Interface: UseFAQsReturn
 
-Defined in: [types.ts:143](https://github.com/VladimiKoroviakov/muzalife_frontend/blob/4624aee8b63690c88d220a5b24312b12672b1c17/src/types.ts#L143)
+Defined in: [types.ts:143](https://github.com/VladimiKoroviakov/muzalife_frontend/blob/328d586a3a7720e0f03a07cc588113975b8b1d19/src/types.ts#L143)
 
 ## Properties
 
@@ -14,7 +14,7 @@ Defined in: [types.ts:143](https://github.com/VladimiKoroviakov/muzalife_fronten
 
 > **error**: `string` \| `null`
 
-Defined in: [types.ts:146](https://github.com/VladimiKoroviakov/muzalife_frontend/blob/4624aee8b63690c88d220a5b24312b12672b1c17/src/types.ts#L146)
+Defined in: [types.ts:146](https://github.com/VladimiKoroviakov/muzalife_frontend/blob/328d586a3a7720e0f03a07cc588113975b8b1d19/src/types.ts#L146)
 
 ***
 
@@ -22,7 +22,7 @@ Defined in: [types.ts:146](https://github.com/VladimiKoroviakov/muzalife_fronten
 
 > **faqs**: [`FAQItem`](FAQItem.md)[]
 
-Defined in: [types.ts:144](https://github.com/VladimiKoroviakov/muzalife_frontend/blob/4624aee8b63690c88d220a5b24312b12672b1c17/src/types.ts#L144)
+Defined in: [types.ts:144](https://github.com/VladimiKoroviakov/muzalife_frontend/blob/328d586a3a7720e0f03a07cc588113975b8b1d19/src/types.ts#L144)
 
 ***
 
@@ -30,4 +30,4 @@ Defined in: [types.ts:144](https://github.com/VladimiKoroviakov/muzalife_fronten
 
 > **loading**: `boolean`
 
-Defined in: [types.ts:145](https://github.com/VladimiKoroviakov/muzalife_frontend/blob/4624aee8b63690c88d220a5b24312b12672b1c17/src/types.ts#L145)
+Defined in: [types.ts:145](https://github.com/VladimiKoroviakov/muzalife_frontend/blob/328d586a3a7720e0f03a07cc588113975b8b1d19/src/types.ts#L145)

@@ -6,7 +6,7 @@ import { apiService } from '../services/api';
 import { useAuthContext } from '../context/AuthContext';
 
 // Common components
-import { Header } from '../components/cabinet/Header';
+import { DashboardHeader } from '../components/layout/DashboardHeader';
 import { SettingsContent } from '../components/cabinet/SettingsContent';
 
 // Layout and UI components
@@ -14,8 +14,8 @@ import { DashboardCanvas } from '../components/layout/DashboardCanvas';
 import { SidebarTabs, TabItem } from '../components/layout/SidebarTabs';
 import { iconPaths } from '../components/ui/icons/iconPaths';
 
-// Admin-specific components
-import { AdminRightSide } from '../components/admin/AdminRightSide';
+// Layout & shared components
+import { DashboardRightSide, type DashboardCard } from '../components/layout/DashboardRightSide';
 import { AdminMaterialsContent } from '../components/admin/AdminMaterialsContent';
 import { AdminAddMaterial } from '../components/admin/AdminAddMaterial';
 import { AdminEditMaterial } from '../components/admin/AdminEditMaterial';
@@ -25,6 +25,13 @@ import { AdminAnalyticsContent } from '../components/admin/AdminAnalyticsContent
 import { AdminPollsContent } from '../components/admin/AdminPollsContent';
 import { AdminCreateSurvey } from '../components/admin/AdminCreateSurvey';
 
+
+const ADMIN_RIGHT_CARDS: DashboardCard[] = [
+  { id: 'materials', label: 'Всі матеріали',               path: iconPaths.homeStorageCard,       viewBox: '0 0 60 60',           iconSize: 80, padding: 'px-[24px] py-[16px]' },
+  { id: 'orders',    label: 'Персональні замовлення',      path: iconPaths.contractEditAdminCard, viewBox: '0 0 53.3333 53.3333', iconSize: 64, padding: 'px-[24px] py-[16px]' },
+  { id: 'analytics', label: 'Аналітика',                   path: iconPaths.financeModeCard,       viewBox: '0 0 63.3333 63.5',    iconSize: 80, padding: 'px-[24px] py-[16px]' },
+  { id: 'polls',     label: 'Опитування для користувачів', path: iconPaths.barChartAdminCard,     viewBox: '0 0 42.6667 42.6667', iconSize: 64, padding: 'px-[24px] py-[16px]' },
+];
 
 const ADMIN_TABS: TabItem[] = [
   { id: 'main',      label: 'Головна',                    path: iconPaths.homeTab,          viewBox: '0 0 13.3333 15'    },
@@ -151,7 +158,7 @@ export default function AdminPanel() {
       case 'settings':
         return <SettingsContent onShowFAQ={handleShowFAQ} />;
       default:
-        return <AdminRightSide onSectionChange={setActiveSection} />;
+        return <DashboardRightSide cards={ADMIN_RIGHT_CARDS} onSectionChange={handleSectionChange} />;
     }
   };
 
@@ -167,7 +174,7 @@ export default function AdminPanel() {
     <div className="bg-[#e6e6e6] relative size-full" data-name="Admin panel">
       <div className="flex flex-col items-center max-w-inherit min-w-inherit size-full">
         <div className="box-border content-stretch flex flex-col gap-[48px] items-center max-w-inherit min-w-inherit px-[48px] py-[24px] relative size-full">
-          <Header
+          <DashboardHeader
             onBackClick={handleBackClick}
             activeSection={activeSection}
             userName={userName}

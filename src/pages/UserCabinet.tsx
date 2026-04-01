@@ -10,14 +10,21 @@ import { DashboardCanvas } from '../components/layout/DashboardCanvas';
 import { SidebarTabs, TabItem } from '../components/layout/SidebarTabs';
 
 // Cabinet components
-import { Header } from '../components/cabinet/Header';
-import { RightSide } from '../components/cabinet/RightSide';
+import { DashboardHeader } from '../components/layout/DashboardHeader';
+import { DashboardRightSide, type DashboardCard } from '../components/layout/DashboardRightSide';
 import { PurchaseHistoryContent } from '../components/cabinet/PurchaseHistoryContent';
 import { SavedScenariosContent } from '../components/cabinet/SavedScenariosContent';
 import { PersonalOrdersContent } from '../components/cabinet/PersonalOrdersContent';
 import { QuestionnairesContent } from '../components/cabinet/QuestionnairesContent';
 import { SettingsContent } from '../components/cabinet/SettingsContent';
 import FAQs from './FAQsPage';
+
+const USER_RIGHT_CARDS: DashboardCard[] = [
+  { id: 'history',        label: 'Історія замовлень',           path: iconPaths.workHistoryCard,    viewBox: '0 0 70 70', iconSize: 80, padding: 'px-[24px] py-[16px]' },
+  { id: 'saved',          label: 'Збережені матеріали',          path: iconPaths.bookmarksCard,      viewBox: '0 0 54 67', iconSize: 80, padding: 'px-[24px] py-[16px]' },
+  { id: 'orders',         label: 'Персональні замовлення',       path: iconPaths.contractEditCard,   viewBox: '0 0 54 54', iconSize: 80, padding: 'px-[24px] py-[16px]' },
+  { id: 'questionnaires', label: 'Опитування для користувачів', path: iconPaths.barChartCard,       viewBox: '0 0 43 43', iconSize: 80, padding: 'p-[10px]' },
+];
 
 const USER_TABS: TabItem[] = [
   { id: 'main',           label: 'Головна',                  path: iconPaths.homeTab,          viewBox: '0 0 14 15'  },
@@ -178,7 +185,7 @@ export default function UserCabinet({
       case 'settings':
         return <SettingsContent onShowFAQ={() => setShowFAQ(true)} />;
       default:
-        return <RightSide activeSection={activeSection} onSectionChange={setActiveSection} />;
+        return <DashboardRightSide cards={USER_RIGHT_CARDS} onSectionChange={setActiveSection} />;
     }
   };
 
@@ -198,7 +205,7 @@ export default function UserCabinet({
     <div className="bg-[#e6e6e6] relative size-full" data-name="User Cabinet">
       <div className="flex flex-col items-center max-w-inherit min-w-inherit size-full">
         <div className="box-border content-stretch flex flex-col gap-[48px] items-center max-w-inherit min-w-inherit px-[48px] py-[24px] relative size-full">
-          <Header
+          <DashboardHeader
             onBackClick={handleBackClick}
             activeSection={activeSection}
             userName={userName ?? 'Користувач'}

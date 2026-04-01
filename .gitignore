@@ -17,3 +17,7 @@ dist/
 # OS / Editor
 .DS_Store
 .vscode/
+
+# Generated files
+CLAUDE.md
+.claude/

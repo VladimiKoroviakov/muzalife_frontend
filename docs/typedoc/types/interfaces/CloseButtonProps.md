@@ -6,7 +6,7 @@
 
 # Interface: CloseButtonProps
 
-Defined in: [types.ts:190](https://github.com/VladimiKoroviakov/muzalife_frontend/blob/4624aee8b63690c88d220a5b24312b12672b1c17/src/types.ts#L190)
+Defined in: [types.ts:190](https://github.com/VladimiKoroviakov/muzalife_frontend/blob/328d586a3a7720e0f03a07cc588113975b8b1d19/src/types.ts#L190)
 
 ## Properties
 
@@ -14,7 +14,7 @@ Defined in: [types.ts:190](https://github.com/VladimiKoroviakov/muzalife_fronten
 
 > `optional` **onClick?**: () => `void`
 
-Defined in: [types.ts:191](https://github.com/VladimiKoroviakov/muzalife_frontend/blob/4624aee8b63690c88d220a5b24312b12672b1c17/src/types.ts#L191)
+Defined in: [types.ts:191](https://github.com/VladimiKoroviakov/muzalife_frontend/blob/328d586a3a7720e0f03a07cc588113975b8b1d19/src/types.ts#L191)
 
 #### Returns
 
