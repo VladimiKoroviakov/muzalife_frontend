@@ -1,6 +1,6 @@
 import { useState, useEffect, useCallback, useRef } from 'react';
 import { iconPaths } from '../ui/icons/iconPaths';
-import { Table, TextCell, EmptyCell, TableCell } from '../layout/TableComponents';
+import { Table, TextCell, EmptyCell, TableCell } from '../layout/dashboard/TableComponents';
 import { apiService } from '../../services/api';
 import { PersonalOrder } from '../../types';
 import { CacheManager } from '../../utils/cache-manager';

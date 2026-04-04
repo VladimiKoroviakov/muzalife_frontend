@@ -8,7 +8,7 @@
 
 > **useAuth**(): `object`
 
-Defined in: [hooks/useAuth.ts:44](https://github.com/VladimiKoroviakov/muzalife_frontend/blob/1074258052725a424cacf218be1126e63b23f61f/src/hooks/useAuth.ts#L44)
+Defined in: [hooks/useAuth.ts:44](https://github.com/VladimiKoroviakov/muzalife_frontend/blob/87c4a505c788bf7161cfbd08d726aadd0cac740a/src/hooks/useAuth.ts#L44)
 
 Core authentication hook.
 
@@ -17,7 +17,7 @@ Manages the full authentication lifecycle:
   against `/api/users/profile`.
 - Exposes sign-in (email + OAuth), sign-up (two-step with OTP), and
   sign-out actions.
-- Maps raw API user objects to the typed [AuthUser](../../../types/type-aliases/AuthUser.md) shape.
+- Maps raw API user objects to the typed AuthUser shape.
 
 **Business logic:** the hook intentionally does not hard-redirect on auth
 failure — it just clears the user state.  Routing guards
@@ -39,7 +39,7 @@ The current auth state merged with action functions.
 
 ### completeRegistration
 
-> **completeRegistration**: (`email`, `password`, `name`, `verificationCode`) => `Promise`\<\{ `error`: `null`; `user`: [`AuthUser`](../../../types/type-aliases/AuthUser.md) \| `undefined`; \} \| \{ `error`: `string`; `user?`: `undefined`; \}\>
+> **completeRegistration**: (`email`, `password`, `name`, `verificationCode`) => `Promise`\<\{ `error`: `null`; `user`: `AuthUser` \| `undefined`; \} \| \{ `error`: `string`; `user?`: `undefined`; \}\>
 
 #### Parameters
 
@@ -61,7 +61,7 @@ The current auth state merged with action functions.
 
 #### Returns
 
-`Promise`\<\{ `error`: `null`; `user`: [`AuthUser`](../../../types/type-aliases/AuthUser.md) \| `undefined`; \} \| \{ `error`: `string`; `user?`: `undefined`; \}\>
+`Promise`\<\{ `error`: `null`; `user`: `AuthUser` \| `undefined`; \} \| \{ `error`: `string`; `user?`: `undefined`; \}\>
 
 ### error
 
@@ -155,7 +155,7 @@ The current auth state merged with action functions.
 
 ### user
 
-> **user**: [`AuthUser`](../../../types/type-aliases/AuthUser.md) \| `null`
+> **user**: `AuthUser` \| `null`
 
 ## Example
 

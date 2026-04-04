@@ -6,9 +6,9 @@
 
 # Function: useFAQs()
 
-> **useFAQs**(): [`UseFAQsReturn`](../../../types/interfaces/UseFAQsReturn.md)
+> **useFAQs**(): `UseFAQsReturn`
 
-Defined in: [hooks/useFAQs.ts:31](https://github.com/VladimiKoroviakov/muzalife_frontend/blob/1074258052725a424cacf218be1126e63b23f61f/src/hooks/useFAQs.ts#L31)
+Defined in: [hooks/useFAQs.ts:31](https://github.com/VladimiKoroviakov/muzalife_frontend/blob/87c4a505c788bf7161cfbd08d726aadd0cac740a/src/hooks/useFAQs.ts#L31)
 
 Fetches the list of FAQ items from the backend on mount.
 
@@ -18,7 +18,7 @@ should always have content.  The error message is displayed to the user.
 
 ## Returns
 
-[`UseFAQsReturn`](../../../types/interfaces/UseFAQsReturn.md)
+`UseFAQsReturn`
 
 An object containing `faqs`, `loading`, and `error` state.
 

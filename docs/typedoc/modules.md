@@ -12,6 +12,4 @@
 - [hooks/useSingleProduct](hooks/useSingleProduct/README.md)
 - [hooks/useVerificationCode](hooks/useVerificationCode/README.md)
 - [lib/utils](lib/utils/README.md)
-- [services/api](services/api/README.md)
-- [types](types/README.md)
 - [utils/CacheManager](utils/CacheManager/README.md)

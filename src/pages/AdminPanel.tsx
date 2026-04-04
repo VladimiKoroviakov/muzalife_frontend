@@ -6,16 +6,16 @@ import { apiService } from '../services/api';
 import { useAuthContext } from '../context/AuthContext';
 
 // Common components
-import { DashboardHeader } from '../components/layout/DashboardHeader';
-import { SettingsContent } from '../components/cabinet/SettingsContent';
+import { DashboardHeader } from '../components/layout/dashboard/DashboardHeader';
+import { SettingsContent } from '../components/layout/dashboard/SettingsContent';
 
 // Layout and UI components
-import { DashboardCanvas } from '../components/layout/DashboardCanvas';
+import { DashboardCanvas } from '../components/layout/dashboard/DashboardCanvas';
 import { SidebarTabs } from '../components/layout/SidebarTabs';
 import { iconPaths } from '../components/ui/icons/iconPaths';
 
 // Layout & shared components
-import { DashboardRightSide } from '../components/layout/DashboardRightSide';
+import { DashboardRightSide } from '../components/layout/dashboard/DashboardRightSide';
 import { AdminMaterialsContent } from '../components/admin/AdminMaterialsContent';
 import { AdminAddMaterial } from '../components/admin/AdminAddMaterial';
 import { AdminEditMaterial } from '../components/admin/AdminEditMaterial';

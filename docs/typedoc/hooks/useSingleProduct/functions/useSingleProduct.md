@@ -6,9 +6,9 @@
 
 # Function: useSingleProduct()
 
-> **useSingleProduct**(`id`): [`UseSingleProduct`](../../../types/interfaces/UseSingleProduct.md)
+> **useSingleProduct**(`id`): `UseSingleProduct`
 
-Defined in: [hooks/useSingleProduct.ts:38](https://github.com/VladimiKoroviakov/muzalife_frontend/blob/1074258052725a424cacf218be1126e63b23f61f/src/hooks/useSingleProduct.ts#L38)
+Defined in: [hooks/useSingleProduct.ts:38](https://github.com/VladimiKoroviakov/muzalife_frontend/blob/87c4a505c788bf7161cfbd08d726aadd0cac740a/src/hooks/useSingleProduct.ts#L38)
 
 Fetches a product and its reviews by product ID.
 
@@ -33,7 +33,7 @@ The product ID as a string (from `useParams`), or `undefined`
 
 ## Returns
 
-[`UseSingleProduct`](../../../types/interfaces/UseSingleProduct.md)
+`UseSingleProduct`
 
 State object with the product, reviews, gallery images, loading
          flag, error message, and a `refetch` callback.
