@@ -1,6 +1,6 @@
-import { Logo } from '../ui/Logo';
-import { SearchBar } from '../ui/SearchBar';
-import { Hamburger } from '../ui/Hamburger';
+import { Logo } from '@/components/common/Logo';
+import { SearchBar } from '@/components/common/SearchBar';
+import { Hamburger } from '@/components/common/Hamburger';
 
 interface HeaderProps {
   cartCount: number;

@@ -1,4 +1,4 @@
-import imgLogoMuzaLife from '../../assets/images/Logo.png';
+import imgLogoMuzaLife from '@/assets/images/Logo.png';
 
 export function Logo() {
   return (

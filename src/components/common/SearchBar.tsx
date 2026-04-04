@@ -1,4 +1,4 @@
-import { Search } from './icons/Search';
+import { Search } from '@/components/ui/icons/Search';
 
 interface SearchBarProps {
   searchQuery: string;

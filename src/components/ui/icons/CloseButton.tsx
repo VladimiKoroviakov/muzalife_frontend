@@ -1,4 +1,4 @@
-import { CloseIcon } from '../CloseButton';
+import { CloseIcon } from './CloseIcon';
 import { CloseButtonProps } from '../../../types';
 
 export function CloseButton({ onClick }: CloseButtonProps) {

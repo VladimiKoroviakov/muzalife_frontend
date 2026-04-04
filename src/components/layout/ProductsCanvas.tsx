@@ -1,7 +1,7 @@
 import { MiddleBar } from './MiddleBar';
 import { Product } from '../../types';
 import { FiltersSidebar } from '../features/FiltersSidebar';
-import ProductCard from '../ui/ProductCard';
+import ProductCard from '@/components/common/ProductCard';
 
 interface CanvasProps {
   showFilters: boolean;

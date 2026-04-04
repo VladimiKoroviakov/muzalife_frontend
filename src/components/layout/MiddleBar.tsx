@@ -1,5 +1,5 @@
-import { FiltersButton } from '../ui/FiltersButton';
-import { TabsContainer } from '../ui/TabsContainer';
+import { FiltersButton } from '@/components/common/FiltersButton';
+import { TabsContainer } from '@/components/common/TabsContainer';
 
 interface MiddleBarProps {
   showFilters: boolean;

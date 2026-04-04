@@ -1,7 +1,7 @@
-import { iconPaths } from './icons/iconPaths';
-import { ProductCardProps } from '../../types';
-import { IconBookmarks } from '../ui/icons/IconBookmarks';
-import Badge from '../ui/badge';
+import { iconPaths } from '@/components/ui/icons/iconPaths';
+import { ProductCardProps } from '@/types';
+import { IconBookmarks } from '@/components/ui/icons/IconBookmarks';
+import Badge from '@/components/ui/badge';
 import { toast } from 'sonner';
 
 function Delete({ onClick }: { onClick?: () => void }) {

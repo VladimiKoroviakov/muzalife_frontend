@@ -1,8 +1,8 @@
 import { useState, useEffect } from 'react';
-import { iconPaths } from '../ui/icons/iconPaths';
-import { RadioButtonChecked } from './RadioButtonChecked';
-import { RadioButtonUnchecked } from './RadioButtonUnchecked';
-import { apiService } from '../../services/api';
+import { iconPaths } from '@/components/ui/icons/iconPaths';
+import { RadioButtonChecked } from '@/components/ui/icons/RadioButtonChecked';
+import { RadioButtonUnchecked } from '@/components/ui/icons/RadioButtonUnchecked';
+import { apiService } from '@/services/api';
 import {
   Poll,
   OptionProps,
@@ -12,9 +12,9 @@ import {
   RowProps,
   VotedCardProps,
   PollCardProps
-} from '../../types';
-import { CacheManager } from '../../utils/cache-manager';
-import config from '../../config';
+} from '@/types';
+import { CacheManager } from '@/utils/cache-manager';
+import config from '@/config';
 
 
 function CheckCircle() {
@@ -237,8 +237,8 @@ function Polls() {
       CacheManager.setItem(config.cacheKeys.POLLS, pollsData);
       CacheManager.setItem(config.cacheKeys.POLLS_TIMESTAMP, Date.now());
 
-    } catch (err: any) {
-      console.error('Error loading polls:', err);
+    } catch (err: unknown) {
+      const message = err instanceof Error ? err.message : 'Не вдалося завантажити опитування';
 
       // If API fails, use cached data even if expired
       const cachedPolls = CacheManager.getItem<Poll[]>(config.cacheKeys.POLLS);
@@ -246,7 +246,7 @@ function Polls() {
         setPolls(cachedPolls);
       } else {
         // No cache available, show error
-        setError(err.message || 'Не вдалося завантажити опитування');
+        setError(message);
       }
 
       // Update timestamp to prevent immediate retry
@@ -302,9 +302,9 @@ function Polls() {
         CacheManager.setItem(config.cacheKeys.POLLS_TIMESTAMP, Date.now());
       }, 2000);
 
-    } catch (err: any) {
-      console.error('Error submitting vote:', err);
-      setError(err.message || 'Не вдалося проголосувати');
+    } catch (err: unknown) {
+      const message = err instanceof Error ? err.message : 'Не вдалося проголосувати';
+      setError(message);
 
       // Reset selection on error
       setPolls((prev) => prev.map((poll) =>

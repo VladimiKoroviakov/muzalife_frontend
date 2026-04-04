@@ -1,7 +1,7 @@
 import { Product } from '../../types';
-import { CartItem } from '../ui/CartItem';
+import { CartItem } from '@/components/common/CartItem';
 import { IconBag } from '../ui/icons/IconBag';
-import CloseButton from '../ui/CloseButton';
+import CloseButton from '../ui/icons/CloseIcon';
 
 // Cart Component
 export function Cart({ cartItems, products, onClose, onRemoveItem }: { cartItems: number[]; products: Product[]; onClose: () => void; onRemoveItem: (id: number) => void }) {

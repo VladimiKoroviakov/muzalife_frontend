@@ -1,5 +1,5 @@
-import { iconPaths } from './icons/iconPaths';
-import { CloseButtonProps } from '../../types';
+import { iconPaths } from './iconPaths';
+import { CloseButtonProps } from '@/types';
 
 // Close Icon Component
 export function CloseIcon() {

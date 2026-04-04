@@ -1,4 +1,4 @@
-import Polls from '../ui/Polls';
+import Polls from '@/components/common/Polls';
 
 export function QuestionnairesContent() {
   return (

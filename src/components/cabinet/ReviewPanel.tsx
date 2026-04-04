@@ -104,7 +104,7 @@ function Row1({ onCancel, onSubmit, isSubmitting }: { onCancel: () => void; onSu
   );
 }
 
-export default function ReviewScreen({
+export default function ReviewPanel({
   materialName,
   onClose,
   onSubmit

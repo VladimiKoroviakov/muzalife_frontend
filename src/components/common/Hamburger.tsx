@@ -1,6 +1,6 @@
-import { Help } from './icons/Help';
-import { ContactsProduct } from './ContactsProduct';
-import { LocalMall } from '../../components/ui/icons/LocalMall';
+import { Help } from '@/components/ui/icons/Help';
+import { ContactsProduct } from '@/components/ui/icons/ContactsProduct';
+import { LocalMall } from '@/components/ui/icons/LocalMall';
 
 interface HamburgerProps {
   cartCount: number;

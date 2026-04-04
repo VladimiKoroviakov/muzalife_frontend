@@ -1,5 +1,5 @@
-import { ArrowBackIosNew } from './ArrowBackIosNew';
-import { FilterAlt } from './icons/FilterAlt';
+import { ArrowBackIosNew } from '@/components/ui/icons/ArrowBackIosNew';
+import { FilterAlt } from '@/components/ui/icons/FilterAlt';
 
 interface FiltersButtonProps {
   showFilters: boolean;

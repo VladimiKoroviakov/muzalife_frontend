@@ -1,8 +1,8 @@
 import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useFAQs } from '../hooks/useFAQs';
-import { Logo } from '../components/ui/Logo';
-import CloseButton from '../components/ui/CloseButton';
+import { Logo } from '@/components/common/Logo';
+import CloseButton from '@/components/ui/icons/CloseIcon';
 import { Question } from '../components/faqs/Question';
 import { EmptyFAQs } from '../components/faqs/EmptyFAQs';
 import { ErrorState } from '../components/faqs/ErrorState';

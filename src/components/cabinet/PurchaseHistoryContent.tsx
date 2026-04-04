@@ -1,11 +1,11 @@
 import { useState, useEffect, useRef, useCallback } from 'react';
 import { toast } from 'sonner';
 import { iconPaths } from '../ui/icons/iconPaths';
-import { Table, TextCell, EmptyCell, TableCell } from '../layout/TableComponents';
+import { Table, TextCell, EmptyCell, TableCell } from '../layout/dashboard/TableComponents';
 import { Skeleton } from '../ui/skeleton';
 import { apiService } from '../../services/api';
 import { Order, BoughtScenariosContentProps } from '../../types';
-import ReviewScreen from './ReviewScreen';
+import ReviewPanel from './ReviewPanel';
 import { CacheManager } from '../../utils/cache-manager';
 import config from '../../config';
 
@@ -390,7 +390,7 @@ export function PurchaseHistoryContent({
 		<div className="basis-0 content-stretch flex flex-col gap-[10px] grow h-full items-start min-h-px min-w-px relative rounded-[16px] shrink-0" data-name="Right Side">
 		{/* Conditionally render ReviewScreen or the Purchase History table */}
 		{showReviewScreen && selectedOrder ? (
-			<ReviewScreen
+			<ReviewPanel
 			materialName={selectedOrder.name}
 			onClose={handleCloseReview}
 			onSubmit={handleSubmitReview}

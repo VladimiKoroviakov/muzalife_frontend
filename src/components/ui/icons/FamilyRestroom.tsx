@@ -1,4 +1,4 @@
-import { iconPaths } from './icons/iconPaths';
+import { iconPaths } from './iconPaths';
 
 export function FamilyRestroom() {
   return (

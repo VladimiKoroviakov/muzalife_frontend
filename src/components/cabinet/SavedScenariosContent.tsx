@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react';
 import { toast } from 'sonner';
 import { Skeleton } from '../ui/skeleton';
-import ProductCard from '../ui/ProductCard';
+import ProductCard from '@/components/common/ProductCard';
 import { apiService } from '../../services/api';
 import { useNavigate } from 'react-router-dom';
 import { SavedScenariosContentProps } from '../../types';

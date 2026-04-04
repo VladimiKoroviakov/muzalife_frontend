@@ -1,5 +1,5 @@
-import { Product } from '../../types';
-import { IconTrash } from '../ui/icons/IconTrash';
+import { Product } from '@/types';
+import { IconTrash } from '@/components/ui/icons/IconTrash';
 
 function Delete({ onClick }: { onClick: () => void }) {
   return (

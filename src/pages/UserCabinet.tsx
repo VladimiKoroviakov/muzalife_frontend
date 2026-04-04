@@ -6,17 +6,14 @@ import { useAuthContext } from '../context/AuthContext';
 
 // Layout components & icons
 import { iconPaths } from '../components/ui/icons/iconPaths';
-import { DashboardCanvas } from '../components/layout/DashboardCanvas';
+import { DashboardCanvas } from '../components/layout/dashboard/DashboardCanvas';
 import { SidebarTabs } from '../components/layout/SidebarTabs';
 
 // Cabinet components
-import { DashboardHeader } from '../components/layout/DashboardHeader';
-import { DashboardRightSide } from '../components/layout/DashboardRightSide';
-import { PurchaseHistoryContent } from '../components/cabinet/PurchaseHistoryContent';
-import { SavedScenariosContent } from '../components/cabinet/SavedScenariosContent';
-import { PersonalOrdersContent } from '../components/cabinet/PersonalOrdersContent';
-import { QuestionnairesContent } from '../components/cabinet/QuestionnairesContent';
-import { SettingsContent } from '../components/cabinet/SettingsContent';
+import { DashboardHeader } from '../components/layout/dashboard/DashboardHeader';
+import { DashboardRightSide } from '../components/layout/dashboard/DashboardRightSide';
+import { PurchaseHistoryContent, SavedScenariosContent, PersonalOrdersContent, QuestionnairesContent } from '../components/cabinet';
+import { SettingsContent } from '../components/layout/dashboard/SettingsContent';
 import FAQs from './FAQsPage';
 
 // Types

@@ -1,9 +1,9 @@
-import { FamilyRestroom } from '../ui/FamilyRestroom';
-import { Celebration } from '../ui/Celebration';
-import { RadioButtonChecked } from '../ui/RadioButtonChecked';
-import { RadioButtonUnchecked } from '../ui/RadioButtonUnchecked';
-import { CheckBoxChecked } from '../ui/CheckBoxChecked';
-import { CheckBoxOutlineBlank } from '../ui/CheckBoxOutlineBlank';
+import { FamilyRestroom } from '../ui/icons/FamilyRestroom';
+import { Celebration } from '../ui/icons/Celebration';
+import { RadioButtonChecked } from '../ui/icons/RadioButtonChecked';
+import { RadioButtonUnchecked } from '../ui/icons/RadioButtonUnchecked';
+import { CheckBoxChecked } from '../ui/icons/CheckBoxChecked';
+import { CheckBoxOutlineBlank } from '../ui/icons/CheckBoxOutlineBlank';
 
 interface FiltersSidebarProps {
   selectedAgeCategory: string | null;

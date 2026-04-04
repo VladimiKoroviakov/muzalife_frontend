@@ -1,4 +1,4 @@
-import { Logo } from '../ui/Logo';
+import { Logo } from '@/components/common/Logo';
 import { iconPaths } from '../ui/icons/iconPaths';
 
 export function ProductHeader({ onClose }: { onClose?: () => void }) {
