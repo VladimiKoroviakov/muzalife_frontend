@@ -6,7 +6,7 @@
 
 # Interface: ApiResponse\<T\>
 
-Defined in: [types.ts:340](https://github.com/VladimiKoroviakov/muzalife_frontend/blob/328d586a3a7720e0f03a07cc588113975b8b1d19/src/types.ts#L340)
+Defined in: [types.ts:340](https://github.com/VladimiKoroviakov/muzalife_frontend/blob/1074258052725a424cacf218be1126e63b23f61f/src/types.ts#L340)
 
 ## Type Parameters
 
@@ -24,7 +24,7 @@ Defined in: [types.ts:340](https://github.com/VladimiKoroviakov/muzalife_fronten
 
 > `optional` **data?**: `T`
 
-Defined in: [types.ts:342](https://github.com/VladimiKoroviakov/muzalife_frontend/blob/328d586a3a7720e0f03a07cc588113975b8b1d19/src/types.ts#L342)
+Defined in: [types.ts:342](https://github.com/VladimiKoroviakov/muzalife_frontend/blob/1074258052725a424cacf218be1126e63b23f61f/src/types.ts#L342)
 
 ***
 
@@ -32,7 +32,7 @@ Defined in: [types.ts:342](https://github.com/VladimiKoroviakov/muzalife_fronten
 
 > `optional` **error?**: `string`
 
-Defined in: [types.ts:343](https://github.com/VladimiKoroviakov/muzalife_frontend/blob/328d586a3a7720e0f03a07cc588113975b8b1d19/src/types.ts#L343)
+Defined in: [types.ts:343](https://github.com/VladimiKoroviakov/muzalife_frontend/blob/1074258052725a424cacf218be1126e63b23f61f/src/types.ts#L343)
 
 ***
 
@@ -40,4 +40,4 @@ Defined in: [types.ts:343](https://github.com/VladimiKoroviakov/muzalife_fronten
 
 > **success**: `boolean`
 
-Defined in: [types.ts:341](https://github.com/VladimiKoroviakov/muzalife_frontend/blob/328d586a3a7720e0f03a07cc588113975b8b1d19/src/types.ts#L341)
+Defined in: [types.ts:341](https://github.com/VladimiKoroviakov/muzalife_frontend/blob/1074258052725a424cacf218be1126e63b23f61f/src/types.ts#L341)

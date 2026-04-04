@@ -11,11 +11,11 @@ import { SettingsContent } from '../components/cabinet/SettingsContent';
 
 // Layout and UI components
 import { DashboardCanvas } from '../components/layout/DashboardCanvas';
-import { SidebarTabs, TabItem } from '../components/layout/SidebarTabs';
+import { SidebarTabs } from '../components/layout/SidebarTabs';
 import { iconPaths } from '../components/ui/icons/iconPaths';
 
 // Layout & shared components
-import { DashboardRightSide, type DashboardCard } from '../components/layout/DashboardRightSide';
+import { DashboardRightSide } from '../components/layout/DashboardRightSide';
 import { AdminMaterialsContent } from '../components/admin/AdminMaterialsContent';
 import { AdminAddMaterial } from '../components/admin/AdminAddMaterial';
 import { AdminEditMaterial } from '../components/admin/AdminEditMaterial';
@@ -24,6 +24,9 @@ import { AdminOrderDetail } from '../components/admin/AdminOrderDetail';
 import { AdminAnalyticsContent } from '../components/admin/AdminAnalyticsContent';
 import { AdminPollsContent } from '../components/admin/AdminPollsContent';
 import { AdminCreateSurvey } from '../components/admin/AdminCreateSurvey';
+
+// Types
+import { TabItem, DashboardCard } from '../types/ui';
 
 
 const ADMIN_RIGHT_CARDS: DashboardCard[] = [

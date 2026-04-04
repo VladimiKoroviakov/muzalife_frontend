@@ -6,7 +6,7 @@
 
 # Interface: Poll
 
-Defined in: [types.ts:200](https://github.com/VladimiKoroviakov/muzalife_frontend/blob/328d586a3a7720e0f03a07cc588113975b8b1d19/src/types.ts#L200)
+Defined in: [types.ts:200](https://github.com/VladimiKoroviakov/muzalife_frontend/blob/1074258052725a424cacf218be1126e63b23f61f/src/types.ts#L200)
 
 ## Properties
 
@@ -14,7 +14,7 @@ Defined in: [types.ts:200](https://github.com/VladimiKoroviakov/muzalife_fronten
 
 > **hasVoted**: `boolean`
 
-Defined in: [types.ts:206](https://github.com/VladimiKoroviakov/muzalife_frontend/blob/328d586a3a7720e0f03a07cc588113975b8b1d19/src/types.ts#L206)
+Defined in: [types.ts:206](https://github.com/VladimiKoroviakov/muzalife_frontend/blob/1074258052725a424cacf218be1126e63b23f61f/src/types.ts#L206)
 
 ***
 
@@ -22,7 +22,7 @@ Defined in: [types.ts:206](https://github.com/VladimiKoroviakov/muzalife_fronten
 
 > **id**: `number`
 
-Defined in: [types.ts:201](https://github.com/VladimiKoroviakov/muzalife_frontend/blob/328d586a3a7720e0f03a07cc588113975b8b1d19/src/types.ts#L201)
+Defined in: [types.ts:201](https://github.com/VladimiKoroviakov/muzalife_frontend/blob/1074258052725a424cacf218be1126e63b23f61f/src/types.ts#L201)
 
 ***
 
@@ -30,7 +30,7 @@ Defined in: [types.ts:201](https://github.com/VladimiKoroviakov/muzalife_fronten
 
 > **options**: `string`[]
 
-Defined in: [types.ts:203](https://github.com/VladimiKoroviakov/muzalife_frontend/blob/328d586a3a7720e0f03a07cc588113975b8b1d19/src/types.ts#L203)
+Defined in: [types.ts:203](https://github.com/VladimiKoroviakov/muzalife_frontend/blob/1074258052725a424cacf218be1126e63b23f61f/src/types.ts#L203)
 
 ***
 
@@ -38,7 +38,7 @@ Defined in: [types.ts:203](https://github.com/VladimiKoroviakov/muzalife_fronten
 
 > **optionVoteIds**: `number`[]
 
-Defined in: [types.ts:204](https://github.com/VladimiKoroviakov/muzalife_frontend/blob/328d586a3a7720e0f03a07cc588113975b8b1d19/src/types.ts#L204)
+Defined in: [types.ts:204](https://github.com/VladimiKoroviakov/muzalife_frontend/blob/1074258052725a424cacf218be1126e63b23f61f/src/types.ts#L204)
 
 ***
 
@@ -46,7 +46,7 @@ Defined in: [types.ts:204](https://github.com/VladimiKoroviakov/muzalife_fronten
 
 > **question**: `string`
 
-Defined in: [types.ts:202](https://github.com/VladimiKoroviakov/muzalife_frontend/blob/328d586a3a7720e0f03a07cc588113975b8b1d19/src/types.ts#L202)
+Defined in: [types.ts:202](https://github.com/VladimiKoroviakov/muzalife_frontend/blob/1074258052725a424cacf218be1126e63b23f61f/src/types.ts#L202)
 
 ***
 
@@ -54,7 +54,7 @@ Defined in: [types.ts:202](https://github.com/VladimiKoroviakov/muzalife_fronten
 
 > **selectedOption**: `number` \| `null`
 
-Defined in: [types.ts:205](https://github.com/VladimiKoroviakov/muzalife_frontend/blob/328d586a3a7720e0f03a07cc588113975b8b1d19/src/types.ts#L205)
+Defined in: [types.ts:205](https://github.com/VladimiKoroviakov/muzalife_frontend/blob/1074258052725a424cacf218be1126e63b23f61f/src/types.ts#L205)
 
 ***
 
@@ -62,7 +62,7 @@ Defined in: [types.ts:205](https://github.com/VladimiKoroviakov/muzalife_fronten
 
 > **voteCount**: `number`
 
-Defined in: [types.ts:207](https://github.com/VladimiKoroviakov/muzalife_frontend/blob/328d586a3a7720e0f03a07cc588113975b8b1d19/src/types.ts#L207)
+Defined in: [types.ts:207](https://github.com/VladimiKoroviakov/muzalife_frontend/blob/1074258052725a424cacf218be1126e63b23f61f/src/types.ts#L207)
 
 ***
 
@@ -70,4 +70,4 @@ Defined in: [types.ts:207](https://github.com/VladimiKoroviakov/muzalife_fronten
 
 > **voters**: [`VoterData`](VoterData.md)[]
 
-Defined in: [types.ts:208](https://github.com/VladimiKoroviakov/muzalife_frontend/blob/328d586a3a7720e0f03a07cc588113975b8b1d19/src/types.ts#L208)
+Defined in: [types.ts:208](https://github.com/VladimiKoroviakov/muzalife_frontend/blob/1074258052725a424cacf218be1126e63b23f61f/src/types.ts#L208)

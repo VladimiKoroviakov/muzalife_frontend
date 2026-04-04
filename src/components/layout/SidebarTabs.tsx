@@ -1,10 +1,4 @@
-export interface TabItem {
-  id: string;
-  label: string;
-  path: string;
-  viewBox: string;
-  iconSize?: 'size-[16px]';
-}
+import { TabItem } from '../../types/ui';
 
 interface SidebarTabsProps {
   tabs: TabItem[];

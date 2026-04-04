@@ -6,7 +6,7 @@
 
 # Interface: PersonalOrdersApiResponse
 
-Defined in: [types.ts:333](https://github.com/VladimiKoroviakov/muzalife_frontend/blob/328d586a3a7720e0f03a07cc588113975b8b1d19/src/types.ts#L333)
+Defined in: [types.ts:333](https://github.com/VladimiKoroviakov/muzalife_frontend/blob/1074258052725a424cacf218be1126e63b23f61f/src/types.ts#L333)
 
 ## Properties
 
@@ -14,7 +14,7 @@ Defined in: [types.ts:333](https://github.com/VladimiKoroviakov/muzalife_fronten
 
 > `optional` **error?**: `string`
 
-Defined in: [types.ts:337](https://github.com/VladimiKoroviakov/muzalife_frontend/blob/328d586a3a7720e0f03a07cc588113975b8b1d19/src/types.ts#L337)
+Defined in: [types.ts:337](https://github.com/VladimiKoroviakov/muzalife_frontend/blob/1074258052725a424cacf218be1126e63b23f61f/src/types.ts#L337)
 
 ***
 
@@ -22,7 +22,7 @@ Defined in: [types.ts:337](https://github.com/VladimiKoroviakov/muzalife_fronten
 
 > `optional` **personalOrder?**: [`PersonalOrder`](PersonalOrder.md)
 
-Defined in: [types.ts:336](https://github.com/VladimiKoroviakov/muzalife_frontend/blob/328d586a3a7720e0f03a07cc588113975b8b1d19/src/types.ts#L336)
+Defined in: [types.ts:336](https://github.com/VladimiKoroviakov/muzalife_frontend/blob/1074258052725a424cacf218be1126e63b23f61f/src/types.ts#L336)
 
 ***
 
@@ -30,7 +30,7 @@ Defined in: [types.ts:336](https://github.com/VladimiKoroviakov/muzalife_fronten
 
 > `optional` **personalOrders?**: [`PersonalOrder`](PersonalOrder.md)[]
 
-Defined in: [types.ts:335](https://github.com/VladimiKoroviakov/muzalife_frontend/blob/328d586a3a7720e0f03a07cc588113975b8b1d19/src/types.ts#L335)
+Defined in: [types.ts:335](https://github.com/VladimiKoroviakov/muzalife_frontend/blob/1074258052725a424cacf218be1126e63b23f61f/src/types.ts#L335)
 
 ***
 
@@ -38,4 +38,4 @@ Defined in: [types.ts:335](https://github.com/VladimiKoroviakov/muzalife_fronten
 
 > **success**: `boolean`
 
-Defined in: [types.ts:334](https://github.com/VladimiKoroviakov/muzalife_frontend/blob/328d586a3a7720e0f03a07cc588113975b8b1d19/src/types.ts#L334)
+Defined in: [types.ts:334](https://github.com/VladimiKoroviakov/muzalife_frontend/blob/1074258052725a424cacf218be1126e63b23f61f/src/types.ts#L334)

@@ -1,5 +1,5 @@
 
-import { Table, TextCell, EmptyCell, TableCell } from '../cabinet/TableComponents';
+import { Table, TextCell, EmptyCell, TableCell } from '../layout/TableComponents';
 
 interface OrderItem {
   id: string;

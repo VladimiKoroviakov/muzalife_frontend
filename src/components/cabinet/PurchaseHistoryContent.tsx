@@ -1,7 +1,7 @@
 import { useState, useEffect, useRef, useCallback } from 'react';
 import { toast } from 'sonner';
 import { iconPaths } from '../ui/icons/iconPaths';
-import { Table, TextCell, EmptyCell, TableCell } from './TableComponents';
+import { Table, TextCell, EmptyCell, TableCell } from '../layout/TableComponents';
 import { Skeleton } from '../ui/skeleton';
 import { apiService } from '../../services/api';
 import { Order, BoughtScenariosContentProps } from '../../types';

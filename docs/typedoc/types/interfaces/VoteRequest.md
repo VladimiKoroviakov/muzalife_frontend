@@ -6,7 +6,7 @@
 
 # Interface: VoteRequest
 
-Defined in: [types.ts:228](https://github.com/VladimiKoroviakov/muzalife_frontend/blob/328d586a3a7720e0f03a07cc588113975b8b1d19/src/types.ts#L228)
+Defined in: [types.ts:228](https://github.com/VladimiKoroviakov/muzalife_frontend/blob/1074258052725a424cacf218be1126e63b23f61f/src/types.ts#L228)
 
 ## Properties
 
@@ -14,4 +14,4 @@ Defined in: [types.ts:228](https://github.com/VladimiKoroviakov/muzalife_fronten
 
 > **vote\_id**: `number`
 
-Defined in: [types.ts:229](https://github.com/VladimiKoroviakov/muzalife_frontend/blob/328d586a3a7720e0f03a07cc588113975b8b1d19/src/types.ts#L229)
+Defined in: [types.ts:229](https://github.com/VladimiKoroviakov/muzalife_frontend/blob/1074258052725a424cacf218be1126e63b23f61f/src/types.ts#L229)

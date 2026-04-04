@@ -6,7 +6,7 @@
 
 # Interface: AuthLogoTitleProps
 
-Defined in: [types.ts:153](https://github.com/VladimiKoroviakov/muzalife_frontend/blob/328d586a3a7720e0f03a07cc588113975b8b1d19/src/types.ts#L153)
+Defined in: [types.ts:153](https://github.com/VladimiKoroviakov/muzalife_frontend/blob/1074258052725a424cacf218be1126e63b23f61f/src/types.ts#L153)
 
 ## Properties
 
@@ -14,7 +14,7 @@ Defined in: [types.ts:153](https://github.com/VladimiKoroviakov/muzalife_fronten
 
 > **children**: `ReactNode`
 
-Defined in: [types.ts:154](https://github.com/VladimiKoroviakov/muzalife_frontend/blob/328d586a3a7720e0f03a07cc588113975b8b1d19/src/types.ts#L154)
+Defined in: [types.ts:154](https://github.com/VladimiKoroviakov/muzalife_frontend/blob/1074258052725a424cacf218be1126e63b23f61f/src/types.ts#L154)
 
 ***
 
@@ -22,4 +22,4 @@ Defined in: [types.ts:154](https://github.com/VladimiKoroviakov/muzalife_fronten
 
 > `optional` **logoSize?**: `number`
 
-Defined in: [types.ts:155](https://github.com/VladimiKoroviakov/muzalife_frontend/blob/328d586a3a7720e0f03a07cc588113975b8b1d19/src/types.ts#L155)
+Defined in: [types.ts:155](https://github.com/VladimiKoroviakov/muzalife_frontend/blob/1074258052725a424cacf218be1126e63b23f61f/src/types.ts#L155)

@@ -6,7 +6,7 @@
 
 # Interface: AuthState
 
-Defined in: [types.ts:123](https://github.com/VladimiKoroviakov/muzalife_frontend/blob/328d586a3a7720e0f03a07cc588113975b8b1d19/src/types.ts#L123)
+Defined in: [types.ts:123](https://github.com/VladimiKoroviakov/muzalife_frontend/blob/1074258052725a424cacf218be1126e63b23f61f/src/types.ts#L123)
 
 ## Properties
 
@@ -14,7 +14,7 @@ Defined in: [types.ts:123](https://github.com/VladimiKoroviakov/muzalife_fronten
 
 > **error**: `string` \| `null`
 
-Defined in: [types.ts:126](https://github.com/VladimiKoroviakov/muzalife_frontend/blob/328d586a3a7720e0f03a07cc588113975b8b1d19/src/types.ts#L126)
+Defined in: [types.ts:126](https://github.com/VladimiKoroviakov/muzalife_frontend/blob/1074258052725a424cacf218be1126e63b23f61f/src/types.ts#L126)
 
 ***
 
@@ -22,7 +22,7 @@ Defined in: [types.ts:126](https://github.com/VladimiKoroviakov/muzalife_fronten
 
 > **isLoading**: `boolean`
 
-Defined in: [types.ts:125](https://github.com/VladimiKoroviakov/muzalife_frontend/blob/328d586a3a7720e0f03a07cc588113975b8b1d19/src/types.ts#L125)
+Defined in: [types.ts:125](https://github.com/VladimiKoroviakov/muzalife_frontend/blob/1074258052725a424cacf218be1126e63b23f61f/src/types.ts#L125)
 
 ***
 
@@ -30,4 +30,4 @@ Defined in: [types.ts:125](https://github.com/VladimiKoroviakov/muzalife_fronten
 
 > **user**: [`AuthUser`](../type-aliases/AuthUser.md) \| `null`
 
-Defined in: [types.ts:124](https://github.com/VladimiKoroviakov/muzalife_frontend/blob/328d586a3a7720e0f03a07cc588113975b8b1d19/src/types.ts#L124)
+Defined in: [types.ts:124](https://github.com/VladimiKoroviakov/muzalife_frontend/blob/1074258052725a424cacf218be1126e63b23f61f/src/types.ts#L124)

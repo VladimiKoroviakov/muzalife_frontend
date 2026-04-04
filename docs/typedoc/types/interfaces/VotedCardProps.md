@@ -6,7 +6,7 @@
 
 # Interface: VotedCardProps
 
-Defined in: [types.ts:271](https://github.com/VladimiKoroviakov/muzalife_frontend/blob/328d586a3a7720e0f03a07cc588113975b8b1d19/src/types.ts#L271)
+Defined in: [types.ts:271](https://github.com/VladimiKoroviakov/muzalife_frontend/blob/1074258052725a424cacf218be1126e63b23f61f/src/types.ts#L271)
 
 ## Properties
 
@@ -14,4 +14,4 @@ Defined in: [types.ts:271](https://github.com/VladimiKoroviakov/muzalife_fronten
 
 > `optional` **message?**: `string`
 
-Defined in: [types.ts:272](https://github.com/VladimiKoroviakov/muzalife_frontend/blob/328d586a3a7720e0f03a07cc588113975b8b1d19/src/types.ts#L272)
+Defined in: [types.ts:272](https://github.com/VladimiKoroviakov/muzalife_frontend/blob/1074258052725a424cacf218be1126e63b23f61f/src/types.ts#L272)

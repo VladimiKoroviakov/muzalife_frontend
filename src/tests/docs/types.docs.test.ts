@@ -14,6 +14,7 @@
  */
 
 import { describe, it, expect } from 'vitest';
+import { ApiError } from '../../types';
 import type {
   AuthResponse,
   AuthState,
@@ -21,6 +22,24 @@ import type {
   Review,
   PersonalOrder,
 } from '../../types';
+
+// ─────────────────────────────────────────────────────────────────────────────
+// ApiError — thrown by apiService on non-2xx responses
+// ─────────────────────────────────────────────────────────────────────────────
+describe('ApiError class', () => {
+  it('extends Error and captures HTTP status', () => {
+    const err = new ApiError('Not found', 404);
+    expect(err).toBeInstanceOf(Error);
+    expect(err.status).toBe(404);
+    expect(err.name).toBe('ApiError');
+    expect(err.message).toBe('Not found');
+  });
+
+  it('accepts an optional machine-readable error code', () => {
+    const err = new ApiError('Forbidden', 403, 'FORBIDDEN');
+    expect(err.code).toBe('FORBIDDEN');
+  });
+});
 
 // ─────────────────────────────────────────────────────────────────────────────
 // AuthResponse — returned by POST /api/auth/login

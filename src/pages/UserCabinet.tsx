@@ -7,17 +7,20 @@ import { useAuthContext } from '../context/AuthContext';
 // Layout components & icons
 import { iconPaths } from '../components/ui/icons/iconPaths';
 import { DashboardCanvas } from '../components/layout/DashboardCanvas';
-import { SidebarTabs, TabItem } from '../components/layout/SidebarTabs';
+import { SidebarTabs } from '../components/layout/SidebarTabs';
 
 // Cabinet components
 import { DashboardHeader } from '../components/layout/DashboardHeader';
-import { DashboardRightSide, type DashboardCard } from '../components/layout/DashboardRightSide';
+import { DashboardRightSide } from '../components/layout/DashboardRightSide';
 import { PurchaseHistoryContent } from '../components/cabinet/PurchaseHistoryContent';
 import { SavedScenariosContent } from '../components/cabinet/SavedScenariosContent';
 import { PersonalOrdersContent } from '../components/cabinet/PersonalOrdersContent';
 import { QuestionnairesContent } from '../components/cabinet/QuestionnairesContent';
 import { SettingsContent } from '../components/cabinet/SettingsContent';
 import FAQs from './FAQsPage';
+
+// Types
+import { TabItem, DashboardCard } from '../types/ui';
 
 const USER_RIGHT_CARDS: DashboardCard[] = [
   { id: 'history',        label: 'Історія замовлень',           path: iconPaths.workHistoryCard,    viewBox: '0 0 70 70', iconSize: 80, padding: 'px-[24px] py-[16px]' },

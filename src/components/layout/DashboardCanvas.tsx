@@ -1,5 +1,5 @@
 import { ReactNode } from 'react';
-import { Tab } from '../cabinet/Tab';
+import { Tab } from './Tab';
 
 interface CanvasLayoutProps {
   tabs: ReactNode;

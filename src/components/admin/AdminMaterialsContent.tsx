@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { iconPaths } from '../ui/icons/iconPaths';
-import { Table, TextCell, EmptyCell, TableCell } from '../cabinet/TableComponents';
+import { Table, TextCell, EmptyCell, TableCell } from '../layout/TableComponents';
 
 interface MaterialItem {
   id: string;
