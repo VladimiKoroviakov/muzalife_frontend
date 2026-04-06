@@ -1,13 +1,9 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
+import { toast } from 'sonner';
 import { iconPaths } from '../ui/icons/iconPaths';
-import { Table, TextCell, EmptyCell, TableCell } from '../layout/dashboard/TableComponents';
-
-interface MaterialItem {
-  id: string;
-  title: string;
-  type: string;
-  date: string;
-}
+import { Table, TextCell, TableCell } from '../layout/dashboard/TableComponents';
+import { apiService } from '@/services/api';
+import { Product } from '@/types';
 
 interface AdminMaterialsContentProps {
   onSectionChange: (section: string) => void;
@@ -17,24 +13,43 @@ interface AdminMaterialsContentProps {
 const fontRegular = { fontVariationSettings: "'CTGR' 0, 'wdth' 100, 'wght' 400" };
 const fontBold = { fontVariationSettings: "'CTGR' 0, 'wdth' 100, 'wght' 700" };
 
-const MOCK_MATERIALS: MaterialItem[] = [
-  { id: '1', title: '1 Вересня – Побувайте на святі, що в новому форматі', type: 'Сценарій', date: '01.12.2025' },
-  { id: '2', title: 'Авторський квест «Подорож країнами світу». Для літнього табору.', type: 'Квест', date: '03.11.2025' },
-  { id: '3', title: 'День Вишиванки', type: 'Інше', date: '12.09.2025' },
-  { id: '4', title: 'День матері', type: 'Поезія', date: '07.08.2025' },
-];
-
-const EMPTY_ROWS_COUNT = 20;
-
 const getRowBg = (index: number) => index % 2 === 0 ? '#f2f2f2' : '#e6e6e6';
 
-export function AdminMaterialsContent({ onSectionChange, onEditMaterial }: AdminMaterialsContentProps) {
-  const [materials, setMaterials] = useState<MaterialItem[]>(MOCK_MATERIALS);
-  const [deleteId, setDeleteId] = useState<string | null>(null);
+const formatDate = (iso: string) => {
+  const d = new Date(iso);
+  return `${String(d.getDate()).padStart(2, '0')}.${String(d.getMonth() + 1).padStart(2, '0')}.${d.getFullYear()}`;
+};
 
-  const handleDelete = () => {
-    if (deleteId) {
+export function AdminMaterialsContent({ onSectionChange, onEditMaterial }: AdminMaterialsContentProps) {
+  const [materials, setMaterials] = useState<Product[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
+  const [deleteId, setDeleteId] = useState<number | null>(null);
+
+  useEffect(() => {
+    const load = async () => {
+      try {
+        setLoading(true);
+        apiService.clearProductsCache();
+        const data = await apiService.getProducts();
+        setMaterials(data);
+      } catch {
+        setError('Не вдалося завантажити матеріали. Спробуйте оновити сторінку.');
+      } finally {
+        setLoading(false);
+      }
+    };
+    load();
+  }, []);
+
+  const handleDelete = async () => {
+    if (deleteId === null) { return; }
+    try {
+      await apiService.adminDeleteProduct(deleteId);
       setMaterials((prev) => prev.filter((m) => m.id !== deleteId));
+      setDeleteId(null);
+    } catch {
+      toast.error('Не вдалося видалити матеріал. Спробуйте ще раз.');
       setDeleteId(null);
     }
   };
@@ -44,69 +59,49 @@ export function AdminMaterialsContent({ onSectionChange, onEditMaterial }: Admin
       header: 'Назва Матеріалу',
       width: 1,
       minWidth: '200px',
-      cells: [
-        ...materials.map((item, index) => (
-          <TextCell key={`name-${item.id}`} text={item.title} bg={getRowBg(index)} />
-        )),
-        ...Array.from({ length: EMPTY_ROWS_COUNT }, (_, i) => (
-          <EmptyCell key={`empty-name-${i}`} bg={getRowBg(materials.length + i)} />
-        ))
-      ]
+      cells: materials.map((item, index) => (
+        <TextCell key={`name-${item.id}`} text={item.title} bg={getRowBg(index)} />
+      ))
     },
     {
       header: 'Тип Матеріалу',
       width: '148px',
-      cells: [
-        ...materials.map((item, index) => (
-          <TextCell key={`type-${item.id}`} text={item.type} bg={getRowBg(index)} centered />
-        )),
-        ...Array.from({ length: EMPTY_ROWS_COUNT }, (_, i) => (
-          <EmptyCell key={`empty-type-${i}`} bg={getRowBg(materials.length + i)} />
-        ))
-      ]
+      cells: materials.map((item, index) => (
+        <TextCell key={`type-${item.id}`} text={item.type} bg={getRowBg(index)} centered />
+      ))
     },
     {
       header: 'Дата Публікації',
       width: '155px',
-      cells: [
-        ...materials.map((item, index) => (
-          <TextCell key={`date-${item.id}`} text={item.date} bg={getRowBg(index)} centered />
-        )),
-        ...Array.from({ length: EMPTY_ROWS_COUNT }, (_, i) => (
-          <EmptyCell key={`empty-date-${i}`} bg={getRowBg(materials.length + i)} />
-        ))
-      ]
+      cells: materials.map((item, index) => (
+        <TextCell key={`date-${item.id}`} text={formatDate(item.createdAt)} bg={getRowBg(index)} centered />
+      ))
     },
     {
       header: 'Дії',
       width: '96px',
-      cells: [
-        ...materials.map((item, index) => (
-          <TableCell key={`action-${item.id}`} bg={getRowBg(index)}>
-            <div className="flex items-center justify-center gap-[16px] w-full h-[40px]">
-              <button
-                onClick={() => onEditMaterial(item.id)}
-                className="hover:opacity-70 transition-opacity cursor-pointer bg-transparent border-none p-0"
-              >
-                <svg width="18" height="18" viewBox="0 0 18 18" fill="none">
-                  <path d={iconPaths.editAdmin} fill="#0d0d0d" />
-                </svg>
-              </button>
-              <button
-                onClick={() => setDeleteId(item.id)}
-                className="hover:opacity-70 transition-opacity cursor-pointer bg-transparent border-none p-0"
-              >
-                <svg width="16" height="18" viewBox="0 0 16 18" fill="none">
-                  <path d={iconPaths.deleteAdmin} fill="#0d0d0d" />
-                </svg>
-              </button>
-            </div>
-          </TableCell>
-        )),
-        ...Array.from({ length: EMPTY_ROWS_COUNT }, (_, i) => (
-          <EmptyCell key={`empty-action-${i}`} bg={getRowBg(materials.length + i)} />
-        ))
-      ]
+      cells: materials.map((item, index) => (
+        <TableCell key={`action-${item.id}`} bg={getRowBg(index)}>
+          <div className="flex items-center justify-center gap-[16px] w-full h-[40px]">
+            <button
+              onClick={() => onEditMaterial(String(item.id))}
+              className="hover:opacity-70 transition-opacity cursor-pointer bg-transparent border-none p-0"
+            >
+              <svg width="18" height="18" viewBox="0 0 18 18" fill="none">
+                <path d={iconPaths.editAdmin} fill="#0d0d0d" />
+              </svg>
+            </button>
+            <button
+              onClick={() => setDeleteId(item.id)}
+              className="hover:opacity-70 transition-opacity cursor-pointer bg-transparent border-none p-0"
+            >
+              <svg width="16" height="18" viewBox="0 0 16 18" fill="none">
+                <path d={iconPaths.deleteAdmin} fill="#0d0d0d" />
+              </svg>
+            </button>
+          </div>
+        </TableCell>
+      ))
     }
   ];
 
@@ -117,7 +112,17 @@ export function AdminMaterialsContent({ onSectionChange, onEditMaterial }: Admin
     >
       {/* Table */}
       <div className="flex-1 min-h-0 relative rounded-[12px] overflow-y-auto">
-        <Table columns={tableColumns} />
+        {loading ? (
+          <div className="flex items-center justify-center h-full">
+            <p className="text-[16px] text-[#4d4d4d]" style={fontRegular}>Завантаження...</p>
+          </div>
+        ) : error ? (
+          <div className="flex items-center justify-center h-full">
+            <p className="text-[16px] text-[#e53935]" style={fontRegular}>{error}</p>
+          </div>
+        ) : (
+          <Table columns={tableColumns} />
+        )}
       </div>
 
       {/* Add button */}

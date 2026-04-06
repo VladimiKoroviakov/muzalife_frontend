@@ -6,7 +6,7 @@
 
 import config from '../../config';
 import { CacheManager } from '../../utils/cache-manager';
-import { Product, ApiResponse } from '../../types';
+import { Product, BoughtProduct, ApiResponse, ProductTypeLookup, AgeCategoryLookup, EventLookup } from '../../types';
 import { ApiClient } from './client';
 
 /**
@@ -99,14 +99,18 @@ export function createProductsMethods(client: ApiClient) {
 
     // ── Bought products ─────────────────────────────────────────────────────
 
-    async getBoughtProducts(): Promise<number[]> {
-      const cached = CacheManager.getItem<number[]>(config.cacheKeys.BOUGHT_PRODUCTS);
-      if (cached) {
+    async getBoughtProducts(): Promise<BoughtProduct[]> {
+      const cached = CacheManager.getItem<BoughtProduct[]>(config.cacheKeys.BOUGHT_PRODUCTS);
+      const isValidCache = Array.isArray(cached) && (cached.length === 0 || typeof cached[0] === 'object');
+      if (!isValidCache) {
+        CacheManager.removeItem(config.cacheKeys.BOUGHT_PRODUCTS);
+      }
+      if (cached && isValidCache) {
         return cached;
       }
 
       try {
-        const response = await client.get<ApiResponse<number[]>>(config.endpoints.boughtProducts.ids);
+        const response = await client.get<ApiResponse<BoughtProduct[]>>(config.endpoints.boughtProducts.base);
 
         if (response.success && Array.isArray(response.data)) {
           CacheManager.setItem(config.cacheKeys.BOUGHT_PRODUCTS, response.data);
@@ -129,7 +133,84 @@ export function createProductsMethods(client: ApiClient) {
         throw new Error(response.error || 'Failed to save bought product');
       }
 
-      client.updateCachedArray<number>(config.cacheKeys.BOUGHT_PRODUCTS, productId, 'add');
+      CacheManager.removeItem(config.cacheKeys.BOUGHT_PRODUCTS);
+    },
+
+    // ── Product metadata ────────────────────────────────────────────────────
+
+    /**
+     * Fetches all product types from the backend, using a 1-hour localStorage cache.
+     *
+     * @returns Array of `{ id, name }` records from the `ProductTypes` table.
+     * @example
+     * ```ts
+     * const types = await apiService.getProductTypes();
+     * // [{ id: 1, name: 'Сценарій' }, ...]
+     * ```
+     */
+    async getProductTypes(): Promise<ProductTypeLookup[]> {
+      const cached = CacheManager.getItem<ProductTypeLookup[]>(config.cacheKeys.PRODUCT_TYPES);
+      if (cached && CacheManager.isCacheValid(config.cacheKeys.PRODUCT_TYPES, config.cacheDurations.PRODUCT_METADATA)) {
+        return cached;
+      }
+      try {
+        const response = await client.get<{ success: boolean; data: ProductTypeLookup[] }>(config.endpoints.productTypes);
+        CacheManager.setWithTimestamp(config.cacheKeys.PRODUCT_TYPES, response.data);
+        return response.data;
+      } catch (error) {
+        if (cached) { return cached; }
+        throw error;
+      }
+    },
+
+    /**
+     * Fetches all age categories from the backend, using a 1-hour localStorage cache.
+     *
+     * @returns Array of `{ id, name }` records from the `AgeCategories` table.
+     * @example
+     * ```ts
+     * const cats = await apiService.getAgeCategories();
+     * // [{ id: 1, name: 'Дошкільний вік' }, ...]
+     * ```
+     */
+    async getAgeCategories(): Promise<AgeCategoryLookup[]> {
+      const cached = CacheManager.getItem<AgeCategoryLookup[]>(config.cacheKeys.AGE_CATEGORIES);
+      if (cached && CacheManager.isCacheValid(config.cacheKeys.AGE_CATEGORIES, config.cacheDurations.PRODUCT_METADATA)) {
+        return cached;
+      }
+      try {
+        const response = await client.get<{ success: boolean; data: AgeCategoryLookup[] }>(config.endpoints.productAgeCategories);
+        CacheManager.setWithTimestamp(config.cacheKeys.AGE_CATEGORIES, response.data);
+        return response.data;
+      } catch (error) {
+        if (cached) { return cached; }
+        throw error;
+      }
+    },
+
+    /**
+     * Fetches all events from the backend, using a 1-hour localStorage cache.
+     *
+     * @returns Array of `{ id, name }` records from the `Events` table.
+     * @example
+     * ```ts
+     * const events = await apiService.getEvents();
+     * // [{ id: 1, name: 'Новий рік' }, ...]
+     * ```
+     */
+    async getEvents(): Promise<EventLookup[]> {
+      const cached = CacheManager.getItem<EventLookup[]>(config.cacheKeys.EVENTS);
+      if (cached && CacheManager.isCacheValid(config.cacheKeys.EVENTS, config.cacheDurations.PRODUCT_METADATA)) {
+        return cached;
+      }
+      try {
+        const response = await client.get<{ success: boolean; data: EventLookup[] }>(config.endpoints.productEvents);
+        CacheManager.setWithTimestamp(config.cacheKeys.EVENTS, response.data);
+        return response.data;
+      } catch (error) {
+        if (cached) { return cached; }
+        throw error;
+      }
     },
   };
 }

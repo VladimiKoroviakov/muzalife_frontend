@@ -1,0 +1,528 @@
+import { useState, useRef, useEffect, type DragEvent, type ChangeEvent } from 'react';
+import { toast } from 'sonner';
+import { iconPaths } from '../ui/icons/iconPaths';
+import { apiService } from '@/services/api';
+import { useProductMetadata } from '@/hooks/useProductMetadata';
+import type { ProductFile } from '@/types';
+
+export interface AdminMaterialFormProps {
+  onSectionChange: (section: string) => void;
+  mode?: 'add' | 'edit';
+  productId?: string | null;
+}
+
+const fontRegular = { fontVariationSettings: "'CTGR' 0, 'wdth' 100, 'wght' 400" };
+const fontBold = { fontVariationSettings: "'CTGR' 0, 'wdth' 100, 'wght' 700" };
+
+// ── Sub-components ─────────────────────────────────────────────────────────────
+
+function FileChip({ name, onRemove }: { name: string; onRemove: () => void }) {
+  return (
+    <div className="relative flex flex-col items-center gap-[4px] rounded-[8px] p-[8px] w-[100px] border border-solid border-[#e6e6e6]">
+      <button
+        onClick={onRemove}
+        aria-label={`Видалити ${name}`}
+        className="absolute top-[-8px] right-[-8px] w-[20px] h-[20px] rounded-full border border-solid border-[#ccc] flex items-center justify-center cursor-pointer hover:border-[#999] transition-colors"
+      >
+        <svg className="block" fill="none" viewBox="0 0 28 28" width={12} height={12}>
+          <path d={iconPaths.close} fill="#4d4d4d" />
+        </svg>
+      </button>
+      <svg width="32" height="32" viewBox="0 0 32 32" fill="none">
+        <rect x="4" y="2" width="18" height="24" rx="2" fill="#5e89e8" />
+        <rect x="4" y="2" width="14" height="24" rx="2" fill="#5e89e8" />
+        <path d="M18 2L22 7H18V2Z" fill="#3a6fd8" />
+        <rect x="8" y="12" width="10" height="1.5" rx="0.75" fill="white" />
+        <rect x="8" y="15.5" width="10" height="1.5" rx="0.75" fill="white" />
+        <rect x="8" y="19" width="7" height="1.5" rx="0.75" fill="white" />
+      </svg>
+      <span className="text-[12px] text-[#0d0d0d] w-full text-center truncate" style={fontRegular}>
+        {name}
+      </span>
+    </div>
+  );
+}
+
+function DashedBorder({ active }: { active: boolean }) {
+  return (
+    <svg
+      aria-hidden="true"
+      className="absolute inset-0 w-full pointer-events-none overflow-visible h-full"
+    >
+      <rect
+        x="1" y="1"
+        width="calc(100% - 2px)" height="calc(100% - 2px)"
+        rx="11" ry="11"
+        fill="none"
+        stroke={active ? '#5e89e8' : '#4d4d4d'}
+        strokeWidth="1"
+        strokeDasharray="10 8"
+      />
+    </svg>
+  );
+}
+
+// ── Main component ─────────────────────────────────────────────────────────────
+
+type ExistingImage = { url: string; isMain: boolean; imageId?: number };
+
+export function AdminManageMaterial({ onSectionChange, mode = 'add', productId }: AdminMaterialFormProps) {
+  // ── Metadata from backend ─────────────────────────────────────────────────────
+  const { types, ageCategories, events: eventOptions, isLoading: isMetadataLoading } = useProductMetadata();
+
+  // ── Step 1 state ─────────────────────────────────────────────────────────────
+  const [files, setFiles] = useState<File[]>([]);
+  const [existingFiles, setExistingFiles] = useState<ProductFile[]>([]);
+  const [removedFileIds, setRemovedFileIds] = useState<number[]>([]);
+  const [scenarioName, setScenarioName] = useState('');
+  const [holiday, setHoliday] = useState('');
+  const [ageGroup, setAgeGroup] = useState('');
+  const [contentType, setContentType] = useState('');
+  const [price, setPrice] = useState('');
+  const [isFileDragOver, setIsFileDragOver] = useState(false);
+  const fileInputRef = useRef<HTMLInputElement>(null);
+
+  // ── Step 2 state ─────────────────────────────────────────────────────────────
+  const [step, setStep] = useState<1 | 2>(1);
+  const [images, setImages] = useState<File[]>([]);
+  const [existingImages, setExistingImages] = useState<ExistingImage[]>([]);
+  const [removedMainImage, setRemovedMainImage] = useState(false);
+  const [removedImageIds, setRemovedImageIds] = useState<number[]>([]);
+  const [description, setDescription] = useState('');
+  const [isImageDragOver, setIsImageDragOver] = useState(false);
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const imageInputRef = useRef<HTMLInputElement>(null);
+
+  // ── Prefill for edit mode ─────────────────────────────────────────────────────
+  useEffect(() => {
+    if (mode !== 'edit' || !productId || isMetadataLoading) { return; }
+
+    apiService.getProductById(productId).then((product) => {
+      setScenarioName(product.title);
+      setPrice(String(product.price));
+      setContentType(String(types.find((t) => t.name === product.type)?.id ?? ''));
+      setAgeGroup(
+        product.ageCategory.length > 0
+          ? String(ageCategories.find((a) => a.name === product.ageCategory[0])?.id ?? '')
+          : '',
+      );
+      setHoliday(
+        product.events.length > 0
+          ? String(eventOptions.find((e) => e.name === product.events[0])?.id ?? '')
+          : '',
+      );
+      setDescription(product.description);
+
+      const imgs: ExistingImage[] = [];
+      if (product.image) {
+        imgs.push({ url: product.image, isMain: true });
+      }
+      (product.additionalImages ?? []).forEach((url, i) => {
+        imgs.push({ url, isMain: false, imageId: product.additionalImageIds?.[i] });
+      });
+      setExistingImages(imgs);
+    }).catch(() => {
+      toast.error('Не вдалося завантажити дані матеріалу');
+    });
+
+    apiService.adminGetProductFiles(parseInt(productId, 10)).then((fetched) => {
+      setExistingFiles(fetched);
+    }).catch(() => {
+      toast.error('Не вдалося завантажити файли матеріалу');
+    });
+  }, [mode, productId, isMetadataLoading, types, ageCategories, eventOptions]);
+
+  // ── Step 1 handlers ───────────────────────────────────────────────────────────
+  const handleFileDragOver = (e: DragEvent<HTMLDivElement>) => { e.preventDefault(); setIsFileDragOver(true); };
+  const handleFileDragLeave = (e: DragEvent<HTMLDivElement>) => { e.preventDefault(); setIsFileDragOver(false); };
+  const handleFileDrop = (e: DragEvent<HTMLDivElement>) => {
+    e.preventDefault();
+    setIsFileDragOver(false);
+    setFiles((prev) => [...prev, ...Array.from(e.dataTransfer.files)]);
+  };
+  const handleFileChange = (e: ChangeEvent<HTMLInputElement>) => {
+    const { files: selected } = e.target;
+    if (selected) { setFiles((prev) => [...prev, ...Array.from(selected)]); }
+  };
+  const removeFile = (index: number) => setFiles((prev) => prev.filter((_, i) => i !== index));
+  const removeExistingFile = (fileId: number) => {
+    setExistingFiles((prev) => prev.filter((f) => f.fileId !== fileId));
+    setRemovedFileIds((prev) => [...prev, fileId]);
+  };
+  const removeExistingImage = (img: ExistingImage) => {
+    setExistingImages((prev) => prev.filter((i) => i.url !== img.url));
+    if (img.isMain) {
+      setRemovedMainImage(true);
+    } else if (img.imageId !== undefined) {
+      setRemovedImageIds((prev) => [...prev, img.imageId as number]);
+    }
+  };
+
+  const handleContinue = () => {
+    if (!scenarioName.trim()) { toast.error('Введіть назву матеріалу'); return; }
+    if (!contentType) { toast.error('Оберіть тип контенту'); return; }
+    if (!price.trim() || isNaN(parseFloat(price))) { toast.error('Введіть коректну ціну'); return; }
+    setStep(2);
+  };
+
+  // ── Step 2 handlers ───────────────────────────────────────────────────────────
+  const handleImageDragOver = (e: DragEvent<HTMLDivElement>) => { e.preventDefault(); setIsImageDragOver(true); };
+  const handleImageDragLeave = (e: DragEvent<HTMLDivElement>) => { e.preventDefault(); setIsImageDragOver(false); };
+  const handleImageDrop = (e: DragEvent<HTMLDivElement>) => {
+    e.preventDefault();
+    setIsImageDragOver(false);
+    setImages((prev) => [...prev, ...Array.from(e.dataTransfer.files)]);
+  };
+  const handleImageChange = (e: ChangeEvent<HTMLInputElement>) => {
+    const { files: selected } = e.target;
+    if (selected) { setImages((prev) => [...prev, ...Array.from(selected)]); }
+  };
+  const removeImage = (index: number) => setImages((prev) => prev.filter((_, i) => i !== index));
+
+  const handleSubmit = async () => {
+    if (mode === 'add' && images.length === 0) { toast.error('Додайте хоча б одне зображення'); return; }
+    if (!description.trim()) { toast.error('Введіть опис матеріалу'); return; }
+
+    setIsSubmitting(true);
+    try {
+      if (mode === 'edit' && productId) {
+        await apiService.adminUpdateProduct(
+          parseInt(productId, 10),
+          {
+            title: scenarioName,
+            description,
+            price: parseFloat(price),
+            typeId: parseInt(contentType, 10),
+            ageCategoryIds: ageGroup ? [parseInt(ageGroup, 10)] : [],
+            eventIds: holiday ? [parseInt(holiday, 10)] : [],
+          },
+          {
+            files,
+            removeFileIds: removedFileIds,
+            images,
+            removeImageIds: removedImageIds,
+            removeMainImage: removedMainImage,
+          },
+        );
+        toast.success('Матеріал успішно оновлено');
+      } else {
+        await apiService.adminAddProduct(
+          {
+            title: scenarioName,
+            description,
+            price: parseFloat(price),
+            typeId: parseInt(contentType, 10),
+            ageCategoryIds: ageGroup ? [parseInt(ageGroup, 10)] : undefined,
+            eventIds: holiday ? [parseInt(holiday, 10)] : undefined,
+          },
+          {
+            mainImage: images[0],
+            images: images.slice(1),
+            files,
+          },
+        );
+        toast.success('Матеріал успішно опубліковано');
+      }
+      onSectionChange('materials');
+    } catch (err) {
+      toast.error(err instanceof Error ? err.message : 'Помилка при збереженні матеріалу');
+    } finally {
+      setIsSubmitting(false);
+    }
+  };
+
+  // ── Render ────────────────────────────────────────────────────────────────────
+  const hasFiles = files.length > 0 || existingFiles.length > 0;
+  const hasImages = images.length > 0 || existingImages.length > 0;
+  const isEdit = mode === 'edit';
+
+  if (step === 2) {
+    return (
+      <div
+        className="basis-0 grow min-h-px min-w-px bg-[#f2f2f2] rounded-[16px] flex flex-col justify-between p-[20px] py-[29px] h-full gap-[24px]"
+        data-name="AdminMaterialForm-Step2"
+      >
+        {/* Image drag & drop area */}
+        <div
+          className="relative rounded-[12px] shrink-0 w-full"
+          onDragOver={handleImageDragOver}
+          onDragLeave={handleImageDragLeave}
+          onDrop={handleImageDrop}
+        >
+          <DashedBorder active={isImageDragOver} />
+          <div className="flex flex-col items-center justify-center w-full px-[48px] py-[40px] gap-[16px]">
+            {!hasImages && (
+              <div className="relative shrink-0 w-[80px] h-[80px] flex items-center justify-center">
+                <svg xmlns="http://www.w3.org/2000/svg" width="94" height="75" viewBox="0 0 94 75" fill="none">
+                  <path d="M9.33333 74.6667C6.76667 74.6667 4.56944 73.7528 2.74167 71.925C0.913889 70.0972 0 67.9 0 65.3333V9.33333C0 6.76667 0.913889 4.56944 2.74167 2.74167C4.56944 0.913889 6.76667 0 9.33333 0H37.3333L46.6667 9.33333H84C86.5667 9.33333 88.7639 10.2472 90.5917 12.075C92.4195 13.9028 93.3333 16.1 93.3333 18.6667V65.3333C93.3333 67.9 92.4195 70.0972 90.5917 71.925C88.7639 73.7528 86.5667 74.6667 84 74.6667H9.33333ZM42 60.6667H51.3333V41.0667L58.8 48.5333L65.3333 42L46.6667 23.3333L28 42L34.5333 48.5333L42 41.0667V60.6667Z" fill="#1C1B1F" />
+                </svg>
+              </div>
+            )}
+
+            <p className="text-[20px] text-[#0d0d0d] text-center m-0 leading-[28px]" style={fontBold}>
+              Перетягніть зображення та уривки сюди
+            </p>
+
+            <p className="text-[16px] text-[#4d4d4d] text-center m-0 leading-[24px]" style={fontRegular}>
+              або
+            </p>
+
+            <button
+              onClick={() => imageInputRef.current?.click()}
+              className="bg-white box-border flex items-center justify-center gap-[8px] h-[44px] px-[24px] py-[12px] rounded-[12px] border border-solid border-[#0d0d0d] cursor-pointer text-[16px] text-[#0d0d0d] hover:bg-gray-50 transition-colors"
+              style={fontRegular}
+            >
+              {hasImages ? 'Оберіть ще файли' : 'Оберіть файли'}
+            </button>
+            <input
+              ref={imageInputRef}
+              type="file"
+              multiple
+              accept=".png,.jpg,.jpeg"
+              className="hidden"
+              onChange={handleImageChange}
+            />
+
+            <p className="text-[14px] text-[#4d4d4d] text-center m-0 leading-[24px]" style={fontRegular}>
+              Дозволені типи файлів: .png .jpg
+            </p>
+
+            {hasImages && (
+              <div className="flex flex-wrap gap-[8px] justify-start w-full">
+                {existingImages.map((img) => (
+                  <FileChip
+                    key={img.url}
+                    name={img.url.split('/').at(-1) ?? img.url}
+                    onRemove={() => removeExistingImage(img)}
+                  />
+                ))}
+                {images.map((img, index) => (
+                  <FileChip key={`new-${img.name}-${index}`} name={img.name} onRemove={() => removeImage(index)} />
+                ))}
+              </div>
+            )}
+          </div>
+        </div>
+
+        {/* Description textarea */}
+        <div className="relative rounded-[12px] shrink-0 w-full flex-1 min-h-[160px]">
+          <div
+            aria-hidden="true"
+            className="absolute border border-[#b3b3b3] border-solid inset-0 pointer-events-none rounded-[12px]"
+          />
+          <textarea
+            value={description}
+            onChange={(e) => setDescription(e.target.value)}
+            placeholder="Введіть опис матеріалу..."
+            className="w-full h-full bg-transparent border-none outline-none px-[16px] py-[16px] text-[16px] text-[#0d0d0d] placeholder-[#4d4d4d] rounded-[12px] resize-none"
+            style={fontRegular}
+          />
+        </div>
+
+        {/* Action row */}
+        <div className="flex gap-[16px] items-center justify-end shrink-0 w-full">
+          <button
+            onClick={() => setStep(1)}
+            className="h-[44px] px-[24px] py-[12px] rounded-[12px] border-none bg-transparent cursor-pointer text-[16px] text-[#4d4d4d] underline"
+            style={fontRegular}
+          >
+            Повернутись
+          </button>
+          <button
+            onClick={handleSubmit}
+            disabled={isSubmitting}
+            className="bg-[#5e89e8] h-[44px] px-[24px] py-[12px] rounded-[12px] border-none cursor-pointer text-[16px] text-white hover:opacity-90 transition-opacity disabled:opacity-60 disabled:cursor-not-allowed"
+            style={fontRegular}
+          >
+            {isSubmitting
+              ? (isEdit ? 'Збереження...' : 'Публікація...')
+              : (isEdit ? 'Зберегти зміни' : 'Опублікувати матеріал')}
+          </button>
+        </div>
+      </div>
+    );
+  }
+
+  return (
+    <div
+      className="basis-0 grow min-h-px min-w-px bg-[#f2f2f2] rounded-[16px] flex flex-col justify-between p-[20px] py-[29px] h-full"
+      data-name="AdminMaterialForm-Step1"
+    >
+      {/* Drag & Drop area */}
+      <div
+        className="relative rounded-[12px] shrink-0 w-full"
+        onDragOver={handleFileDragOver}
+        onDragLeave={handleFileDragLeave}
+        onDrop={handleFileDrop}
+      >
+        <DashedBorder active={isFileDragOver} />
+        <div className="flex flex-col items-center justify-center w-full px-[48px] py-[40px] gap-[16px]">
+          {!hasFiles && (
+            <div className="relative shrink-0 w-[80px] h-[80px]">
+              <svg xmlns="http://www.w3.org/2000/svg" width="94" height="75" viewBox="0 0 94 75" fill="none">
+                <path d="M9.33333 74.6667C6.76667 74.6667 4.56944 73.7528 2.74167 71.925C0.913889 70.0972 0 67.9 0 65.3333V9.33333C0 6.76667 0.913889 4.56944 2.74167 2.74167C4.56944 0.913889 6.76667 0 9.33333 0H37.3333L46.6667 9.33333H84C86.5667 9.33333 88.7639 10.2472 90.5917 12.075C92.4195 13.9028 93.3333 16.1 93.3333 18.6667V65.3333C93.3333 67.9 92.4195 70.0972 90.5917 71.925C88.7639 73.7528 86.5667 74.6667 84 74.6667H9.33333ZM42 60.6667H51.3333V41.0667L58.8 48.5333L65.3333 42L46.6667 23.3333L28 42L34.5333 48.5333L42 41.0667V60.6667Z" fill="#1C1B1F" />
+              </svg>
+            </div>
+          )}
+
+          <p className="text-[20px] text-[#0d0d0d] text-center m-0 leading-[28px]" style={fontBold}>
+            Перетягніть файли (матеріали для відправки) сюди
+          </p>
+
+          <p className="text-[16px] text-[#4d4d4d] text-center m-0 leading-[24px]" style={fontRegular}>
+            або
+          </p>
+
+          <button
+            onClick={() => fileInputRef.current?.click()}
+            className="bg-white box-border flex items-center justify-center gap-[8px] h-[44px] px-[24px] py-[12px] rounded-[12px] border border-solid border-[#0d0d0d] cursor-pointer text-[16px] text-[#0d0d0d] hover:bg-gray-50 transition-colors"
+            style={fontRegular}
+          >
+            {hasFiles ? 'Оберіть ще файли' : 'Оберіть файли'}
+          </button>
+          <input
+            ref={fileInputRef}
+            type="file"
+            multiple
+            accept=".rar,.zip,.docx,.pdf,.pptx,.png,.jpg"
+            className="hidden"
+            onChange={handleFileChange}
+          />
+
+          <p className="text-[14px] text-[#4d4d4d] text-center m-0 leading-[24px]" style={fontRegular}>
+            Дозволені типи файлів: .rar .zip .docx .pdf .pptx .png .jpg
+          </p>
+
+          {(hasFiles || existingFiles.length > 0) && (
+            <div className="flex flex-wrap gap-[8px] justify-start w-full">
+              {existingFiles.map((ef) => (
+                <FileChip key={`existing-${ef.fileId}`} name={ef.fileName} onRemove={() => removeExistingFile(ef.fileId)} />
+              ))}
+              {files.map((file, index) => (
+                <FileChip key={`new-${file.name}-${index}`} name={file.name} onRemove={() => removeFile(index)} />
+              ))}
+            </div>
+          )}
+        </div>
+      </div>
+
+      {/* Scenario name input */}
+      <div className="h-[52px] relative rounded-[12px] shrink-0 w-full">
+        <div aria-hidden="true" className="absolute border border-[#b3b3b3] border-solid inset-0 pointer-events-none rounded-[12px]" />
+        <input
+          type="text"
+          value={scenarioName}
+          onChange={(e) => setScenarioName(e.target.value)}
+          placeholder="Введіть назву матеріалу..."
+          className="w-full h-full bg-transparent border-none outline-none px-[16px] py-[4px] text-[16px] text-[#0d0d0d] placeholder-[#4d4d4d] rounded-[12px]"
+          style={fontRegular}
+        />
+      </div>
+
+      {/* Holiday + Age group row */}
+      <div className="flex gap-[24px] items-start shrink-0 w-full">
+        <div className="flex-1 h-[52px] relative rounded-[12px]">
+          <div aria-hidden="true" className="absolute border border-[#b3b3b3] border-solid inset-0 pointer-events-none rounded-[12px]" />
+          <div className="flex items-center size-full px-[16px] py-[4px] gap-[8px]">
+            <select
+              value={holiday}
+              onChange={(e) => setHoliday(e.target.value)}
+              disabled={isMetadataLoading}
+              className="flex-1 bg-transparent border-none outline-none text-[16px] text-[#4d4d4d] appearance-none cursor-pointer disabled:cursor-not-allowed"
+              style={fontRegular}
+            >
+              <option value="">{isMetadataLoading ? 'Завантаження...' : 'Оберіть свято'}</option>
+              {eventOptions.map((e) => (
+                <option key={e.id} value={String(e.id)}>{e.name}</option>
+              ))}
+            </select>
+            <div className="shrink-0 w-[24px] h-[24px] pointer-events-none">
+              <svg className="block size-full" fill="none" viewBox="0 0 12 8">
+                <path d={iconPaths.keyboardArrowDown} fill="#4D4D4D" />
+              </svg>
+            </div>
+          </div>
+        </div>
+
+        <div className="flex-1 h-[52px] relative rounded-[12px]">
+          <div aria-hidden="true" className="absolute border border-[#b3b3b3] border-solid inset-0 pointer-events-none rounded-[12px]" />
+          <div className="flex items-center size-full px-[16px] py-[4px] gap-[8px]">
+            <select
+              value={ageGroup}
+              onChange={(e) => setAgeGroup(e.target.value)}
+              disabled={isMetadataLoading}
+              className="flex-1 bg-transparent border-none outline-none text-[16px] text-[#4d4d4d] appearance-none cursor-pointer disabled:cursor-not-allowed"
+              style={fontRegular}
+            >
+              <option value="">{isMetadataLoading ? 'Завантаження...' : 'Оберіть вікові групи'}</option>
+              {ageCategories.map((a) => (
+                <option key={a.id} value={String(a.id)}>{a.name}</option>
+              ))}
+            </select>
+            <div className="shrink-0 w-[24px] h-[24px] pointer-events-none">
+              <svg className="block size-full" fill="none" viewBox="0 0 12 8">
+                <path d={iconPaths.keyboardArrowDown} fill="#4D4D4D" />
+              </svg>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      {/* Content type + Price row */}
+      <div className="flex gap-[24px] items-start shrink-0 w-full">
+        <div className="flex-1 h-[52px] relative rounded-[12px]">
+          <div aria-hidden="true" className="absolute border border-[#b3b3b3] border-solid inset-0 pointer-events-none rounded-[12px]" />
+          <div className="flex items-center size-full px-[16px] py-[4px] gap-[8px]">
+            <select
+              value={contentType}
+              onChange={(e) => setContentType(e.target.value)}
+              disabled={isMetadataLoading}
+              className="flex-1 bg-transparent border-none outline-none text-[16px] text-[#4d4d4d] appearance-none cursor-pointer disabled:cursor-not-allowed"
+              style={fontRegular}
+            >
+              <option value="" disabled>{isMetadataLoading ? 'Завантаження...' : 'Оберіть тип контенту'}</option>
+              {types.map((t) => (
+                <option key={t.id} value={String(t.id)}>{t.name}</option>
+              ))}
+            </select>
+            <div className="shrink-0 w-[24px] h-[24px] pointer-events-none">
+              <svg className="block size-full" fill="none" viewBox="0 0 12 8">
+                <path d={iconPaths.keyboardArrowDown} fill="#4D4D4D" />
+              </svg>
+            </div>
+          </div>
+        </div>
+
+        <div className="flex-1 h-[52px] relative rounded-[12px]">
+          <div aria-hidden="true" className="absolute border border-[#b3b3b3] border-solid inset-0 pointer-events-none rounded-[12px]" />
+          <input
+            type="text"
+            value={price}
+            onChange={(e) => setPrice(e.target.value)}
+            placeholder="Введіть ціну..."
+            className="w-full h-full bg-transparent border-none outline-none px-[16px] py-[4px] text-[16px] text-[#0d0d0d] placeholder-[#4d4d4d] rounded-[12px]"
+            style={fontRegular}
+          />
+        </div>
+      </div>
+
+      {/* Action row */}
+      <div className="flex gap-[16px] items-center justify-end shrink-0 w-full">
+        <button
+          onClick={() => onSectionChange('materials')}
+          className="h-[44px] px-[24px] py-[12px] rounded-[12px] border-none bg-transparent cursor-pointer text-[16px] text-[#e53935] underline"
+          style={fontRegular}
+        >
+          Скасувати
+        </button>
+        <button
+          onClick={handleContinue}
+          className="bg-[#5e89e8] h-[44px] px-[24px] py-[12px] rounded-[12px] border-none cursor-pointer text-[16px] text-white hover:opacity-90 transition-opacity"
+          style={fontRegular}
+        >
+          Продовжити
+        </button>
+      </div>
+    </div>
+  );
+}

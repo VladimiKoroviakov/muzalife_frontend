@@ -94,3 +94,32 @@ export interface PollCardProps {
   onSelectOption: (pollIndex: number, optionIndex: number) => void;
   onVote: (pollIndex: number) => void;
 }
+
+export interface CreatePollData {
+  pollQuestion: string;
+  options: string[];
+}
+
+export interface PollResult {
+  poll_id: number;
+  poll_question: string;
+  is_active: boolean;
+  total_votes: number;
+  options: Array<{
+    vote_id: number;
+    vote_text: string;
+    vote_count: number;
+  }>;
+}
+
+export interface PollResultsResponse {
+  success: boolean;
+  polls: PollResult[];
+  error?: string;
+}
+
+export interface AdminPollResponse {
+  success: boolean;
+  poll?: ApiPoll;
+  error?: string;
+}

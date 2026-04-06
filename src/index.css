@@ -1739,6 +1739,10 @@
     padding-block: 24px;
   }
 
+  .py-\[40px\] {
+    padding-block: 40px;
+  }
+
   .py-\[48px\] {
     padding-block: 48px;
   }

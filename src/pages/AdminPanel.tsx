@@ -17,8 +17,7 @@ import { iconPaths } from '../components/ui/icons/iconPaths';
 // Layout & shared components
 import { DashboardRightSide } from '../components/layout/dashboard/DashboardRightSide';
 import { AdminMaterialsContent } from '../components/admin/AdminMaterialsContent';
-import { AdminAddMaterial } from '../components/admin/AdminAddMaterial';
-import { AdminEditMaterial } from '../components/admin/AdminEditMaterial';
+import { AdminManageMaterial } from '../components/admin/AdminManageMaterial';
 import { AdminOrdersContent } from '../components/admin/AdminOrdersContent';
 import { AdminOrderDetail } from '../components/admin/AdminOrderDetail';
 import { AdminAnalyticsContent } from '../components/admin/AdminAnalyticsContent';
@@ -137,9 +136,9 @@ export default function AdminPanel() {
           />
         );
       case 'materials-add':
-        return <AdminAddMaterial onSectionChange={setActiveSection} />;
+        return <AdminManageMaterial onSectionChange={setActiveSection} />;
       case 'materials-edit':
-        return <AdminEditMaterial onSectionChange={setActiveSection} materialId={editingId} />;
+        return <AdminManageMaterial mode="edit" productId={editingId} onSectionChange={setActiveSection} />;
       case 'orders':
         return (
           <AdminOrdersContent

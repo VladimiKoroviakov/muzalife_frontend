@@ -4,21 +4,19 @@ import { iconPaths } from '../ui/icons/iconPaths';
 import { Table, TextCell, EmptyCell, TableCell } from '../layout/dashboard/TableComponents';
 import { Skeleton } from '../ui/skeleton';
 import { apiService } from '../../services/api';
-import { Order, BoughtScenariosContentProps } from '../../types';
+import { BoughtProduct, Order, BoughtScenariosContentProps } from '../../types';
 import ReviewPanel from './ReviewPanel';
 import { CacheManager } from '../../utils/cache-manager';
 import config from '../../config';
 
 export function PurchaseHistoryContent({
 	onBack: _onBack,
-	products = []
 }: BoughtScenariosContentProps) {
 	const [showReviewScreen, setShowReviewScreen] = useState(false);
 	const [selectedOrder, setSelectedOrder] = useState<Order | null>(null);
 	const [reviewedProducts, setReviewedProducts] = useState<Set<number>>(new Set());
-	const [boughtProductIds, setBoughtProductIds] = useState<number[]>([]);
+	const [boughtProducts, setBoughtProducts] = useState<BoughtProduct[]>([]);
 	const [isLoading, setIsLoading] = useState(true);
-	const [productsLoading, setProductsLoading] = useState(true);
 	const [error, setError] = useState<string | null>(null);
 	const tableContainerRef = useRef<HTMLDivElement>(null);
 	const [tableHeight, setTableHeight] = useState<number>(0);
@@ -61,54 +59,41 @@ export function PurchaseHistoryContent({
 			const reviews = await apiService.getUserReviews(userProfile.id);
 			const reviewedProductIds = reviews.map((review) => review.productId);
 
-			// Update state
 			setReviewedProducts(new Set(reviewedProductIds));
 
-			// Update cache
 			CacheManager.setItem(cacheKey, reviewedProductIds);
 			CacheManager.setItem(timestampKey, Date.now());
 
-		} catch (apiError: any) {
+		} catch (apiError: unknown) {
 			console.error('API error loading user reviews:', apiError);
 
-			// If API fails, use cached data even if expired
 			if (cachedProductIds) {
 			setReviewedProducts(new Set(cachedProductIds));
 			} else {
-			// No cache available, use empty set
 			setReviewedProducts(new Set());
 			}
 
-			// Update timestamp to prevent immediate retry
 			CacheManager.setItem(timestampKey, Date.now());
 		}
 
 		} catch (error) {
-		console.error('Error in loadUserReviews:', error);
-		// Final fallback to any available cache
-		const cachedProductIds = CacheManager.getItem<number[]>(config.cacheKeys.REVIEWED_PRODUCTS);
-		if (cachedProductIds) {
-			setReviewedProducts(new Set(cachedProductIds));
-		}
+			console.error('Error in loadUserReviews:', error);
+			const cachedProductIds = CacheManager.getItem<number[]>(config.cacheKeys.REVIEWED_PRODUCTS);
+			if (cachedProductIds) {
+				setReviewedProducts(new Set(cachedProductIds));
+			}
 		}
 	}, []);
 
-	// Load bought product IDs
+	// Load bought products
 	useEffect(() => {
 		const loadBoughtProducts = async () => {
 		try {
 			setIsLoading(true);
 			setError(null);
 
-			// Check cache first
-			const cachedBoughtProducts = CacheManager.getItem<number[]>(config.cacheKeys.BOUGHT_PRODUCTS);
-			if (cachedBoughtProducts) {
-			setBoughtProductIds(cachedBoughtProducts);
-			}
-
-			// Always fetch fresh data
-			const boughtIds = await apiService.getBoughtProducts();
-			setBoughtProductIds(boughtIds);
+			const products = await apiService.getBoughtProducts();
+			setBoughtProducts(products);
 
 		} catch (error) {
 			console.error('Error loading bought products:', error);
@@ -124,15 +109,10 @@ export function PurchaseHistoryContent({
 
 	// Load user reviews when bought products are loaded
 	useEffect(() => {
-		if (boughtProductIds.length > 0 && !isLoading) {
+		if (boughtProducts.length > 0 && !isLoading) {
 		loadUserReviews();
 		}
-	}, [boughtProductIds, isLoading, loadUserReviews]);
-
-	// Monitor when products are loaded
-	useEffect(() => {
-		setProductsLoading(false);
-	}, [products]);
+	}, [boughtProducts, isLoading, loadUserReviews]);
 
 	// Calculate table height
 	useEffect(() => {
@@ -152,18 +132,13 @@ export function PurchaseHistoryContent({
 		return () => window.removeEventListener('resize', updateTableHeight);
 	}, []);
 
-	// Filter products to show only bought ones
-	const boughtMaterials = products.filter((p) => {
-		const productId = typeof p.id === 'string' ? parseInt(p.id, 10) : Number(p.id);
-		return boughtProductIds.includes(productId);
-	});
-
-	// Transform bought materials to orders format
-	const orders: Order[] = boughtMaterials.map((material) => ({
-		id: Number(material.id),
-		name: material.title || 'Невідомий матеріал',
-		date: formatDate(material.bought_at || material.orderDate || material.createdAt || new Date().toISOString()),
-		materialType: material.type || 'Не вказано'
+	// Transform bought products to orders format
+	const orders: Order[] = boughtProducts.map((product) => ({
+		id: product.id,
+		name: product.title || 'Невідомий матеріал',
+		date: formatDate(product.boughtAt || new Date().toISOString()),
+		materialType: product.type || 'Не вказано',
+		hidden: product.hidden
 	}));
 
 	const getRowBg = (index: number) => index % 2 === 0 ? '#f2f2f2' : '#e6e6e6';
@@ -200,12 +175,18 @@ export function PurchaseHistoryContent({
 	};
 
 	const handleOpenReview = (order: Order) => {
-		// Check if product is already reviewed
+		if (order.hidden) {
+			toast.error('Матеріал недоступний', {
+				description: 'Цей матеріал було видалено з каталогу і відгук на нього залишити неможливо'
+			});
+			return;
+		}
+
 		if (reviewedProducts.has(order.id)) {
-		toast.error('Ви вже залишили відгук', {
-			description: 'Ви можете залишити лише один відгук на цей матеріал'
-		});
-		return;
+			toast.error('Ви вже залишили відгук', {
+				description: 'Ви можете залишити лише один відгук на цей матеріал'
+			});
+			return;
 		}
 
 		setSelectedOrder(order);
@@ -221,7 +202,6 @@ export function PurchaseHistoryContent({
 		try {
 		if (!selectedOrder) {return;}
 
-		// Submit review via API
 		await apiService.submitReview(
 			selectedOrder.id,
 			rating,
@@ -230,11 +210,9 @@ export function PurchaseHistoryContent({
 
 		toast.success('Відгук успішно надіслано!');
 
-		// Update local state
 		const updatedReviewedProducts = new Set([...reviewedProducts, selectedOrder.id]);
 		setReviewedProducts(updatedReviewedProducts);
 
-		// Update cache immediately
 		const cacheKey = config.cacheKeys.REVIEWED_PRODUCTS;
 		const timestampKey = `${config.cacheKeys.REVIEWED_PRODUCTS}_timestamp`;
 
@@ -254,7 +232,7 @@ export function PurchaseHistoryContent({
 	};
 
 	// Generate table data
-	const tableColumns = orders.length > 0 && !isLoading && !productsLoading ? [
+	const tableColumns = orders.length > 0 && !isLoading ? [
 		{
 		header: 'Назва матеріалу',
 		width: '50%',
@@ -324,6 +302,8 @@ export function PurchaseHistoryContent({
 		cells: [
 			...orders.map((order, index) => {
 			const isReviewed = reviewedProducts.has(order.id);
+				const isHidden = order.hidden ?? false;
+				const reviewDisabled = isReviewed || isHidden;
 
 			return (
 				<TableCell
@@ -347,12 +327,12 @@ export function PurchaseHistoryContent({
 					<div
 						onClick={() => handleOpenReview(order)}
 						className={`relative shrink-0 size-[24px] transition-opacity ${
-						isReviewed
+						reviewDisabled
 							? 'opacity-30 cursor-not-allowed'
 							: 'cursor-pointer hover:opacity-70'
 						}`}
 						data-name="comment"
-						title={isReviewed ? 'Ви вже залишили відгук' : 'Залишити відгук'}
+						title={isHidden ? 'Матеріал недоступний' : isReviewed ? 'Ви вже залишили відгук' : 'Залишити відгук'}
 					>
 						<div className="absolute inset-[8.333%] mask-alpha mask-intersect mask-no-clip mask-no-repeat mask-position-[-2px] mask-size-[24px_24px]" data-name="comment">
 						<svg className="block size-full" fill="none" preserveAspectRatio="none" viewBox="0 0 20 20">
@@ -375,20 +355,8 @@ export function PurchaseHistoryContent({
 		}
 	] : null;
 
-	// Show loading if products are still loading
-	if (productsLoading && products.length === 0 && boughtProductIds.length > 0) {
-		return (
-		<div className="basis-0 bg-[#f2f2f2] grow h-full min-h-px min-w-px relative rounded-[16px] shrink-0" data-name="Right Side">
-			<div className="flex items-center justify-center h-full">
-			<div className="text-lg">Завантаження даних продуктів...</div>
-			</div>
-		</div>
-		);
-	}
-
 	return (
 		<div className="basis-0 content-stretch flex flex-col gap-[10px] grow h-full items-start min-h-px min-w-px relative rounded-[16px] shrink-0" data-name="Right Side">
-		{/* Conditionally render ReviewScreen or the Purchase History table */}
 		{showReviewScreen && selectedOrder ? (
 			<ReviewPanel
 			materialName={selectedOrder.name}
@@ -402,7 +370,6 @@ export function PurchaseHistoryContent({
 			data-name="Scrolling Table"
 			>
 			{isLoading ? (
-				// Loading state - show skeletons
 				<div className="basis-0 grow h-full min-h-px min-w-px relative rounded-[12px] shrink-0 overflow-hidden w-full flex items-center justify-center">
 					<div className="flex flex-col items-center justify-center w-full h-full gap-4">
 						<div className="text-lg">Завантаження історії покупок...</div>
@@ -414,7 +381,6 @@ export function PurchaseHistoryContent({
 					</div>
 				</div>
 			) : error ? (
-				// Error state
 				<div className="basis-0 grow h-full min-h-px min-w-px relative rounded-[12px] shrink-0 overflow-hidden w-full flex items-center justify-center">
 					<div className="flex flex-col items-center justify-center w-full h-full gap-4 py-12">
 						<div className="flex flex-col font-['Atkinson_Hyperlegible:Regular','Noto_Sans:Regular',sans-serif] justify-end leading-[0] relative text-[#4d4d4d] text-[18px] text-center" style={{ fontVariationSettings: "'CTGR' 0, 'wdth' 100, 'wght' 400" }}>
@@ -424,8 +390,7 @@ export function PurchaseHistoryContent({
 						</div>
 					</div>
 				</div>
-			) : boughtProductIds.length === 0 ? (
-				// Empty state - no purchase history
+			) : boughtProducts.length === 0 ? (
 				<div className="basis-0 grow h-full min-h-px min-w-px relative rounded-[12px] shrink-0 overflow-hidden w-full flex items-center justify-center">
 					<div className="flex flex-col items-center justify-center w-full h-full gap-4 py-12">
 						<div className="flex flex-col font-['Atkinson_Hyperlegible:Regular','Noto_Sans:Regular',sans-serif] justify-end leading-[0] relative text-[#4d4d4d] text-[18px] text-center" style={{ fontVariationSettings: "'CTGR' 0, 'wdth' 100, 'wght' 400" }}>
@@ -435,25 +400,7 @@ export function PurchaseHistoryContent({
 						</div>
 					</div>
 				</div>
-			) : orders.length === 0 ? (
-				// Edge case: bought products exist but not found in available products
-				<div className="basis-0 grow h-full min-h-px min-w-px relative rounded-[12px] shrink-0 overflow-hidden w-full flex items-center justify-center">
-					<div className="flex flex-col items-center justify-center w-full h-full gap-4 py-12">
-						<div className="flex flex-col font-['Atkinson_Hyperlegible:Regular','Noto_Sans:Regular',sans-serif] justify-end leading-[0] relative text-[#4d4d4d] text-[18px] text-center" style={{ fontVariationSettings: "'CTGR' 0, 'wdth' 100, 'wght' 400" }}>
-							<p className="leading-[normal]">
-								Куплені матеріали не знайдені серед доступних продуктів
-							</p>
-						</div>
-						{boughtProductIds.length > 0 && products.length > 0 && (
-						<div className="text-sm text-gray-500 text-center">
-							<div>Куплені ID: {boughtProductIds.join(', ')}</div>
-							<div>Доступні ID: {products.map((p) => p.id).join(', ')}</div>
-						</div>
-						)}
-					</div>
-				</div>
 			) : (
-				// Show table only when we have orders and not loading
 				<div className="basis-0 grow h-full min-h-px min-w-px relative rounded-[12px] shrink-0 overflow-hidden w-full" data-name="Table">
 					<div className="content-stretch flex gap-[2px] items-start overflow-x-clip overflow-y-auto relative size-full rounded-[12px] w-full">
 						{tableColumns && <Table columns={tableColumns} />}

@@ -168,7 +168,7 @@ export default function UserCabinet({
   const renderContent = () => {
     switch (activeSection) {
       case 'history':
-        return <PurchaseHistoryContent onBack={() => setActiveSection('main')} products={localProducts} />;
+        return <PurchaseHistoryContent onBack={() => setActiveSection('main')} />;
       case 'saved':
         return (
           <SavedScenariosContent

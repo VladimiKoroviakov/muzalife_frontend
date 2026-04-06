@@ -270,11 +270,7 @@ export default function HomePage() {
     if (activeTab === 'other' && product.type !== 'Інше') {return false;}
 
     if (selectedAgeCategory) {
-      const productAgeCategories = Array.isArray(product.ageCategory)
-        ? product.ageCategory
-        : [product.ageCategory];
-
-      if (!productAgeCategories.includes(selectedAgeCategory)) {
+      if (!product.ageCategory.includes(selectedAgeCategory)) {
         return false;
       }
     }

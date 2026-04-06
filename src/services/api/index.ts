@@ -32,6 +32,7 @@ import { createOrdersMethods } from './orders';
 import { createFaqsMethods } from './faqs';
 import { createPollsMethods } from './polls';
 import { createReviewsMethods } from './reviews';
+import { createAdminMethods } from './admin';
 
 const client = new ApiClient();
 
@@ -51,6 +52,7 @@ export const apiService = {
   ...createFaqsMethods(client),
   ...createPollsMethods(client),
   ...createReviewsMethods(client),
+  ...createAdminMethods(client),
 
   // Cache utilities forwarded from the client
   clearUserData: () => client.clearUserData(),

@@ -63,6 +63,10 @@ const config = {
       account: '/users/account',
     },
     products: '/products',
+    productTypes: '/products/types',
+    productAgeCategories: '/products/age-categories',
+    productEvents: '/products/events',
+    productFiles: (id: number) => `/products/${id}/files`,
     savedProducts: {
       base: '/saved-products',
       ids: '/saved-products/ids',
@@ -81,6 +85,11 @@ const config = {
       base: '/polls',
       byId: (id: number) => `/polls/${id}`,
       vote: (id: number) => `/polls/${id}/vote`,
+      results: '/polls/results',
+      status: (pollId: number) => `/polls/${pollId}/status`,
+    },
+    analytics: {
+      stats: (productId: number) => `/analytics/stats/${productId}`,
     },
   },
 } as const;
