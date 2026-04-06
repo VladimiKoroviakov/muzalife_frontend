@@ -116,7 +116,7 @@ export function createAdminMethods(client: ApiClient) {
             files?: File[];
             removeFileIds?: number[];
             images?: File[];
-            removeImageIds?: number[];
+            removeImageUrls?: string[];
             removeMainImage?: boolean;
         },
     ): Promise<void> {
@@ -127,17 +127,27 @@ export function createAdminMethods(client: ApiClient) {
         if (data.price !== undefined) { formData.append('price', String(data.price)); }
         if (data.typeId !== undefined) { formData.append('typeId', String(data.typeId)); }
 
-        for (const catId of data.ageCategoryIds ?? []) {
-            formData.append('ageCategoryIds', String(catId));
+        if (data.ageCategoryIds !== undefined) {
+            for (const catId of data.ageCategoryIds) {
+                formData.append('ageCategoryIds', String(catId));
+            }
+            if (data.ageCategoryIds.length === 0) {
+                formData.append('ageCategoryIds', '');
+            }
         }
-        for (const evtId of data.eventIds ?? []) {
-            formData.append('eventIds', String(evtId));
+        if (data.eventIds !== undefined) {
+            for (const evtId of data.eventIds) {
+                formData.append('eventIds', String(evtId));
+            }
+            if (data.eventIds.length === 0) {
+                formData.append('eventIds', '');
+            }
         }
         for (const fileId of attachments?.removeFileIds ?? []) {
             formData.append('removeFileIds', String(fileId));
         }
-        for (const imageId of attachments?.removeImageIds ?? []) {
-            formData.append('removeImageIds', String(imageId));
+        for (const imageUrl of attachments?.removeImageUrls ?? []) {
+            formData.append('removeImageUrls', String(imageUrl));
         }
         for (const file of attachments?.files ?? []) {
             formData.append('files', file);

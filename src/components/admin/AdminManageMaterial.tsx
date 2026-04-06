@@ -1,4 +1,4 @@
-import { useState, useRef, useEffect, type DragEvent, type ChangeEvent } from 'react';
+import { useState, useRef, useEffect, useMemo, type DragEvent, type ChangeEvent, type MouseEvent } from 'react';
 import { toast } from 'sonner';
 import { iconPaths } from '../ui/icons/iconPaths';
 import { apiService } from '@/services/api';
@@ -62,6 +62,147 @@ function DashedBorder({ active }: { active: boolean }) {
   );
 }
 
+interface MultiSelectProps {
+  options: { id: number; name: string }[];
+  selected: number[];
+  onChange: (ids: number[]) => void;
+  placeholder: string;
+  disabled?: boolean;
+}
+
+function MultiSelect({ options, selected, onChange, placeholder, disabled }: MultiSelectProps) {
+  const [isOpen, setIsOpen] = useState(false);
+  const [dropdownDirection, setDropdownDirection] = useState<'up' | 'down'>('down');
+  const containerRef = useRef<HTMLDivElement>(null);
+  const buttonRef = useRef<HTMLButtonElement>(null);
+
+  // Calculate available space and set dropdown direction
+  useEffect(() => {
+    if (!isOpen || !containerRef.current) {
+      return;
+    }
+
+    const rect = containerRef.current.getBoundingClientRect();
+    const viewportHeight = window.innerHeight;
+    const spaceBelow = viewportHeight - rect.bottom;
+    const spaceAbove = rect.top;
+
+    // If there's more space below, open downward; otherwise open upward
+    // Also ensure minimum space of 200px for the dropdown
+    if (spaceBelow > spaceAbove && spaceBelow > 200) {
+      setDropdownDirection('down');
+    } else if (spaceAbove > 200) {
+      setDropdownDirection('up');
+    } else {
+      // Default to down if both are constrained
+      setDropdownDirection('down');
+    }
+  }, [isOpen]);
+
+  useEffect(() => {
+    if (!isOpen) { return; }
+    const handler = (e: globalThis.MouseEvent) => {
+      if (!containerRef.current?.contains(e.target as Node)) {
+        setIsOpen(false);
+      }
+    };
+    document.addEventListener('mousedown', handler);
+    return () => { document.removeEventListener('mousedown', handler); };
+  }, [isOpen]);
+
+  const label = useMemo(() => {
+    if (selected.length === 0) { return placeholder; }
+    if (selected.length === 1) {
+      return options.find((o) => o.id === selected[0])?.name ?? placeholder;
+    }
+    return `${selected.length} обрано`;
+  }, [selected, options, placeholder]);
+
+  const toggle = (id: number, e: MouseEvent) => {
+    e.stopPropagation();
+    onChange(selected.includes(id) ? selected.filter((s) => s !== id) : [...selected, id]);
+  };
+
+  // Get dropdown positioning classes
+  const dropdownPositionClass = dropdownDirection === 'down'
+    ? 'top-full mt-1'
+    : 'bottom-full mb-1';
+
+  return (
+    <div ref={containerRef} className="relative flex-1 h-[52px]">
+      <div aria-hidden="true" className="absolute border border-[#b3b3b3] border-solid inset-0 pointer-events-none rounded-[12px]" />
+      <button
+        ref={buttonRef}
+        type="button"
+        onClick={() => { if (!disabled) { setIsOpen((v) => !v); } }}
+        className={`flex items-center size-full px-[16px] py-[4px] gap-[8px] bg-transparent border-none rounded-[12px] w-full text-left ${disabled ? 'cursor-not-allowed' : 'cursor-pointer'}`}
+      >
+        <span
+          className={`flex-1 text-[16px] truncate ${selected.length === 0 || disabled ? 'text-[#4d4d4d]' : 'text-[#0d0d0d]'}`}
+          style={fontRegular}
+        >
+          {disabled ? 'Завантаження...' : label}
+        </span>
+        <div className="shrink-0 w-[24px] h-[24px] pointer-events-none">
+          <svg className="block size-full" fill="none" viewBox="0 0 12 8">
+            <path d={iconPaths.keyboardArrowDown} fill="#4D4D4D" />
+          </svg>
+        </div>
+      </button>
+
+      {isOpen && (
+        <div
+          className={`absolute ${dropdownPositionClass} mt-1 left-0 right-0 z-10 bg-white border border-solid border-[#b3b3b3] rounded-[12px] shadow-md max-h-[280px] overflow-y-auto`}
+          style={{
+            // Ensure dropdown has a reasonable minimum and maximum size
+            minHeight: 'auto',
+            maxHeight: '200px',
+          }}
+        >
+          {options.length === 0 ? (
+            <div className="px-[16px] py-[10px] text-[#4d4d4d] text-center">
+              Немає доступних опцій
+            </div>
+          ) : (
+            options.map((opt) => {
+              const checked = selected.includes(opt.id);
+              return (
+                <button
+                  key={opt.id}
+                  type="button"
+                  onClick={(e) => { toggle(opt.id, e); }}
+                  className="flex items-center gap-[10px] w-full px-[16px] py-[10px] bg-transparent border-none text-left cursor-pointer hover:bg-[#f5f5f5] transition-colors"
+                >
+                  <div
+                    style={{
+                      flexShrink: 0,
+                      width: 16,
+                      height: 16,
+                      borderRadius: 4,
+                      border: checked ? '1px solid #5e89e8' : '1px solid #b3b3b3',
+                      backgroundColor: checked ? '#5e89e8' : 'transparent',
+                      display: 'flex',
+                      alignItems: 'center',
+                      justifyContent: 'center',
+                    }}
+                  >
+                    {checked && (
+                      <svg width="10" height="8" viewBox="0 0 10 8" fill="none">
+                        <path d="M1 4L3.5 6.5L9 1" stroke="white" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
+                      </svg>
+                    )}
+                  </div>
+                  <span className="text-[16px] text-[#0d0d0d]" style={fontRegular}>{opt.name}</span>
+                </button>
+              );
+            })
+          )}
+        </div>
+      )}
+    </div>
+  );
+}
+
 // ── Main component ─────────────────────────────────────────────────────────────
 
 type ExistingImage = { url: string; isMain: boolean; imageId?: number };
@@ -75,8 +216,8 @@ export function AdminManageMaterial({ onSectionChange, mode = 'add', productId }
   const [existingFiles, setExistingFiles] = useState<ProductFile[]>([]);
   const [removedFileIds, setRemovedFileIds] = useState<number[]>([]);
   const [scenarioName, setScenarioName] = useState('');
-  const [holiday, setHoliday] = useState('');
-  const [ageGroup, setAgeGroup] = useState('');
+  const [selectedEventIds, setSelectedEventIds] = useState<number[]>([]);
+  const [selectedAgeCategoryIds, setSelectedAgeCategoryIds] = useState<number[]>([]);
   const [contentType, setContentType] = useState('');
   const [price, setPrice] = useState('');
   const [isFileDragOver, setIsFileDragOver] = useState(false);
@@ -87,7 +228,7 @@ export function AdminManageMaterial({ onSectionChange, mode = 'add', productId }
   const [images, setImages] = useState<File[]>([]);
   const [existingImages, setExistingImages] = useState<ExistingImage[]>([]);
   const [removedMainImage, setRemovedMainImage] = useState(false);
-  const [removedImageIds, setRemovedImageIds] = useState<number[]>([]);
+  const [removeImageUrls, setRemovedImageUrls] = useState<string[]>([]);
   const [description, setDescription] = useState('');
   const [isImageDragOver, setIsImageDragOver] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -101,15 +242,15 @@ export function AdminManageMaterial({ onSectionChange, mode = 'add', productId }
       setScenarioName(product.title);
       setPrice(String(product.price));
       setContentType(String(types.find((t) => t.name === product.type)?.id ?? ''));
-      setAgeGroup(
-        product.ageCategory.length > 0
-          ? String(ageCategories.find((a) => a.name === product.ageCategory[0])?.id ?? '')
-          : '',
+      setSelectedAgeCategoryIds(
+        product.ageCategory
+          .map((name) => ageCategories.find((a) => a.name === name)?.id)
+          .filter((id): id is number => id !== undefined),
       );
-      setHoliday(
-        product.events.length > 0
-          ? String(eventOptions.find((e) => e.name === product.events[0])?.id ?? '')
-          : '',
+      setSelectedEventIds(
+        product.events
+          .map((name) => eventOptions.find((e) => e.name === name)?.id)
+          .filter((id): id is number => id !== undefined),
       );
       setDescription(product.description);
 
@@ -117,8 +258,8 @@ export function AdminManageMaterial({ onSectionChange, mode = 'add', productId }
       if (product.image) {
         imgs.push({ url: product.image, isMain: true });
       }
-      (product.additionalImages ?? []).forEach((url, i) => {
-        imgs.push({ url, isMain: false, imageId: product.additionalImageIds?.[i] });
+      (product.additionalImages ?? []).forEach((url) => {
+        imgs.push({ url, isMain: false });
       });
       setExistingImages(imgs);
     }).catch(() => {
@@ -153,8 +294,8 @@ export function AdminManageMaterial({ onSectionChange, mode = 'add', productId }
     setExistingImages((prev) => prev.filter((i) => i.url !== img.url));
     if (img.isMain) {
       setRemovedMainImage(true);
-    } else if (img.imageId !== undefined) {
-      setRemovedImageIds((prev) => [...prev, img.imageId as number]);
+    } else if (img.url) {
+      setRemovedImageUrls((prev) => [...prev, img.url as string]);
     }
   };
 
@@ -193,14 +334,14 @@ export function AdminManageMaterial({ onSectionChange, mode = 'add', productId }
             description,
             price: parseFloat(price),
             typeId: parseInt(contentType, 10),
-            ageCategoryIds: ageGroup ? [parseInt(ageGroup, 10)] : [],
-            eventIds: holiday ? [parseInt(holiday, 10)] : [],
+            ageCategoryIds: selectedAgeCategoryIds,
+            eventIds: selectedEventIds,
           },
           {
             files,
             removeFileIds: removedFileIds,
             images,
-            removeImageIds: removedImageIds,
+            removeImageUrls,
             removeMainImage: removedMainImage,
           },
         );
@@ -212,8 +353,8 @@ export function AdminManageMaterial({ onSectionChange, mode = 'add', productId }
             description,
             price: parseFloat(price),
             typeId: parseInt(contentType, 10),
-            ageCategoryIds: ageGroup ? [parseInt(ageGroup, 10)] : undefined,
-            eventIds: holiday ? [parseInt(holiday, 10)] : undefined,
+            ageCategoryIds: selectedAgeCategoryIds.length > 0 ? selectedAgeCategoryIds : undefined,
+            eventIds: selectedEventIds.length > 0 ? selectedEventIds : undefined,
           },
           {
             mainImage: images[0],
@@ -421,51 +562,20 @@ export function AdminManageMaterial({ onSectionChange, mode = 'add', productId }
 
       {/* Holiday + Age group row */}
       <div className="flex gap-[24px] items-start shrink-0 w-full">
-        <div className="flex-1 h-[52px] relative rounded-[12px]">
-          <div aria-hidden="true" className="absolute border border-[#b3b3b3] border-solid inset-0 pointer-events-none rounded-[12px]" />
-          <div className="flex items-center size-full px-[16px] py-[4px] gap-[8px]">
-            <select
-              value={holiday}
-              onChange={(e) => setHoliday(e.target.value)}
-              disabled={isMetadataLoading}
-              className="flex-1 bg-transparent border-none outline-none text-[16px] text-[#4d4d4d] appearance-none cursor-pointer disabled:cursor-not-allowed"
-              style={fontRegular}
-            >
-              <option value="">{isMetadataLoading ? 'Завантаження...' : 'Оберіть свято'}</option>
-              {eventOptions.map((e) => (
-                <option key={e.id} value={String(e.id)}>{e.name}</option>
-              ))}
-            </select>
-            <div className="shrink-0 w-[24px] h-[24px] pointer-events-none">
-              <svg className="block size-full" fill="none" viewBox="0 0 12 8">
-                <path d={iconPaths.keyboardArrowDown} fill="#4D4D4D" />
-              </svg>
-            </div>
-          </div>
-        </div>
-
-        <div className="flex-1 h-[52px] relative rounded-[12px]">
-          <div aria-hidden="true" className="absolute border border-[#b3b3b3] border-solid inset-0 pointer-events-none rounded-[12px]" />
-          <div className="flex items-center size-full px-[16px] py-[4px] gap-[8px]">
-            <select
-              value={ageGroup}
-              onChange={(e) => setAgeGroup(e.target.value)}
-              disabled={isMetadataLoading}
-              className="flex-1 bg-transparent border-none outline-none text-[16px] text-[#4d4d4d] appearance-none cursor-pointer disabled:cursor-not-allowed"
-              style={fontRegular}
-            >
-              <option value="">{isMetadataLoading ? 'Завантаження...' : 'Оберіть вікові групи'}</option>
-              {ageCategories.map((a) => (
-                <option key={a.id} value={String(a.id)}>{a.name}</option>
-              ))}
-            </select>
-            <div className="shrink-0 w-[24px] h-[24px] pointer-events-none">
-              <svg className="block size-full" fill="none" viewBox="0 0 12 8">
-                <path d={iconPaths.keyboardArrowDown} fill="#4D4D4D" />
-              </svg>
-            </div>
-          </div>
-        </div>
+        <MultiSelect
+          options={eventOptions}
+          selected={selectedEventIds}
+          onChange={setSelectedEventIds}
+          placeholder="Оберіть свято"
+          disabled={isMetadataLoading}
+        />
+        <MultiSelect
+          options={ageCategories}
+          selected={selectedAgeCategoryIds}
+          onChange={setSelectedAgeCategoryIds}
+          placeholder="Оберіть вікові групи"
+          disabled={isMetadataLoading}
+        />
       </div>
 
       {/* Content type + Price row */}

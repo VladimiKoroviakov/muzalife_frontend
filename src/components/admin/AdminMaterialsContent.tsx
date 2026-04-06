@@ -141,10 +141,13 @@ export function AdminMaterialsContent({ onSectionChange, onEditMaterial }: Admin
 
       {/* Delete confirmation modal */}
       {deleteId !== null && (
-        <div className="fixed inset-0 bg-[#0d0d0d]/50 flex items-center justify-center z-50">
-          <div className="bg-white rounded-[24px] p-[32px] flex flex-col gap-[24px] max-w-[480px] w-full mx-[24px]">
-            <p className="text-[18px] text-[#0d0d0d] text-center m-0" style={fontRegular}>
-              Ви впевнені, що хочете видалити цей матеріал? Цю дію неможливо скасувати.
+        <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50">
+          <div className="bg-white rounded-[24px] p-[32px] flex flex-col gap-[24px] max-w-[764px] mx-[24px]">
+            <h5 className="text-[40px] text-[#0d0d0d] text-center m-0" style={fontRegular}>
+              Ви впевнені, що хочете видалити цей матеріал?
+            </h5>
+            <p className="text-[20px] text-[#4d4d4d] text-center m-0" style={fontRegular}>
+              Якщо Ви натиснете “Підтвердити”, цей матеріал буде повністю видалено і цю дію неможливо буде відмінити
             </p>
             <div className="flex gap-[16px] justify-center">
               <button
@@ -156,7 +159,7 @@ export function AdminMaterialsContent({ onSectionChange, onEditMaterial }: Admin
               </button>
               <button
                 onClick={handleDelete}
-                className="h-[44px] px-[24px] rounded-[12px] border-none bg-[#e53935] text-white cursor-pointer text-[16px] hover:opacity-90 transition-opacity"
+                className="h-[44px] px-[24px] rounded-[12px] border-none bg-[#E53935] text-white cursor-pointer text-[16px] hover:opacity-90 transition-opacity"
                 style={fontBold}
               >
                 Підтвердити видалення

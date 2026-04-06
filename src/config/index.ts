@@ -63,9 +63,9 @@ const config = {
       account: '/users/account',
     },
     products: '/products',
-    productTypes: '/products/types',
-    productAgeCategories: '/products/age-categories',
-    productEvents: '/products/events',
+    productTypes: '/metadata/types',
+    productAgeCategories: '/metadata/age-categories',
+    productEvents: '/metadata/events',
     productFiles: (id: number) => `/products/${id}/files`,
     savedProducts: {
       base: '/saved-products',
