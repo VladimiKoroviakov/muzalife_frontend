@@ -109,6 +109,8 @@ export interface PollResult {
     vote_id: number;
     vote_text: string;
     vote_count: number;
+    /** Pre-computed percentage string from the backend, e.g. `"66.7"`. */
+    percentage: string;
   }>;
 }
 

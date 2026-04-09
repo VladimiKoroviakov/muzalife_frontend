@@ -87,6 +87,7 @@ const config = {
       vote: (id: number) => `/polls/${id}/vote`,
       results: '/polls/results',
       status: (pollId: number) => `/polls/${pollId}/status`,
+      delete: (pollId: number) => `/polls/${pollId}`,
     },
     analytics: {
       stats: (productId: number) => `/analytics/stats/${productId}`,

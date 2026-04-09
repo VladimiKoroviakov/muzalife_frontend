@@ -1,18 +1,7 @@
 import { useState } from 'react';
-
-interface PollOption {
-  label: string;
-  percentage: number;
-  isWinning?: boolean;
-}
-
-interface PollData {
-  id: number;
-  question: string;
-  options: PollOption[];
-  totalVotes: number;
-  isActive: boolean;
-}
+import { useAdminPolls } from '@/hooks/useAdminPolls';
+import { PollResult } from '@/types';
+import { iconPaths } from '../ui/icons/iconPaths';
 
 interface AdminPollsContentProps {
   onSectionChange: (section: string) => void;
@@ -21,97 +10,83 @@ interface AdminPollsContentProps {
 const fontRegular = { fontVariationSettings: "'CTGR' 0, 'wdth' 100, 'wght' 400" };
 const fontBold = { fontVariationSettings: "'CTGR' 0, 'wdth' 100, 'wght' 700" };
 
-const MOCK_POLLS: PollData[] = [
-  {
-    id: 1,
-    question: 'Який формат матеріалів вам найбільше подобається?',
-    options: [
-      { label: 'Сценарії свят', percentage: 52, isWinning: true },
-      { label: 'Квести та ігри', percentage: 31 },
-      { label: 'Поезія та вірші', percentage: 17 },
-    ],
-    totalVotes: 234,
-    isActive: true,
-  },
-  {
-    id: 2,
-    question: 'Як часто ви використовуєте матеріали з сайту?',
-    options: [
-      { label: 'Щотижня', percentage: 15 },
-      { label: 'Раз на місяць', percentage: 58, isWinning: true },
-      { label: 'Рідше ніж раз на місяць', percentage: 27 },
-    ],
-    totalVotes: 189,
-    isActive: true,
-  },
-];
-
 function PollCard({
   poll,
   onClose,
+  onDeleteRequest,
 }: {
-  poll: PollData;
+  poll: PollResult;
   onClose: (id: number) => void;
+  onDeleteRequest: (id: number) => void;
 }) {
+  const maxVoteCount = Math.max(...(poll.options ?? []).map((o) => o.vote_count), 1);
+
   return (
-    <div className="bg-white rounded-[16px] px-[24px] pt-[28px] pb-[20px] flex flex-col gap-[28px]">
-      {/* Question */}
-      <h3
-        className="text-[24px] text-black m-0"
-        style={fontBold}
+    <div className="bg-white rounded-[16px] px-[24px] pt-[28px] pb-[20px] flex flex-col gap-[28px] relative">
+      {/* Delete (×) button */}
+      <button
+        onClick={() => onDeleteRequest(poll.poll_id)}
+        className="absolute top-[16px] right-[16px] w-[20px] h-[20px] rounded-full border border-solid border-[#4d4d4d] flex items-center justify-center cursor-pointer hover:border-[#999] transition-colors"
+        style={fontRegular}
+        aria-label="Видалити опитування"
       >
-        {poll.question}
+        <svg className="block" fill="none" viewBox="0 0 28 28" width={12} height={12}>
+          <path d={iconPaths.close} fill="#4d4d4d" />
+        </svg>
+      </button>
+
+      {/* Question */}
+      <h3 className="text-[24px] text-black m-0 pr-[32px]" style={fontBold}>
+        {poll.poll_question}
       </h3>
 
       {/* Options with progress bars */}
-      <div className="flex flex-col gap-[16px]">
-        {poll.options.map((option, optIndex) => (
-          <div key={optIndex} className="flex flex-col gap-[6px]">
-            <div className="flex items-center justify-between">
-              <span
-                className="text-[18px] text-[#0d0d0d]"
-                style={option.isWinning ? fontBold : fontRegular}
-              >
-                {option.label}
-              </span>
-              <span
-                className="text-[18px] text-[#0d0d0d]"
-                style={option.isWinning ? fontBold : fontRegular}
-              >
-                {option.percentage}%
-              </span>
+      <div className="flex flex-col gap-[24px]">
+        {(poll.options ?? []).map((option) => {
+          const percentage = Math.round(parseFloat(option.percentage ?? '0'));
+          const isWinning = option.vote_count === maxVoteCount && option.vote_count > 0;
+
+          return (
+            <div key={option.vote_id} className="flex flex-col gap-[8px]">
+              <div className="flex items-center justify-between">
+                <span
+                  className="text-[18px] text-[#0d0d0d]"
+                  style={isWinning ? fontBold : fontRegular}
+                >
+                  {option.vote_text}
+                </span>
+                <span
+                  className="text-[18px] text-[#0d0d0d]"
+                  style={isWinning ? fontBold : fontRegular}
+                >
+                  {percentage}%
+                </span>
+              </div>
+              {/* Progress bar — inline styles used to guarantee rendering */}
+              <div style={{ width: '100%', height: 8, backgroundColor: '#d9d9d9', borderRadius: 1000, overflow: 'hidden' }}>
+                <div style={{ height: '100%', width: `${percentage}%`, backgroundColor: '#5e89e8', borderRadius: 1000 }} />
+              </div>
             </div>
-            {/* Progress bar */}
-            <div className="w-full h-[8px] bg-[#d9d9d9] rounded-[1000px] relative overflow-hidden">
-              <div
-                className="h-full bg-[#5e89e8] rounded-[1000px] absolute left-0 top-0"
-                style={{ width: `${option.percentage}%` }}
-              />
-            </div>
-          </div>
-        ))}
+          );
+        })}
       </div>
 
       {/* Bottom row */}
       <div className="flex items-center justify-between">
         <div className="flex items-center gap-[8px]">
-          {/* Voter avatars - 3 overlapping circles */}
-          <svg width="60" height="28" viewBox="0 0 60 28" fill="none">
-            <circle cx="14" cy="14" r="13" fill="#e6e6e6" stroke="#fff" strokeWidth="2" />
-            <circle cx="30" cy="14" r="13" fill="#e6e6e6" stroke="#fff" strokeWidth="2" />
-            <circle cx="46" cy="14" r="13" fill="#e6e6e6" stroke="#fff" strokeWidth="2" />
+          <svg xmlns="http://www.w3.org/2000/svg" width="76" height="44" viewBox="0 0 76 44" fill="none">
+            <circle cx="22" cy="22" r="21.5" fill="#E6E6E6" stroke="white"/>
+            <circle cx="38" cy="22" r="21.5" fill="#E6E6E6" stroke="white"/>
+            <circle cx="54" cy="22" r="21.5" fill="#E6E6E6" stroke="white"/>
           </svg>
-          <span
-            className="text-[16px] text-[#4d4d4d]"
-            style={fontRegular}
-          >
-            Всього голосів: {poll.totalVotes}
+          <span className="text-[16px] text-[#4d4d4d]" style={fontRegular}>
+            Всього голосів: {poll.total_votes}
           </span>
         </div>
-        {poll.isActive && (
+        {poll.is_active && (
           <button
-            onClick={() => onClose(poll.id)}
-            className="bg-[#e53935] text-white rounded-[12px] h-[44px] px-[24px] border-none cursor-pointer text-[16px] hover:opacity-90 transition-opacity"
+            onClick={() => onClose(poll.poll_id)}
+            className="bg-[#E53935] text-white rounded-[12px] h-[44px] px-[24px] border-none cursor-pointer text-[16px] hover:opacity-90 transition-opacity"
             style={fontRegular}
           >
             Закрити опитування
@@ -123,12 +98,13 @@ function PollCard({
 }
 
 export function AdminPollsContent({ onSectionChange }: AdminPollsContentProps) {
-  const [polls, setPolls] = useState<PollData[]>(MOCK_POLLS);
+  const { polls, loading, error, closePoll, deletePoll } = useAdminPolls();
+  const [deleteId, setDeleteId] = useState<number | null>(null);
 
-  const handleClosePoll = (id: number) => {
-    setPolls((prev) =>
-      prev.map((p) => (p.id === id ? { ...p, isActive: false } : p))
-    );
+  const handleConfirmDelete = async () => {
+    if (deleteId === null) { return; }
+    await deletePoll(deleteId);
+    setDeleteId(null);
   };
 
   return (
@@ -138,21 +114,68 @@ export function AdminPollsContent({ onSectionChange }: AdminPollsContentProps) {
     >
       {/* Scrollable area */}
       <div className="flex-1 overflow-y-auto flex flex-col gap-[16px]">
-        {polls.map((poll) => (
-          <PollCard key={poll.id} poll={poll} onClose={handleClosePoll} />
-        ))}
+        {loading && (
+          <p className="text-[16px] text-[#4d4d4d]" style={fontRegular}>
+            Завантаження...
+          </p>
+        )}
+        {error && (
+          <p className="text-[16px] text-[#e53935]" style={fontRegular}>
+            {error}
+          </p>
+        )}
+        {!loading &&
+          !error &&
+          polls.map((poll) => (
+            <PollCard
+              key={poll.poll_id}
+              poll={poll}
+              onClose={closePoll}
+              onDeleteRequest={setDeleteId}
+            />
+          ))}
       </div>
 
       {/* Create poll button */}
       <div className="flex justify-end">
         <button
           onClick={() => onSectionChange('polls-create')}
-          className="bg-[#4caf50] text-white rounded-[12px] h-[44px] px-[24px] border-none cursor-pointer text-[16px] hover:opacity-90 transition-opacity"
+          className="bg-[#4CAF50] text-white rounded-[12px] h-[44px] px-[24px] border-none cursor-pointer text-[16px] hover:opacity-90 transition-opacity"
           style={fontBold}
         >
           Створити опитування
         </button>
       </div>
+
+      {/* Delete confirmation modal */}
+      {deleteId !== null && (
+        <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50">
+          <div className="bg-white rounded-[24px] p-[32px] flex flex-col gap-[24px] max-w-[764px] mx-[24px]">
+            <h5 className="text-[40px] text-[#0d0d0d] text-center m-0" style={fontRegular}>
+              Ви впевнені, що хочете видалити це опитування?
+            </h5>
+            <p className="text-[20px] text-[#4d4d4d] text-center m-0" style={fontRegular}>
+              Якщо Ви натиснете &ldquo;Підтвердити&rdquo;, це опитування та всі голоси будуть повністю видалені і цю дію неможливо буде відмінити
+            </p>
+            <div className="flex gap-[16px] justify-center">
+              <button
+                onClick={() => setDeleteId(null)}
+                className="h-[44px] px-[24px] rounded-[12px] border border-solid border-[#4d4d4d] bg-white cursor-pointer text-[16px] text-[#0d0d0d] hover:bg-[#f5f5f5] transition-colors"
+                style={fontRegular}
+              >
+                Повернутись
+              </button>
+              <button
+                onClick={handleConfirmDelete}
+                className="h-[44px] px-[24px] rounded-[12px] border-none bg-[#E53935] text-white cursor-pointer text-[16px] hover:opacity-90 transition-opacity"
+                style={fontBold}
+              >
+                Підтвердити видалення
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 }

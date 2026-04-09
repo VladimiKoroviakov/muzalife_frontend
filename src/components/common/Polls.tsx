@@ -13,8 +13,7 @@ import {
   VotedCardProps,
   PollCardProps
 } from '@/types';
-import { CacheManager } from '@/utils/cache-manager';
-import config from '@/config';
+
 
 
 function CheckCircle() {
@@ -215,43 +214,11 @@ function Polls() {
       setLoading(true);
       setError(null);
 
-      const cachedPolls = CacheManager.getItem<Poll[]>(config.cacheKeys.POLLS);
-      const cacheTimestamp = CacheManager.getItem<number>(config.cacheKeys.POLLS_TIMESTAMP);
-
-      // Check if cache is valid (5 minutes)
-      const isCacheValid = cacheTimestamp &&
-                          Date.now() - cacheTimestamp < config.cacheDurations.POLLS;
-
-      if (cachedPolls && isCacheValid) {
-        setPolls(cachedPolls);
-        setLoading(false);
-        return;
-      }
-
       const pollsData = await apiService.getPolls();
-
-      // Update state
       setPolls(pollsData);
-
-      // Update cache
-      CacheManager.setItem(config.cacheKeys.POLLS, pollsData);
-      CacheManager.setItem(config.cacheKeys.POLLS_TIMESTAMP, Date.now());
-
     } catch (err: unknown) {
       const message = err instanceof Error ? err.message : 'Не вдалося завантажити опитування';
-
-      // If API fails, use cached data even if expired
-      const cachedPolls = CacheManager.getItem<Poll[]>(config.cacheKeys.POLLS);
-      if (cachedPolls) {
-        setPolls(cachedPolls);
-      } else {
-        // No cache available, show error
-        setError(message);
-      }
-
-      // Update timestamp to prevent immediate retry
-      CacheManager.setItem(config.cacheKeys.POLLS_TIMESTAMP, Date.now());
-
+      setError(message);
     } finally {
       setLoading(false);
     }
@@ -288,18 +255,9 @@ function Polls() {
 
       setPolls(updatedPolls);
 
-      // Update cache immediately
-      CacheManager.setItem(config.cacheKeys.POLLS, updatedPolls);
-      CacheManager.setItem(config.cacheKeys.POLLS_TIMESTAMP, Date.now());
-
       // Remove voted poll after delay
       setTimeout(() => {
-        const filteredPolls = updatedPolls.filter((p) => p.id !== pollId);
-        setPolls(filteredPolls);
-
-        // Update cache again after removal
-        CacheManager.setItem(config.cacheKeys.POLLS, filteredPolls);
-        CacheManager.setItem(config.cacheKeys.POLLS_TIMESTAMP, Date.now());
+        setPolls(updatedPolls.filter((p) => p.id !== pollId));
       }, 2000);
 
     } catch (err: unknown) {
@@ -317,13 +275,6 @@ function Polls() {
 
   const retry = () => {
     fetchPolls();
-  };
-
-  // Clear polls cache function
-  const clearPollsCache = () => {
-    CacheManager.removeItem(config.cacheKeys.POLLS);
-    CacheManager.removeItem(config.cacheKeys.POLLS_TIMESTAMP);
-    fetchPolls(); // Refresh data
   };
 
   if (loading) {
@@ -355,10 +306,10 @@ function Polls() {
                   Спробувати знову
                 </button>
                 <button
-                  onClick={clearPollsCache}
+                  onClick={retry}
                   className="bg-[#f2f2f2] text-[#4d4d4d] px-4 py-2 rounded-[12px] hover:opacity-90 transition-opacity border border-[#d9d9d9]"
                 >
-                  Очистити кеш
+                  Спробувати знову
                 </button>
               </div>
             </div>
@@ -376,10 +327,10 @@ function Polls() {
             <div className="bg-white relative rounded-[16px] shrink-0 w-full h-[200px] flex flex-col items-center justify-center gap-4">
               <p className="text-[#4d4d4d]">Немає доступних опитувань</p>
               <button
-                onClick={clearPollsCache}
+                onClick={retry}
                 className="bg-[#f2f2f2] text-[#4d4d4d] px-4 py-2 rounded-[12px] hover:opacity-90 transition-opacity border border-[#d9d9d9]"
               >
-                Оновити дані
+                Спробувати знову
               </button>
             </div>
           ) : (

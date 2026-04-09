@@ -380,7 +380,7 @@ export function createAdminMethods(client: ApiClient) {
     async adminCreatePoll(data: CreatePollData): Promise<ApiPoll> {
       const response = await client.post<AdminPollResponse>(
         config.endpoints.polls.base,
-        data as unknown as object
+        { poll_question: data.pollQuestion, options: data.options }
       );
 
       if (!response.success || !response.poll) {
@@ -407,6 +407,24 @@ export function createAdminMethods(client: ApiClient) {
           throw new Error('Poll not found');
         }
         throw new Error(response.error ?? 'Failed to update poll status');
+      }
+    },
+
+    /**
+     * Permanently deletes a poll and all its options and user votes.
+     *
+     * @param pollId - Poll ID to delete.
+     */
+    async adminDeletePoll(pollId: number): Promise<void> {
+      const response = await client.delete<{ success: boolean; error?: string }>(
+        config.endpoints.polls.delete(pollId),
+      );
+
+      if (!response.success) {
+        if (response.error?.includes('not found')) {
+          throw new Error('Poll not found');
+        }
+        throw new Error(response.error ?? 'Failed to delete poll');
       }
     },
 
