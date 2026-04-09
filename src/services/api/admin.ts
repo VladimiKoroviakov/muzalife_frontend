@@ -424,5 +424,41 @@ export function createAdminMethods(client: ApiClient) {
 
       throw new Error(response.error ?? 'Failed to fetch poll results');
     },
+
+    // ── Facebook ──────────────────────────────────────────────────────────────
+
+    /**
+     * Publishes a Facebook post for the given product.
+     * If `images` or `text` are omitted the backend falls back to the
+     * product's own images and description.
+     *
+     * @param productId - ID of the product to promote.
+     * @param data      - Optional override images and post text.
+     */
+    async adminPublishFacebookPost(
+      productId: number,
+      data: { images?: File[]; text?: string },
+    ): Promise<void> {
+      const formData = new FormData();
+      formData.append('productId', String(productId));
+      if (data.text) {
+        formData.append('text', data.text);
+      }
+      for (const img of data.images ?? []) {
+        formData.append('images', img);
+      }
+
+      const response = await fetch(`${config.apiUrl}${config.endpoints.facebookPost}`, {
+        method: 'POST',
+        headers: { Authorization: `Bearer ${client.token}` },
+        body: formData,
+      });
+
+      const json = await response.json() as { success: boolean; error?: string };
+
+      if (!response.ok || !json.success) {
+        throw new ApiError(json.error ?? 'Failed to publish Facebook post', response.status);
+      }
+    },
   };
 }

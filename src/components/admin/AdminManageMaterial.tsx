@@ -7,6 +7,7 @@ import type { ProductFile } from '@/types';
 
 export interface AdminMaterialFormProps {
   onSectionChange: (section: string) => void;
+  onFbPost?: (productId: number) => void;
   mode?: 'add' | 'edit';
   productId?: string | null;
 }
@@ -207,7 +208,7 @@ function MultiSelect({ options, selected, onChange, placeholder, disabled }: Mul
 
 type ExistingImage = { url: string; isMain: boolean; imageId?: number };
 
-export function AdminManageMaterial({ onSectionChange, mode = 'add', productId }: AdminMaterialFormProps) {
+export function AdminManageMaterial({ onSectionChange, onFbPost, mode = 'add', productId }: AdminMaterialFormProps) {
   // ── Metadata from backend ─────────────────────────────────────────────────────
   const { types, ageCategories, events: eventOptions, isLoading: isMetadataLoading } = useProductMetadata();
 
@@ -224,7 +225,7 @@ export function AdminManageMaterial({ onSectionChange, mode = 'add', productId }
   const fileInputRef = useRef<HTMLInputElement>(null);
 
   // ── Step 2 state ─────────────────────────────────────────────────────────────
-  const [step, setStep] = useState<1 | 2>(1);
+  const [step, setStep] = useState<1 | 2 | 3>(1);
   const [images, setImages] = useState<File[]>([]);
   const [existingImages, setExistingImages] = useState<ExistingImage[]>([]);
   const [removedMainImage, setRemovedMainImage] = useState(false);
@@ -232,6 +233,7 @@ export function AdminManageMaterial({ onSectionChange, mode = 'add', productId }
   const [description, setDescription] = useState('');
   const [isImageDragOver, setIsImageDragOver] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [createdProductId, setCreatedProductId] = useState<number | null>(null);
   const imageInputRef = useRef<HTMLInputElement>(null);
 
   // ── Prefill for edit mode ─────────────────────────────────────────────────────
@@ -346,8 +348,9 @@ export function AdminManageMaterial({ onSectionChange, mode = 'add', productId }
           },
         );
         toast.success('Матеріал успішно оновлено');
+        onSectionChange('materials');
       } else {
-        await apiService.adminAddProduct(
+        const created = await apiService.adminAddProduct(
           {
             title: scenarioName,
             description,
@@ -362,9 +365,10 @@ export function AdminManageMaterial({ onSectionChange, mode = 'add', productId }
             files,
           },
         );
-        toast.success('Матеріал успішно опубліковано');
+        setCreatedProductId(created.id);
+        setStep(3);
+        return;
       }
-      onSectionChange('materials');
     } catch (err) {
       toast.error(err instanceof Error ? err.message : 'Помилка при збереженні матеріалу');
     } finally {
@@ -376,6 +380,57 @@ export function AdminManageMaterial({ onSectionChange, mode = 'add', productId }
   const hasFiles = files.length > 0 || existingFiles.length > 0;
   const hasImages = images.length > 0 || existingImages.length > 0;
   const isEdit = mode === 'edit';
+
+  if (step === 3) {
+    return (
+      <div
+        className="basis-0 grow min-h-px min-w-px bg-[#f2f2f2] rounded-[16px] flex flex-col items-center justify-center p-[20px] h-full gap-[24px]"
+        data-name="AdminMaterialForm-Step3"
+      >
+        <div
+          style={{
+            width: 72,
+            height: 72,
+            borderRadius: '50%',
+            backgroundColor: '#4caf50',
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+            flexShrink: 0,
+          }}
+        >
+          <svg width="36" height="36" viewBox="0 0 36 36" fill="none">
+            <path d="M8 18L15 25L28 11" stroke="white" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round" />
+          </svg>
+        </div>
+
+        <p className="text-[16px] text-[#4d4d4d] m-0 text-center" style={fontRegular}>
+          Матеріал успішно додано до каталогу
+        </p>
+
+        <p className="text-[28px] text-[#0d0d0d] m-0 text-center leading-[36px]" style={fontBold}>
+          Бажаєте зробити пост в Facebook?
+        </p>
+
+        <div className="flex gap-[16px] items-center">
+          <button
+            onClick={() => onSectionChange('materials')}
+            className="h-[44px] px-[24px] py-[12px] rounded-[12px] border-none bg-transparent cursor-pointer text-[16px] text-[#4d4d4d] underline"
+            style={fontRegular}
+          >
+            Повернутись
+          </button>
+          <button
+            onClick={() => { if (createdProductId !== null) { onFbPost?.(createdProductId); } }}
+            className="bg-[#5e89e8] h-[44px] px-[24px] py-[12px] rounded-[12px] border-none cursor-pointer text-[16px] text-white hover:opacity-90 transition-opacity"
+            style={fontRegular}
+          >
+            Зробити пост
+          </button>
+        </div>
+      </div>
+    );
+  }
 
   if (step === 2) {
     return (

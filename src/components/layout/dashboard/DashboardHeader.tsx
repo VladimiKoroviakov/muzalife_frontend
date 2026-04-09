@@ -26,6 +26,7 @@ export function DashboardHeader({ onBackClick, activeSection, userName, onSectio
       'analytics': 'Аналітика',
       'polls': 'Опитування для клієнтів',
       'polls-create': 'Створити опитування',
+      'facebook-post': 'Публікація Facebook поста',
     };
     return titles[section] || 'Адміністратор';
   };

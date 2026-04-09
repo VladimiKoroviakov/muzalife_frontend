@@ -23,6 +23,7 @@ import { AdminOrderDetail } from '../components/admin/AdminOrderDetail';
 import { AdminAnalyticsContent } from '../components/admin/AdminAnalyticsContent';
 import { AdminPollsContent } from '../components/admin/AdminPollsContent';
 import { AdminCreateSurvey } from '../components/admin/AdminCreateSurvey';
+import { AdminFacebookPost } from '../components/admin/AdminFacebookPost';
 
 // Types
 import { TabItem, DashboardCard } from '../types/ui';
@@ -50,6 +51,7 @@ export default function AdminPanel() {
   const [isLoading, setIsLoading] = useState(true);
   const [editingId, setEditingId] = useState<string | null>(null);
   const [selectedOrderId, setSelectedOrderId] = useState<string | null>(null);
+  const [fbProductId, setFbProductId] = useState<number | null>(null);
 
   const { signOut, user } = useAuthContext();
   const navigate = useNavigate();
@@ -136,7 +138,12 @@ export default function AdminPanel() {
           />
         );
       case 'materials-add':
-        return <AdminManageMaterial onSectionChange={setActiveSection} />;
+        return (
+          <AdminManageMaterial
+            onSectionChange={setActiveSection}
+            onFbPost={(pid) => { setFbProductId(pid); setActiveSection('facebook-post'); }}
+          />
+        );
       case 'materials-edit':
         return <AdminManageMaterial mode="edit" productId={editingId} onSectionChange={setActiveSection} />;
       case 'orders':
@@ -157,6 +164,8 @@ export default function AdminPanel() {
         return <AdminPollsContent onSectionChange={setActiveSection} />;
       case 'polls-create':
         return <AdminCreateSurvey onBack={() => setActiveSection('polls')} />;
+      case 'facebook-post':
+        return <AdminFacebookPost productId={fbProductId} onSectionChange={setActiveSection} />;
       case 'settings':
         return <SettingsContent onShowFAQ={handleShowFAQ} />;
       default:
