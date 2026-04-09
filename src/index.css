@@ -507,6 +507,10 @@
     top: -1px;
   }
 
+  .top-\[-8px\] {
+    top: -8px;
+  }
+
   .top-\[24px\] {
     top: 24px;
   }
@@ -541,6 +545,10 @@
 
   .right-\[-0\.5px\] {
     right: -.5px;
+  }
+
+  .right-\[-4px\] {
+    right: -4px;
   }
 
   .right-\[-1px\] {
@@ -808,6 +816,10 @@
     height: 16px;
   }
 
+  .h-\[20px\] {
+    height: 20px;
+  }
+
   .h-\[24px\] {
     height: 24px;
   }
@@ -926,6 +938,10 @@
 
   .w-\[13px\] {
     width: 13px;
+  }
+
+  .w-\[20px\] {
+    width: 20px;
   }
 
   .w-\[31\.4px\] {
@@ -1609,6 +1625,10 @@
 
   .p-\[4px\] {
     padding: 4px;
+  }
+
+  .p-\[8px\] {
+    padding: 8px;
   }
 
   .p-\[10px\] {

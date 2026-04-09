@@ -17,28 +17,37 @@ const fontBold = { fontVariationSettings: "'CTGR' 0, 'wdth' 100, 'wght' 700" };
 
 // ── Sub-components ─────────────────────────────────────────────────────────────
 
+function truncateFileName(name: string): string {
+  if (name.length <= 10) { return name; }
+  const lastDot = name.lastIndexOf('.');
+  const ext = lastDot >= 0 ? name.slice(lastDot) : '';
+  const base = lastDot >= 0 ? name.slice(0, lastDot) : name;
+  if (base.length <= 6) { return name; }
+  return `${base.slice(0, 4)}...${base.slice(-2)}${ext}`;
+}
+
 function FileChip({ name, onRemove }: { name: string; onRemove: () => void }) {
   return (
-    <div className="relative flex flex-col items-center gap-[4px] rounded-[8px] p-[8px] w-[100px] border border-solid border-[#e6e6e6]">
+    <div className="relative flex flex-row items-center gap-[8px] rounded-[8px] px-3 py-2 rounded-[16px] bg-background w-auto max-w-[160px] border border-solid border-[#e6e6e6]">
       <button
         onClick={onRemove}
         aria-label={`Видалити ${name}`}
-        className="absolute top-[-8px] right-[-8px] w-[20px] h-[20px] rounded-full border border-solid border-[#ccc] flex items-center justify-center cursor-pointer hover:border-[#999] transition-colors"
+        className="absolute top-[-8px] right-[-4px] w-[20px] h-[20px] rounded-full border border-solid border-[#4d4d4d] flex items-center justify-center cursor-pointer hover:border-[#999] transition-colors"
       >
         <svg className="block" fill="none" viewBox="0 0 28 28" width={12} height={12}>
           <path d={iconPaths.close} fill="#4d4d4d" />
         </svg>
       </button>
-      <svg width="32" height="32" viewBox="0 0 32 32" fill="none">
-        <rect x="4" y="2" width="18" height="24" rx="2" fill="#5e89e8" />
-        <rect x="4" y="2" width="14" height="24" rx="2" fill="#5e89e8" />
-        <path d="M18 2L22 7H18V2Z" fill="#3a6fd8" />
-        <rect x="8" y="12" width="10" height="1.5" rx="0.75" fill="white" />
-        <rect x="8" y="15.5" width="10" height="1.5" rx="0.75" fill="white" />
-        <rect x="8" y="19" width="7" height="1.5" rx="0.75" fill="white" />
+      <svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" viewBox="0 0 28 28" fill="none">
+        <mask id="mask0_1837_18283" maskUnits="userSpaceOnUse" x="0" y="0" width="28" height="28">
+          <rect width="28" height="28" fill="#D9D9D9"/>
+        </mask>
+        <g>
+          <path d="M9.33366 15.1663H18.667V12.833H9.33366V15.1663ZM9.33366 18.6663H18.667V16.333H9.33366V18.6663ZM9.33366 22.1663H15.167V19.833H9.33366V22.1663ZM7.00033 25.6663C6.35866 25.6663 5.80935 25.4379 5.35241 24.9809C4.89546 24.524 4.66699 23.9747 4.66699 23.333V4.66634C4.66699 4.02467 4.89546 3.47537 5.35241 3.01842C5.80935 2.56148 6.35866 2.33301 7.00033 2.33301H16.3337L23.3337 9.33301V23.333C23.3337 23.9747 23.1052 24.524 22.6482 24.9809C22.1913 25.4379 21.642 25.6663 21.0003 25.6663H7.00033ZM15.167 10.4997H21.0003L15.167 4.66634V10.4997Z" fill="#5E89E8"/>
+        </g>
       </svg>
-      <span className="text-[12px] text-[#0d0d0d] w-full text-center truncate" style={fontRegular}>
-        {name}
+      <span className="text-[12px] text-[#0d0d0d]" style={fontRegular}>
+        {truncateFileName(name)}
       </span>
     </div>
   );
