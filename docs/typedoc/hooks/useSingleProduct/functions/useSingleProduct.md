@@ -8,7 +8,7 @@
 
 > **useSingleProduct**(`id`): `UseSingleProduct`
 
-Defined in: [hooks/useSingleProduct.ts:38](https://github.com/VladimiKoroviakov/muzalife_frontend/blob/d5354d66c3da3c03845fcf20aeeff4fd39afd6a9/src/hooks/useSingleProduct.ts#L38)
+Defined in: [hooks/useSingleProduct.ts:38](https://github.com/VladimiKoroviakov/muzalife_frontend/blob/c56a80c875ab6ca7f80ad379df9cbedec3c95b05/src/hooks/useSingleProduct.ts#L38)
 
 Fetches a product and its reviews by product ID.
 

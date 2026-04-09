@@ -511,6 +511,10 @@
     top: -8px;
   }
 
+  .top-\[16px\] {
+    top: 16px;
+  }
+
   .top-\[24px\] {
     top: 24px;
   }
@@ -557,6 +561,10 @@
 
   .right-\[8\.33\%\] {
     right: 8.33%;
+  }
+
+  .right-\[16px\] {
+    right: 16px;
   }
 
   .right-\[24px\] {
@@ -1475,6 +1483,10 @@
 
   .bg-\[\#E53935\] {
     background-color: #e53935;
+  }
+
+  .bg-\[\#4CAF50\] {
+    background-color: #4CAF50;
   }
 
   .bg-\[\#c1c1c1\] {

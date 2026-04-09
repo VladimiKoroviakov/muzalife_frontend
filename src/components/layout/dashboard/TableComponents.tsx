@@ -108,7 +108,7 @@ export function TableColumn({
 }: TableColumnProps) {
   return (
     <div
-      className="content-stretch flex flex-col items-start relative"
+      className={`content-stretch flex flex-col items-start relative${isFirst ? ' [&>*:last-child]:rounded-bl-[12px]' : isLast ? ' [&>*:last-child]:rounded-br-[12px]' : ''}`}
       data-name="Column"
       style={{
         flexBasis: width,
