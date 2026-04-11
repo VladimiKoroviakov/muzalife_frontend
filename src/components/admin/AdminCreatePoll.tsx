@@ -2,14 +2,14 @@ import { useState } from 'react';
 import { apiService } from '@/services/api';
 import { iconPaths } from '../ui/icons/iconPaths';
 
-interface AdminCreateSurveyProps {
+interface AdminCreatePollProps {
   onBack: () => void;
 }
 
 const fontRegular = { fontVariationSettings: "'CTGR' 0, 'wdth' 100, 'wght' 400" };
 const fontBold = { fontVariationSettings: "'CTGR' 0, 'wdth' 100, 'wght' 700" };
 
-export function AdminCreateSurvey({ onBack }: AdminCreateSurveyProps) {
+export function AdminCreatePoll({ onBack }: AdminCreatePollProps) {
   const [question, setQuestion] = useState('');
   const [options, setOptions] = useState(['', '']);
   const [isSubmitting, setIsSubmitting] = useState(false);

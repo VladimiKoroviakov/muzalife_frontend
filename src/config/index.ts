@@ -4,6 +4,8 @@ import {
   HTTP_STATUS_CODES,
   ORDER_STATUS,
   ORDER_STATUS_COLORS,
+  ORDER_STATUS_LABELS_USER,
+  ORDER_STATUS_LABELS_ADMIN,
   ORDER_STATUS_TEXT,
   CONTENT_TYPES
 } from '../constants';
@@ -21,6 +23,8 @@ const config = {
   httpStatusCodes: HTTP_STATUS_CODES,
   orderStatus: ORDER_STATUS,
   orderStatusColors: ORDER_STATUS_COLORS,
+  orderStatusLabelsUser: ORDER_STATUS_LABELS_USER,
+  orderStatusLabelsAdmin: ORDER_STATUS_LABELS_ADMIN,
   orderStatusText: ORDER_STATUS_TEXT,
   contentTypes: CONTENT_TYPES,
 
@@ -78,6 +82,7 @@ const config = {
     personalOrders: {
       base: '/personal-orders',
       all: '/personal-orders/all',
+      byId: (id: number) => `/personal-orders/${id}`,
     },
     reviews: '/reviews',
     faqs: '/faqs',

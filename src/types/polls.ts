@@ -30,6 +30,7 @@ export interface ApiPoll {
     vote_text: string;
     vote_count: number;
   }>;
+  recent_voters?: VoterData[];
 }
 
 export interface PollsResponse {
@@ -112,6 +113,7 @@ export interface PollResult {
     /** Pre-computed percentage string from the backend, e.g. `"66.7"`. */
     percentage: string;
   }>;
+  recent_voters?: VoterData[];
 }
 
 export interface PollResultsResponse {

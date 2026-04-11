@@ -16,6 +16,7 @@ export function DashboardHeader({ onBackClick, activeSection, userName, onSectio
       'history': 'Ваша Історія замовлень',
       'saved': 'Збережені матеріали',
       'orders': 'Персональні замовлення',
+      'orders-create': 'Нове Персональне Замовлення',
       'questionnaires': 'Опитування для користувачів',
       'settings': 'Налаштування профілю',
       // Admin sections

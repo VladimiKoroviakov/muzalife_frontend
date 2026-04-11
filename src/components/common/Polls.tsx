@@ -63,7 +63,7 @@ function Options({ options, selectedOption, onSelectOption }: OptionsProps) {
   );
 }
 
-function Voters({ voters }: VotersProps) {
+export function Voters({ voters }: VotersProps) {
   const getInitials = (name: string) => {
     const parts = name.split(' ').filter(Boolean);
     if (parts.length >= 2) {
@@ -77,6 +77,7 @@ function Voters({ voters }: VotersProps) {
   while (displayVoters.length < 3) {
     displayVoters.push({ name: '', imageUrl: null });
   }
+  displayVoters.reverse();
 
   return (
     <div className="h-[44px] relative shrink-0 w-[76px]" data-name="Voters">
@@ -322,9 +323,9 @@ function Polls() {
   return (
     <div className="bg-[#f2f2f2] relative rounded-[16px] size-full h-full" data-name="Polls">
       <div className="box-border content-stretch flex gap-[12px] h-full items-start px-[12px] relative size-full px-[20px] py-[16px]">
-        <div className="basis-0 content-stretch flex flex-col gap-[20px] grow h-full items-start min-h-px min-w-px overflow-x-clip overflow-y-auto relative rounded-tl-[16px] rounded-tr-[16px] shrink-0">
+        <div className="basis-0 content-stretch flex flex-col gap-[24px] grow h-full items-start min-h-px min-w-px overflow-x-clip overflow-y-auto relative rounded-tl-[16px] rounded-tr-[16px] shrink-0">
           {polls.length === 0 ? (
-            <div className="bg-white relative rounded-[16px] shrink-0 w-full h-[200px] flex flex-col items-center justify-center gap-4">
+            <div className="bg-white relative rounded-[16px] shrink-0 w-full h-full flex flex-col items-center justify-center gap-4">
               <p className="text-[#4d4d4d]">Немає доступних опитувань</p>
               <button
                 onClick={retry}

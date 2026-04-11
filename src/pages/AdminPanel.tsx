@@ -22,7 +22,7 @@ import { AdminOrdersContent } from '../components/admin/AdminOrdersContent';
 import { AdminOrderDetail } from '../components/admin/AdminOrderDetail';
 import { AdminAnalyticsContent } from '../components/admin/AdminAnalyticsContent';
 import { AdminPollsContent } from '../components/admin/AdminPollsContent';
-import { AdminCreateSurvey } from '../components/admin/AdminCreateSurvey';
+import { AdminCreatePoll } from '../components/admin/AdminCreatePoll';
 import { AdminFacebookPost } from '../components/admin/AdminFacebookPost';
 
 // Types
@@ -163,7 +163,7 @@ export default function AdminPanel() {
       case 'polls':
         return <AdminPollsContent onSectionChange={setActiveSection} />;
       case 'polls-create':
-        return <AdminCreateSurvey onBack={() => setActiveSection('polls')} />;
+        return <AdminCreatePoll onBack={() => setActiveSection('polls')} />;
       case 'facebook-post':
         return <AdminFacebookPost productId={fbProductId} onSectionChange={setActiveSection} />;
       case 'settings':

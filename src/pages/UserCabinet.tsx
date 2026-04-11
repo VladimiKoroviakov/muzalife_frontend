@@ -12,7 +12,14 @@ import { SidebarTabs } from '../components/layout/SidebarTabs';
 // Cabinet components
 import { DashboardHeader } from '../components/layout/dashboard/DashboardHeader';
 import { DashboardRightSide } from '../components/layout/dashboard/DashboardRightSide';
-import { PurchaseHistoryContent, SavedScenariosContent, PersonalOrdersContent, QuestionnairesContent } from '../components/cabinet';
+import {
+  PurchaseHistoryContent,
+  SavedScenariosContent,
+  PersonalOrdersContent,
+  CreatePersonalOrder,
+  PersonalOrderDetails,
+  PollsContent,
+} from '../components/cabinet';
 import { SettingsContent } from '../components/layout/dashboard/SettingsContent';
 import FAQs from './FAQsPage';
 
@@ -48,6 +55,8 @@ export default function UserCabinet({
 }) {
   const [activeSection, setActiveSection] = useState<string>('main');
   const [showFAQ, setShowFAQ] = useState(false);
+  const [selectedOrderId, setSelectedOrderId] = useState<number | null>(null);
+  const [ordersRefreshKey, setOrdersRefreshKey] = useState(0);
   const [userName, setUserName] = useState<string | null>(null);
   const [isLoading, setIsLoading] = useState(true);
   const [localProducts, setLocalProducts] = useState<any[]>([]);
@@ -58,6 +67,11 @@ export default function UserCabinet({
   const handleBackClick = onBackClick || (() => {
     window.location.href = '/';
   });
+
+  const handleSectionChange = (section: string) => {
+    setSelectedOrderId(null);
+    setActiveSection(section);
+  };
 
   useEffect(() => {
     const loadProducts = async () => {
@@ -179,9 +193,30 @@ export default function UserCabinet({
           />
         );
       case 'orders':
-        return <PersonalOrdersContent />;
+        return (
+          <PersonalOrdersContent
+            onCreateOrder={() => setActiveSection('orders-create')}
+            onViewOrder={(id) => { setSelectedOrderId(id); setActiveSection('orders-detail'); }}
+            refreshKey={ordersRefreshKey}
+          />
+        );
+      case 'orders-create':
+        return (
+          <CreatePersonalOrder
+            onBack={() => setActiveSection('orders')}
+            onCreated={() => { setOrdersRefreshKey((k) => k + 1); setActiveSection('orders'); }}
+          />
+        );
+      case 'orders-detail':
+        return selectedOrderId !== null ? (
+          <PersonalOrderDetails
+            orderId={selectedOrderId}
+            onBack={() => { setSelectedOrderId(null); setActiveSection('orders'); }}
+            onOrderUpdated={() => { setSelectedOrderId(null); setActiveSection('orders'); }}
+          />
+        ) : null;
       case 'questionnaires':
-        return <QuestionnairesContent />;
+        return <PollsContent />;
       case 'settings':
         return <SettingsContent onShowFAQ={() => setShowFAQ(true)} />;
       default:
@@ -209,10 +244,10 @@ export default function UserCabinet({
             onBackClick={handleBackClick}
             activeSection={activeSection}
             userName={userName ?? 'Користувач'}
-            onSectionChange={setActiveSection}
+            onSectionChange={handleSectionChange}
           />
           <DashboardCanvas
-            tabs={<SidebarTabs tabs={USER_TABS} activeSection={activeSection} onSectionChange={setActiveSection} />}
+            tabs={<SidebarTabs tabs={USER_TABS} activeSection={activeSection} onSectionChange={handleSectionChange} />}
             onLogout={handleLogout}
           >
             {renderContent()}

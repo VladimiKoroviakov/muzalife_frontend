@@ -36,12 +36,7 @@ export function createPollsMethods(client: ApiClient) {
               const options = apiPoll.options?.map((opt) => opt.vote_text) || [];
               const optionVoteIds = apiPoll.options?.map((opt) => opt.vote_id) || [];
 
-              const voters: VoterData[] = [];
-              if (apiPoll.total_votes > 0) {
-                for (let i = 0; i < Math.min(3, apiPoll.total_votes); i++) {
-                  voters.push({ name: `Користувач ${i + 1}`, imageUrl: null });
-                }
-              }
+              const voters: VoterData[] = apiPoll.recent_voters ?? [];
 
               return {
                 id: apiPoll.poll_id,

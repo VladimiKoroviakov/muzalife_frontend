@@ -11,30 +11,49 @@ export const HTTP_STATUS_CODES = {
 
 export const ORDER_STATUS = {
   PENDING: 'pending',
-  IN_PROGRESS: 'in_progress',
-  COMPLETED: 'completed',
-  CANCELLED: 'cancelled',
-  APPROVED: 'approved',
-  REJECTED: 'rejected',
+  IN_REVIEW: 'in_review',
+  ACCEPTED: 'accepted',
+  DECLINED: 'declined',
+  PAID: 'paid',
+  IN_DEVELOPMENT: 'in_development',
+  DONE: 'done',
 } as const;
 
+/** Hex colours for order status badges in table cells. */
 export const ORDER_STATUS_COLORS: Record<string, string> = {
-  [ORDER_STATUS.PENDING]: 'text-yellow-600',
-  [ORDER_STATUS.IN_PROGRESS]: 'text-blue-600',
-  [ORDER_STATUS.COMPLETED]: 'text-green-600',
-  [ORDER_STATUS.CANCELLED]: 'text-red-600',
-  [ORDER_STATUS.APPROVED]: 'text-green-700',
-  [ORDER_STATUS.REJECTED]: 'text-red-700',
+  [ORDER_STATUS.PENDING]: '#4d4d4d',
+  [ORDER_STATUS.IN_REVIEW]: '#ff9900',
+  [ORDER_STATUS.ACCEPTED]: '#ff7b00',
+  [ORDER_STATUS.DECLINED]: '#cc0000',
+  [ORDER_STATUS.PAID]: '#0066cc',
+  [ORDER_STATUS.IN_DEVELOPMENT]: '#0066cc',
+  [ORDER_STATUS.DONE]: '#008000',
 } as const;
 
-export const ORDER_STATUS_TEXT: Record<string, string> = {
-  [ORDER_STATUS.PENDING]: 'Pending',
-  [ORDER_STATUS.IN_PROGRESS]: 'In Progress',
-  [ORDER_STATUS.COMPLETED]: 'Completed',
-  [ORDER_STATUS.CANCELLED]: 'Cancelled',
-  [ORDER_STATUS.APPROVED]: 'Approved',
-  [ORDER_STATUS.REJECTED]: 'Rejected',
+/** User-facing Ukrainian status labels (spec §6). */
+export const ORDER_STATUS_LABELS_USER: Record<string, string> = {
+  [ORDER_STATUS.PENDING]: 'Нове замовлення',
+  [ORDER_STATUS.IN_REVIEW]: 'На розгляді',
+  [ORDER_STATUS.ACCEPTED]: 'Очікує підтвердження та оплати',
+  [ORDER_STATUS.DECLINED]: 'Відхилено',
+  [ORDER_STATUS.PAID]: 'Оплачено',
+  [ORDER_STATUS.IN_DEVELOPMENT]: 'В розробці',
+  [ORDER_STATUS.DONE]: 'Виконано',
 } as const;
+
+/** Admin-facing Ukrainian status labels (spec §6). */
+export const ORDER_STATUS_LABELS_ADMIN: Record<string, string> = {
+  [ORDER_STATUS.PENDING]: 'Нове замовлення',
+  [ORDER_STATUS.IN_REVIEW]: 'На розгляді',
+  [ORDER_STATUS.ACCEPTED]: 'Очікує підтвердження від клієнта',
+  [ORDER_STATUS.DECLINED]: 'Відхилено',
+  [ORDER_STATUS.PAID]: 'Оплачено',
+  [ORDER_STATUS.IN_DEVELOPMENT]: 'В розробці',
+  [ORDER_STATUS.DONE]: 'Виконано',
+} as const;
+
+/** @deprecated Use ORDER_STATUS_LABELS_USER instead. */
+export const ORDER_STATUS_TEXT = ORDER_STATUS_LABELS_USER;
 
 export const CONTENT_TYPES = {
   JSON: 'application/json',

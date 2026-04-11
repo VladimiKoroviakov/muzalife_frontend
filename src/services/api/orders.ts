@@ -87,8 +87,6 @@ export function createOrdersMethods(client: ApiClient) {
       const dataToSend = {
         orderTitle: orderData.orderTitle,
         orderDescription: orderData.orderDescription,
-        orderStatus: orderData.orderStatus || 'pending',
-        orderPrice: orderData.orderPrice || 0,
         orderMaterialType: orderData.orderMaterialType,
         orderMaterialAgeCategory: orderData.orderMaterialAgeCategory,
         orderDeadline: orderData.orderDeadline || null,

@@ -8,7 +8,7 @@
 
 > **useVerificationCode**(`__namedParameters`): `object`
 
-Defined in: [hooks/useVerificationCode.ts:11](https://github.com/VladimiKoroviakov/muzalife_frontend/blob/c56a80c875ab6ca7f80ad379df9cbedec3c95b05/src/hooks/useVerificationCode.ts#L11)
+Defined in: [hooks/useVerificationCode.ts:11](https://github.com/VladimiKoroviakov/muzalife_frontend/blob/3fdb9f5bee16117f34a4da396ecae35b55294059/src/hooks/useVerificationCode.ts#L11)
 
 ## Parameters
 

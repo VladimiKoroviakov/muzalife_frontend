@@ -2,6 +2,7 @@ import { useState } from 'react';
 import { useAdminPolls } from '@/hooks/useAdminPolls';
 import { PollResult } from '@/types';
 import { iconPaths } from '../ui/icons/iconPaths';
+import { Voters } from '@/components/common/Polls';
 
 interface AdminPollsContentProps {
   onSectionChange: (section: string) => void;
@@ -9,7 +10,6 @@ interface AdminPollsContentProps {
 
 const fontRegular = { fontVariationSettings: "'CTGR' 0, 'wdth' 100, 'wght' 400" };
 const fontBold = { fontVariationSettings: "'CTGR' 0, 'wdth' 100, 'wght' 700" };
-
 function PollCard({
   poll,
   onClose,
@@ -74,11 +74,7 @@ function PollCard({
       {/* Bottom row */}
       <div className="flex items-center justify-between">
         <div className="flex items-center gap-[8px]">
-          <svg xmlns="http://www.w3.org/2000/svg" width="76" height="44" viewBox="0 0 76 44" fill="none">
-            <circle cx="22" cy="22" r="21.5" fill="#E6E6E6" stroke="white"/>
-            <circle cx="38" cy="22" r="21.5" fill="#E6E6E6" stroke="white"/>
-            <circle cx="54" cy="22" r="21.5" fill="#E6E6E6" stroke="white"/>
-          </svg>
+          <Voters voters={poll.recent_voters ?? []} />
           <span className="text-[16px] text-[#4d4d4d]" style={fontRegular}>
             Всього голосів: {poll.total_votes}
           </span>
@@ -113,7 +109,7 @@ export function AdminPollsContent({ onSectionChange }: AdminPollsContentProps) {
       data-name="AdminPollsContent"
     >
       {/* Scrollable area */}
-      <div className="flex-1 overflow-y-auto flex flex-col gap-[16px]">
+      <div className="flex-1 overflow-y-auto flex flex-col gap-[24px]">
         {loading && (
           <p className="text-[16px] text-[#4d4d4d]" style={fontRegular}>
             Завантаження...
