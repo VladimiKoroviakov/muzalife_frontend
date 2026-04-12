@@ -195,7 +195,7 @@ export function AdminOrderDetail({ orderId, onSectionChange }: AdminOrderDetailP
       className="basis-0 bg-[#f2f2f2] grow h-full min-h-px min-w-px relative rounded-[16px] shrink-0 overflow-auto"
       data-name="AdminOrderDetail"
     >
-      <div className="box-border flex flex-col gap-[20px] p-[24px] min-h-full">
+      <div className="box-border flex flex-col gap-[20px] p-[24px] h-full">
       {/* Header */}
       <div className="flex items-start gap-[16px] shrink-0">
         <h1
@@ -355,13 +355,6 @@ export function AdminOrderDetail({ orderId, onSectionChange }: AdminOrderDetailP
 
       {/* Action buttons */}
       <div className="flex gap-[12px] items-center justify-end shrink-0">
-        <button
-          onClick={() => onSectionChange('orders')}
-          className="h-[44px] px-[24px] rounded-[12px] border border-[#4d4d4d] bg-white text-[16px] text-[#4d4d4d] cursor-pointer hover:bg-[#e6e6e6] transition-colors"
-          style={fontRegular}
-        >
-          Назад
-        </button>
 
         {/* in_review → accept or decline */}
         {status === 'in_review' && !showDeclineForm && (

@@ -1,4 +1,5 @@
 import { useState, useEffect } from 'react';
+import { useSearchParams, useNavigate } from 'react-router-dom';
 
 // Services & context
 import { apiService } from '../services/api';
@@ -21,10 +22,19 @@ import {
   PollsContent,
 } from '../components/cabinet';
 import { SettingsContent } from '../components/layout/dashboard/SettingsContent';
-import FAQs from './FAQsPage';
 
 // Types
 import { TabItem, DashboardCard } from '../types/ui';
+
+const USER_SECTION_PARENT: Record<string, string> = {
+  'history':        'main',
+  'saved':          'main',
+  'orders':         'main',
+  'orders-create':  'orders',
+  'orders-detail':  'orders',
+  'questionnaires': 'main',
+  'settings':       'main',
+};
 
 const USER_RIGHT_CARDS: DashboardCard[] = [
   { id: 'history',        label: 'Історія замовлень',           path: iconPaths.workHistoryCard,    viewBox: '0 0 70 70', iconSize: 80, padding: 'px-[24px] py-[16px]' },
@@ -53,9 +63,6 @@ export default function UserCabinet({
   products?: any[];
   onBookmarkedProductsChange?: (products: number[]) => void;
 }) {
-  const [activeSection, setActiveSection] = useState<string>('main');
-  const [showFAQ, setShowFAQ] = useState(false);
-  const [selectedOrderId, setSelectedOrderId] = useState<number | null>(null);
   const [ordersRefreshKey, setOrdersRefreshKey] = useState(0);
   const [userName, setUserName] = useState<string | null>(null);
   const [isLoading, setIsLoading] = useState(true);
@@ -64,13 +71,24 @@ export default function UserCabinet({
 
   const { signOut, user } = useAuthContext();
 
-  const handleBackClick = onBackClick || (() => {
-    window.location.href = '/';
-  });
+  const [searchParams, setSearchParams] = useSearchParams();
+  const navigate = useNavigate();
+  const activeSection = searchParams.get('tab') ?? 'main';
+  const selectedOrderId = searchParams.get('orderId') ? Number(searchParams.get('orderId')) : null;
+
+  const handleBackClick = () => {
+    const parent = USER_SECTION_PARENT[activeSection];
+    if (parent) {
+      handleSectionChange(parent);
+    } else if (onBackClick) {
+      onBackClick();
+    } else {
+      window.location.href = '/';
+    }
+  };
 
   const handleSectionChange = (section: string) => {
-    setSelectedOrderId(null);
-    setActiveSection(section);
+    setSearchParams({ tab: section }, { replace: true });
   };
 
   useEffect(() => {
@@ -182,11 +200,11 @@ export default function UserCabinet({
   const renderContent = () => {
     switch (activeSection) {
       case 'history':
-        return <PurchaseHistoryContent onBack={() => setActiveSection('main')} />;
+        return <PurchaseHistoryContent onBack={() => handleSectionChange('main')} />;
       case 'saved':
         return (
           <SavedScenariosContent
-            onBack={() => setActiveSection('main')}
+            onBack={() => handleSectionChange('main')}
             addToCart={addToCart}
             products={localProducts}
             onBookmarkedProductsChange={onBookmarkedProductsChange}
@@ -195,38 +213,38 @@ export default function UserCabinet({
       case 'orders':
         return (
           <PersonalOrdersContent
-            onCreateOrder={() => setActiveSection('orders-create')}
-            onViewOrder={(id) => { setSelectedOrderId(id); setActiveSection('orders-detail'); }}
+            onCreateOrder={() => handleSectionChange('orders-create')}
+            onViewOrder={(id) => setSearchParams({ tab: 'orders-detail', orderId: String(id) }, { replace: true })}
             refreshKey={ordersRefreshKey}
           />
         );
       case 'orders-create':
         return (
           <CreatePersonalOrder
-            onBack={() => setActiveSection('orders')}
-            onCreated={() => { setOrdersRefreshKey((k) => k + 1); setActiveSection('orders'); }}
+            onBack={() => handleSectionChange('orders')}
+            onCreated={() => { setOrdersRefreshKey((k) => k + 1); handleSectionChange('orders'); }}
           />
         );
       case 'orders-detail':
-        return selectedOrderId !== null ? (
+        if (selectedOrderId === null) {
+          handleSectionChange('orders');
+          return null;
+        }
+        return (
           <PersonalOrderDetails
             orderId={selectedOrderId}
-            onBack={() => { setSelectedOrderId(null); setActiveSection('orders'); }}
-            onOrderUpdated={() => { setSelectedOrderId(null); setActiveSection('orders'); }}
+            onBack={() => handleSectionChange('orders')}
+            onOrderUpdated={() => handleSectionChange('orders')}
           />
-        ) : null;
+        );
       case 'questionnaires':
         return <PollsContent />;
       case 'settings':
-        return <SettingsContent onShowFAQ={() => setShowFAQ(true)} />;
+        return <SettingsContent onShowFAQ={() => navigate('/faqs')} />;
       default:
-        return <DashboardRightSide cards={USER_RIGHT_CARDS} onSectionChange={setActiveSection} />;
+        return <DashboardRightSide cards={USER_RIGHT_CARDS} onSectionChange={handleSectionChange} />;
     }
   };
-
-  if (showFAQ) {
-    return <FAQs />;
-  }
 
   if (isLoading || productsLoading) {
     return (

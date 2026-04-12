@@ -5,7 +5,7 @@ import { CloseButtonProps } from '@/types';
 export function CloseIcon() {
   return (
     <div className="relative shrink-0 size-[28px]" data-name="close">
-      <svg className="block size-full" fill="none" preserveAspectRatio="none" viewBox="0 0 28 28">
+      <svg className="block size-full pointer-events-none" fill="none" preserveAspectRatio="none" viewBox="0 0 28 28">
         <g id="close">
           <mask height="28" id="mask0_1_5716" maskUnits="userSpaceOnUse" style={{ maskType: 'alpha' }} width="28" x="0" y="0">
             <rect fill="var(--fill-0, #D9D9D9)" height="28" id="Bounding box" width="28" />

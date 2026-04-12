@@ -16,7 +16,7 @@ import { CacheManager } from '@/utils/cache-manager';
 import config from '@/config';
 import { ORDER_STATUS_LABELS_USER, ORDER_STATUS_COLORS } from '@/constants/api';
 import { iconPaths } from '../ui/icons/iconPaths';
-import type { PersonalOrder } from '@/types';
+import type { PersonalOrder, ProductTypeLookup, AgeCategoryLookup } from '@/types';
 
 const fontBold = { fontVariationSettings: "'CTGR' 0, 'wdth' 100, 'wght' 700" };
 const fontRegular = { fontVariationSettings: "'CTGR' 0, 'wdth' 100, 'wght' 400" };
@@ -29,6 +29,12 @@ const fieldClass = cn(
 const inputClass = cn(
   'h-[52px] w-full rounded-[12px] border border-[#b3b3b3] bg-white px-[16px]',
   'text-[16px] text-[#0d0d0d] outline-none focus:border-[#5e89e8] transition-colors'
+);
+
+const selectClass = cn(
+  'h-[52px] w-full rounded-[12px] border border-[#b3b3b3] bg-white px-[16px]',
+  'text-[16px] text-[#0d0d0d] outline-none focus:border-[#5e89e8] transition-colors',
+  'appearance-none cursor-pointer'
 );
 
 function formatDate(dateString: string | null): string {
@@ -92,16 +98,33 @@ export function PersonalOrderDetails({ orderId, onBack, onOrderUpdated }: Person
   const [editTitle, setEditTitle] = useState('');
   const [editDescription, setEditDescription] = useState('');
   const [editDeadline, setEditDeadline] = useState('');
+  const [editTypeId, setEditTypeId] = useState<number | null>(null);
+  const [editAgeCategoryId, setEditAgeCategoryId] = useState<number | null>(null);
+
+  // Metadata for edit dropdowns
+  const [types, setTypes] = useState<ProductTypeLookup[]>([]);
+  const [ageCategories, setAgeCategories] = useState<AgeCategoryLookup[]>([]);
+
+  // Delete confirmation modal
+  const [showDeleteModal, setShowDeleteModal] = useState(false);
 
   useEffect(() => {
     const load = async () => {
       try {
         setLoading(true);
-        const data = await apiService.getPersonalOrderById(orderId);
+        const [data, t, a] = await Promise.all([
+          apiService.getPersonalOrderById(orderId),
+          apiService.getProductTypes(),
+          apiService.getAgeCategories(),
+        ]);
         setOrder(data);
+        setTypes(t);
+        setAgeCategories(a);
         setEditTitle(data.order_title);
         setEditDescription(data.order_description);
         setEditDeadline(data.order_deadline ?? '');
+        setEditTypeId(t.find((x) => x.name === data.order_material_type)?.id ?? null);
+        setEditAgeCategoryId(a.find((x) => x.name === data.order_material_age_category)?.id ?? null);
       } catch (err: unknown) {
         const msg = err instanceof Error ? err.message : 'Не вдалося завантажити замовлення';
         setError(msg);
@@ -123,6 +146,8 @@ export function PersonalOrderDetails({ orderId, onBack, onOrderUpdated }: Person
         orderTitle: editTitle.trim(),
         orderDescription: editDescription.trim(),
         orderDeadline: editDeadline || null,
+        ...(editTypeId !== null && { orderMaterialType: editTypeId }),
+        ...(editAgeCategoryId !== null && { orderMaterialAgeCategory: editAgeCategoryId }),
       });
       clearOrdersCache();
       setOrder(updated);
@@ -136,8 +161,12 @@ export function PersonalOrderDetails({ orderId, onBack, onOrderUpdated }: Person
     }
   };
 
-  const handleDelete = async () => {
-    if (!window.confirm('Видалити це замовлення?')) { return; }
+  const handleDelete = () => {
+    setShowDeleteModal(true);
+  };
+
+  const confirmDelete = async () => {
+    setShowDeleteModal(false);
     setIsSubmitting(true);
     try {
       await apiService.deletePersonalOrder(orderId);
@@ -208,6 +237,7 @@ export function PersonalOrderDetails({ orderId, onBack, onOrderUpdated }: Person
   const statusLabel = ORDER_STATUS_LABELS_USER[status] ?? status;
   const statusColor = ORDER_STATUS_COLORS[status] ?? '#4d4d4d';
   const isPending = status === 'pending';
+  const isInReview = status === 'in_review';
   const isAccepted = status === 'accepted';
   const isDeclined = status === 'declined';
   const isDone = status === 'done';
@@ -217,7 +247,7 @@ export function PersonalOrderDetails({ orderId, onBack, onOrderUpdated }: Person
       className="basis-0 bg-[#f2f2f2] grow h-full min-h-px min-w-px relative rounded-[16px] shrink-0 overflow-auto"
       data-name="PersonalOrderDetails"
     >
-      <div className="box-border flex flex-col gap-[20px] p-[24px] min-h-full">
+      <div className="box-border flex flex-col gap-[20px] p-[24px] h-full">
 
         {/* Header */}
         <div className="flex items-start gap-[16px] shrink-0">
@@ -243,17 +273,18 @@ export function PersonalOrderDetails({ orderId, onBack, onOrderUpdated }: Person
             >
               {statusLabel}
             </span>
-            <button
-              onClick={onBack}
-              className="flex items-center justify-center size-[44px] rounded-[12px] bg-white border border-[#4d4d4d] hover:bg-[#e6e6e6] transition-colors cursor-pointer"
-              aria-label="Назад"
-            >
-              <svg width="20" height="20" viewBox="0 0 20 20" fill="none">
-                <path d={iconPaths.arrowBack} fill="#0d0d0d" />
-              </svg>
-            </button>
           </div>
         </div>
+
+        {/* Done: file placeholder */}
+        {isDone && (
+          <div className="rounded-[12px] border border-[#008000] bg-[#00800010] p-[16px] shrink-0">
+            <p className="text-[16px] text-[#008000] m-0" style={fontBold}>Ваш файл готовий</p>
+            <p className="text-[14px] text-[#4d4d4d] m-0 mt-[4px]" style={fontRegular}>
+              Матеріал відправлено на Вашу електронну пошту.
+            </p>
+          </div>
+        )}
 
         {/* Decline reason */}
         {isDeclined && order.order_decline_reason && (
@@ -283,19 +314,73 @@ export function PersonalOrderDetails({ orderId, onBack, onOrderUpdated }: Person
         <div className="grid grid-cols-2 gap-[16px] shrink-0">
           <div>
             <label className="block text-[13px] text-[#4d4d4d] mb-[6px]" style={fontRegular}>Тип контенту</label>
-            <div className={fieldClass} style={fontRegular}>
-              <div aria-hidden="true" className="absolute border border-[#b3b3b3] border-solid inset-0 pointer-events-none rounded-[12px]" />
-              {order.order_material_type || '—'}
-            </div>
+            {isEditing ? (
+              <div className="relative">
+                <select
+                  value={editTypeId ?? ''}
+                  onChange={(e) => setEditTypeId(e.target.value ? Number(e.target.value) : null)}
+                  className={selectClass}
+                  style={fontRegular}
+                  disabled={isSubmitting}
+                >
+                  <option value="" disabled>Оберіть тип контенту</option>
+                  {types
+                    .filter((t) => t.name !== 'Безкоштовний матеріал')
+                    .map((t) => (
+                      <option key={t.id} value={t.id}>{t.name}</option>
+                    ))}
+                </select>
+                <svg
+                  className="pointer-events-none absolute right-[16px] top-1/2 -translate-y-1/2"
+                  width="20"
+                  height="20"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                >
+                  <path d={iconPaths.keyboardArrowDown} fill="#4d4d4d" />
+                </svg>
+              </div>
+            ) : (
+              <div className={fieldClass} style={fontRegular}>
+                <div aria-hidden="true" className="absolute border border-[#b3b3b3] border-solid inset-0 pointer-events-none rounded-[12px]" />
+                {order.order_material_type || '—'}
+              </div>
+            )}
           </div>
           <div>
             <label className="block text-[13px] text-[#4d4d4d] mb-[6px]" style={fontRegular}>Вікова група</label>
-            <div className={fieldClass} style={fontRegular}>
-              <div aria-hidden="true" className="absolute border border-[#b3b3b3] border-solid inset-0 pointer-events-none rounded-[12px]" />
-              {order.order_material_age_category || '—'}
-            </div>
+            {isEditing ? (
+              <div className="relative">
+                <select
+                  value={editAgeCategoryId ?? ''}
+                  onChange={(e) => setEditAgeCategoryId(e.target.value ? Number(e.target.value) : null)}
+                  className={selectClass}
+                  style={fontRegular}
+                  disabled={isSubmitting}
+                >
+                  <option value="" disabled>Оберіть вікову групу</option>
+                  {ageCategories.map((a) => (
+                    <option key={a.id} value={a.id}>{a.name}</option>
+                  ))}
+                </select>
+                <svg
+                  className="pointer-events-none absolute right-[16px] top-1/2 -translate-y-1/2"
+                  width="20"
+                  height="20"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                >
+                  <path d={iconPaths.keyboardArrowDown} fill="#4d4d4d" />
+                </svg>
+              </div>
+            ) : (
+              <div className={fieldClass} style={fontRegular}>
+                <div aria-hidden="true" className="absolute border border-[#b3b3b3] border-solid inset-0 pointer-events-none rounded-[12px]" />
+                {order.order_material_age_category || '—'}
+              </div>
+            )}
           </div>
-          {!isDeclined && (
+          {!isDeclined && !isPending && !isInReview && (
             <div>
               <label className="block text-[13px] text-[#4d4d4d] mb-[6px]" style={fontRegular}>Ціна</label>
               <div className={fieldClass} style={fontRegular}>
@@ -322,13 +407,15 @@ export function PersonalOrderDetails({ orderId, onBack, onOrderUpdated }: Person
               </div>
             )}
           </div>
-          <div>
-            <label className="block text-[13px] text-[#4d4d4d] mb-[6px]" style={fontRegular}>Дата замовлення</label>
-            <div className={fieldClass} style={fontRegular}>
-              <div aria-hidden="true" className="absolute border border-[#b3b3b3] border-solid inset-0 pointer-events-none rounded-[12px]" />
-              {formatDate(order.order_created_at)}
+          {!isEditing && (
+            <div>
+              <label className="block text-[13px] text-[#4d4d4d] mb-[6px]" style={fontRegular}>Дата замовлення</label>
+              <div className={fieldClass} style={fontRegular}>
+                <div aria-hidden="true" className="absolute border border-[#b3b3b3] border-solid inset-0 pointer-events-none rounded-[12px]" />
+                {formatDate(order.order_created_at)}
+              </div>
             </div>
-          </div>
+          )}
         </div>
 
         {/* Description */}
@@ -347,7 +434,7 @@ export function PersonalOrderDetails({ orderId, onBack, onOrderUpdated }: Person
               disabled={isSubmitting}
             />
           ) : (
-            <div className="bg-[#f2f2f2] flex-1 relative rounded-[12px] p-[16px]">
+            <div className="flex-1 bg-[#f2f2f2] relative rounded-[12px] p-[16px]">
               <div aria-hidden="true" className="absolute border border-[#b3b3b3] border-solid inset-0 pointer-events-none rounded-[12px]" />
               <p className="text-[16px] text-[#0d0d0d] m-0 leading-[24px] whitespace-pre-wrap" style={fontRegular}>
                 {order.order_description}
@@ -355,16 +442,6 @@ export function PersonalOrderDetails({ orderId, onBack, onOrderUpdated }: Person
             </div>
           )}
         </div>
-
-        {/* Done: file placeholder */}
-        {isDone && (
-          <div className="rounded-[12px] border border-[#008000] bg-[#00800010] p-[16px] shrink-0">
-            <p className="text-[16px] text-[#008000] m-0" style={fontBold}>Ваш файл готовий</p>
-            <p className="text-[14px] text-[#4d4d4d] m-0 mt-[4px]" style={fontRegular}>
-              Матеріал відправлено на Вашу електронну пошту.
-            </p>
-          </div>
-        )}
 
         {/* Action buttons */}
         <div className="flex gap-[12px] items-center justify-end shrink-0">
@@ -435,6 +512,36 @@ export function PersonalOrderDetails({ orderId, onBack, onOrderUpdated }: Person
         </div>
 
       </div>
+
+      {/* Delete confirmation modal */}
+      {showDeleteModal && (
+        <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50">
+          <div className="bg-white rounded-[24px] p-[32px] flex flex-col gap-[24px] max-w-[764px] mx-[24px]">
+            <h5 className="text-[40px] text-[#0d0d0d] text-center m-0" style={fontRegular}>
+              Ви впевнені, що хочете видалити це замовлення?
+            </h5>
+            <p className="text-[20px] text-[#4d4d4d] text-center m-0" style={fontRegular}>
+              Якщо Ви натиснете &ldquo;Підтвердити&rdquo;, це замовлення буде повністю видалено і цю дію неможливо буде відмінити
+            </p>
+            <div className="flex gap-[16px] justify-center">
+              <button
+                onClick={() => setShowDeleteModal(false)}
+                className="h-[44px] px-[24px] rounded-[12px] border border-solid border-[#4d4d4d] bg-white cursor-pointer text-[16px] text-[#0d0d0d] hover:bg-[#f5f5f5] transition-colors"
+                style={fontRegular}
+              >
+                Повернутись
+              </button>
+              <button
+                onClick={confirmDelete}
+                className="h-[44px] px-[24px] rounded-[12px] border-none bg-[#E53935] text-white cursor-pointer text-[16px] hover:opacity-90 transition-opacity"
+                style={fontBold}
+              >
+                Підтвердити видалення
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 }

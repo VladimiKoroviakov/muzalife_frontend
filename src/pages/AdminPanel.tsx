@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useSearchParams } from 'react-router-dom';
 
 // Services and context
 import { apiService } from '../services/api';
@@ -29,6 +29,19 @@ import { AdminFacebookPost } from '../components/admin/AdminFacebookPost';
 import { TabItem, DashboardCard } from '../types/ui';
 
 
+const ADMIN_SECTION_PARENT: Record<string, string> = {
+  'materials':      'main',
+  'materials-add':  'materials',
+  'materials-edit': 'materials',
+  'orders':         'main',
+  'orders-detail':  'orders',
+  'analytics':      'main',
+  'polls':          'main',
+  'polls-create':   'polls',
+  'facebook-post':  'materials',
+  'settings':       'main',
+};
+
 const ADMIN_RIGHT_CARDS: DashboardCard[] = [
   { id: 'materials', label: 'Всі матеріали',               path: iconPaths.homeStorageCard,       viewBox: '0 0 60 60',           iconSize: 80, padding: 'px-[24px] py-[16px]' },
   { id: 'orders',    label: 'Персональні замовлення',      path: iconPaths.contractEditAdminCard, viewBox: '0 0 53.3333 53.3333', iconSize: 64, padding: 'px-[24px] py-[16px]' },
@@ -46,18 +59,25 @@ const ADMIN_TABS: TabItem[] = [
 ];
 
 export default function AdminPanel() {
-  const [activeSection, setActiveSection] = useState<string>('main');
   const [userName, setUserName] = useState<string>('');
   const [isLoading, setIsLoading] = useState(true);
-  const [editingId, setEditingId] = useState<string | null>(null);
-  const [selectedOrderId, setSelectedOrderId] = useState<string | null>(null);
-  const [fbProductId, setFbProductId] = useState<number | null>(null);
 
   const { signOut, user } = useAuthContext();
   const navigate = useNavigate();
+  const [searchParams, setSearchParams] = useSearchParams();
+
+  const activeSection   = searchParams.get('tab') ?? 'main';
+  const selectedOrderId = searchParams.get('orderId') ?? null;
+  const editingId       = searchParams.get('editId') ?? null;
+  const fbProductId     = searchParams.get('productId') ? Number(searchParams.get('productId')) : null;
 
   const handleBackClick = () => {
-    navigate('/');
+    const parent = ADMIN_SECTION_PARENT[activeSection];
+    if (parent) {
+      handleSectionChange(parent);
+    } else {
+      navigate('/');
+    }
   };
 
   const handleShowFAQ = () => {
@@ -65,9 +85,7 @@ export default function AdminPanel() {
   };
 
   const handleSectionChange = (section: string) => {
-    setEditingId(null);
-    setSelectedOrderId(null);
-    setActiveSection(section);
+    setSearchParams({ tab: section }, { replace: true });
   };
 
   useEffect(() => {
@@ -130,42 +148,48 @@ export default function AdminPanel() {
       case 'materials':
         return (
           <AdminMaterialsContent
-            onSectionChange={setActiveSection}
-            onEditMaterial={(id) => {
-              setEditingId(id);
-              setActiveSection('materials-edit');
-            }}
+            onSectionChange={handleSectionChange}
+            onEditMaterial={(id) => setSearchParams({ tab: 'materials-edit', editId: id }, { replace: true })}
           />
         );
       case 'materials-add':
         return (
           <AdminManageMaterial
-            onSectionChange={setActiveSection}
-            onFbPost={(pid) => { setFbProductId(pid); setActiveSection('facebook-post'); }}
+            onSectionChange={handleSectionChange}
+            onFbPost={(pid) => setSearchParams({ tab: 'facebook-post', productId: String(pid) }, { replace: true })}
           />
         );
       case 'materials-edit':
-        return <AdminManageMaterial mode="edit" productId={editingId} onSectionChange={setActiveSection} />;
+        if (editingId === null) {
+          handleSectionChange('materials');
+          return null;
+        }
+        return <AdminManageMaterial mode="edit" productId={editingId} onSectionChange={handleSectionChange} />;
       case 'orders':
         return (
           <AdminOrdersContent
-            onSectionChange={setActiveSection}
-            onViewOrder={(id) => {
-              setSelectedOrderId(id);
-              setActiveSection('orders-detail');
-            }}
+            onSectionChange={handleSectionChange}
+            onViewOrder={(id) => setSearchParams({ tab: 'orders-detail', orderId: id }, { replace: true })}
           />
         );
       case 'orders-detail':
-        return <AdminOrderDetail onSectionChange={setActiveSection} orderId={selectedOrderId} />;
+        if (selectedOrderId === null) {
+          handleSectionChange('orders');
+          return null;
+        }
+        return <AdminOrderDetail onSectionChange={handleSectionChange} orderId={selectedOrderId} />;
       case 'analytics':
-        return <AdminAnalyticsContent onSectionChange={setActiveSection} />;
+        return <AdminAnalyticsContent onSectionChange={handleSectionChange} />;
       case 'polls':
-        return <AdminPollsContent onSectionChange={setActiveSection} />;
+        return <AdminPollsContent onSectionChange={handleSectionChange} />;
       case 'polls-create':
-        return <AdminCreatePoll onBack={() => setActiveSection('polls')} />;
+        return <AdminCreatePoll onBack={() => handleSectionChange('polls')} />;
       case 'facebook-post':
-        return <AdminFacebookPost productId={fbProductId} onSectionChange={setActiveSection} />;
+        if (fbProductId === null) {
+          handleSectionChange('materials');
+          return null;
+        }
+        return <AdminFacebookPost productId={fbProductId} onSectionChange={handleSectionChange} />;
       case 'settings':
         return <SettingsContent onShowFAQ={handleShowFAQ} />;
       default:
@@ -189,7 +213,7 @@ export default function AdminPanel() {
             onBackClick={handleBackClick}
             activeSection={activeSection}
             userName={userName}
-            onSectionChange={setActiveSection}
+            onSectionChange={handleSectionChange}
           />
           <DashboardCanvas
             tabs={<SidebarTabs tabs={ADMIN_TABS} activeSection={activeSection} onSectionChange={handleSectionChange} />}

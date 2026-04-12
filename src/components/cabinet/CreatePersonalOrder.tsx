@@ -50,7 +50,7 @@ interface CreatePersonalOrderProps {
  * <CreatePersonalOrder onBack={() => setSection('orders')} onCreated={() => setSection('orders')} />
  * ```
  */
-export function CreatePersonalOrder({ onBack, onCreated }: CreatePersonalOrderProps) {
+export function CreatePersonalOrder({ onCreated }: CreatePersonalOrderProps) {
   const [title, setTitle] = useState('');
   const [description, setDescription] = useState('');
   const [typeId, setTypeId] = useState<number | null>(null);
@@ -93,6 +93,10 @@ export function CreatePersonalOrder({ onBack, onCreated }: CreatePersonalOrderPr
       toast.error('Оберіть вікову групу');
       return;
     }
+    if (!deadline) {
+      toast.error('Вкажіть дедлайн замовлення');
+      return;
+    }
     if (!description.trim()) {
       toast.error('Опишіть замовлення детально');
       return;
@@ -123,108 +127,106 @@ export function CreatePersonalOrder({ onBack, onCreated }: CreatePersonalOrderPr
       data-name="CreatePersonalOrder"
     >
       <div className="size-full">
-        <div className="box-border content-stretch flex flex-col gap-[20px] items-start relative size-full overflow-hidden px-[24px] py-[16px]">
+        <div className="box-border content-stretch flex flex-col gap-[20px] items-start relative size-full overflow-hidden pt-[28px] pb-[20px] px-[20px]">
 
-          {/* Back button */}
-          <div className="flex items-center justify-end w-full shrink-0">
-            <button
-              onClick={onBack}
-              className="flex items-center justify-center size-[44px] rounded-[12px] bg-white border border-[#4d4d4d] hover:bg-[#f2f2f2] transition-colors cursor-pointer shrink-0"
-              aria-label="Назад"
-            >
-              <svg width="20" height="20" viewBox="0 0 20 20" fill="none">
-                <path d={iconPaths.arrowBack} fill="#0d0d0d" />
-              </svg>
-            </button>
-          </div>
-
-          {/* Row 1: Title + Content type */}
-          <div className="flex gap-[24px] w-full shrink-0">
-            <input
-              type="text"
-              placeholder="Введіть назву свята"
-              value={title}
-              onChange={(e) => setTitle(e.target.value)}
-              className={inputClass}
-              style={fontRegular}
-              disabled={isSubmitting}
-            />
-            <div className="relative w-full">
-              <select
-                value={typeId ?? ''}
-                onChange={(e) => setTypeId(e.target.value ? Number(e.target.value) : null)}
-                className={selectClass}
+          {/* 2×2 grid: Title / Content type / Age group / Deadline */}
+          <div className="grid grid-cols-2 gap-[24px] w-full shrink-0">
+            <div className="flex flex-col gap-[8px]">
+              <label className="block text-[13px] text-[#4d4d4d] mb-[6px]" style={fontRegular}>Назва замовлення</label>
+              <input
+                type="text"
+                placeholder="Введіть назву свята"
+                value={title}
+                onChange={(e) => setTitle(e.target.value)}
+                className={inputClass}
                 style={fontRegular}
-                disabled={metaLoading || isSubmitting}
-              >
-                <option value="" disabled>Оберіть тип контенту</option>
-                {types
-                  .filter((t) => t.name !== 'Безкоштовний матеріал')
-                  .map((t) => (
-                    <option key={t.id} value={t.id}>{t.name}</option>
+                disabled={isSubmitting}
+              />
+            </div>
+            <div className="flex flex-col gap-[4px]">
+              <label className="block text-[13px] text-[#4d4d4d] mb-[6px]" style={fontRegular}>Тип контенту</label>
+              <div className="relative">
+                <select
+                  value={typeId ?? ''}
+                  onChange={(e) => setTypeId(e.target.value ? Number(e.target.value) : null)}
+                  className={selectClass}
+                  style={fontRegular}
+                  disabled={metaLoading || isSubmitting}
+                >
+                  <option value="" disabled>Оберіть тип контенту</option>
+                  {types
+                    .filter((t) => t.name !== 'Безкоштовний матеріал')
+                    .map((t) => (
+                      <option key={t.id} value={t.id}>{t.name}</option>
+                    ))}
+                </select>
+                <svg
+                  className="pointer-events-none absolute right-[16px] top-1/2 -translate-y-1/2"
+                  width="20"
+                  height="20"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                >
+                  <path d={iconPaths.keyboardArrowDown} fill="#4d4d4d" />
+                </svg>
+              </div>
+            </div>
+            <div className="flex flex-col gap-[4px]">
+              <label className="block text-[13px] text-[#4d4d4d] mb-[6px]" style={fontRegular}>Вікова група</label>
+              <div className="relative">
+                <select
+                  value={ageCategoryId ?? ''}
+                  onChange={(e) => setAgeCategoryId(e.target.value ? Number(e.target.value) : null)}
+                  className={selectClass}
+                  style={fontRegular}
+                  disabled={metaLoading || isSubmitting}
+                >
+                  <option value="" disabled>Оберіть вікову групу</option>
+                  {ageCategories.map((a) => (
+                    <option key={a.id} value={a.id}>{a.name}</option>
                   ))}
-              </select>
-              <svg
-                className="pointer-events-none absolute right-[16px] top-1/2 -translate-y-1/2"
-                width="20"
-                height="20"
-                viewBox="0 0 24 24"
-                fill="none"
-              >
-                <path d={iconPaths.keyboardArrowDown} fill="#4d4d4d" />
-              </svg>
+                </select>
+                <svg
+                  className="pointer-events-none absolute right-[16px] top-1/2 -translate-y-1/2"
+                  width="20"
+                  height="20"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                >
+                  <path d={iconPaths.keyboardArrowDown} fill="#4d4d4d" />
+                </svg>
+              </div>
             </div>
-          </div>
-
-          {/* Row 2: Age group + Deadline */}
-          <div className="flex gap-[24px] w-full shrink-0">
-            <div className="relative w-full">
-              <select
-                value={ageCategoryId ?? ''}
-                onChange={(e) => setAgeCategoryId(e.target.value ? Number(e.target.value) : null)}
-                className={selectClass}
+            <div className="flex flex-col gap-[4px]">
+              <label className="block text-[13px] text-[#4d4d4d] mb-[6px]" style={fontRegular}>Дедлайн</label>
+              <input
+                type="date"
+                placeholder="До коли потрібно зробити?"
+                value={deadline}
+                onChange={(e) => setDeadline(e.target.value)}
+                className={inputClass}
                 style={fontRegular}
-                disabled={metaLoading || isSubmitting}
-              >
-                <option value="" disabled>Оберіть вікову групу</option>
-                {ageCategories.map((a) => (
-                  <option key={a.id} value={a.id}>{a.name}</option>
-                ))}
-              </select>
-              <svg
-                className="pointer-events-none absolute right-[16px] top-1/2 -translate-y-1/2"
-                width="20"
-                height="20"
-                viewBox="0 0 24 24"
-                fill="none"
-              >
-                <path d={iconPaths.keyboardArrowDown} fill="#4d4d4d" />
-              </svg>
+                disabled={isSubmitting}
+              />
             </div>
-            <input
-              type="date"
-              placeholder="До коли потрібно зробити?"
-              value={deadline}
-              onChange={(e) => setDeadline(e.target.value)}
-              className={inputClass}
-              style={fontRegular}
-              disabled={isSubmitting}
-            />
           </div>
 
           {/* Description */}
-          <textarea
-            placeholder="Детально опишіть що б Ви хотіли отримати"
-            value={description}
-            onChange={(e) => setDescription(e.target.value)}
-            className={cn(
-              'flex-1 w-full min-h-[160px] rounded-[12px] border border-[#b3b3b3]',
-              'px-[16px] py-[12px] text-[16px] text-[#0d0d0d] outline-none',
-              'focus:border-[#5e89e8] transition-colors resize-none'
-            )}
-            style={fontRegular}
-            disabled={isSubmitting}
-          />
+          <div className="flex-1 flex flex-col min-h-[160px] w-full gap-[4px]">
+            <label className="block text-[13px] text-[#4d4d4d] mb-[6px]" style={fontRegular}>Опис замовлення</label>
+            <textarea
+              placeholder="Детально опишіть що б Ви хотіли отримати"
+              value={description}
+              onChange={(e) => setDescription(e.target.value)}
+              className={cn(
+                'flex-1 w-full min-h-[160px] rounded-[12px] border border-[#b3b3b3]',
+                'px-[16px] py-[12px] text-[16px] text-[#0d0d0d] outline-none',
+                'focus:border-[#5e89e8] transition-colors resize-none'
+              )}
+              style={fontRegular}
+              disabled={isSubmitting}
+            />
+          </div>
 
           {/* Submit */}
           <button
