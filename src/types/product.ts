@@ -119,12 +119,26 @@ export interface ProductFile {
 
 export interface ProductAnalytics {
   productId: number;
-  totalViews: number;
-  totalPurchases: number;
-  totalSaves: number;
+  /** ISO 8601 start of the measured window. */
+  timeFrom: string;
+  /** ISO 8601 end of the measured window. */
+  timeTo: string;
+  views: number;
+  purchases: number;
+  saves: number;
+  /** Average review rating in the window (0 when no reviews). */
   averageRating: number;
   reviewCount: number;
+  /** Revenue = purchases × product_price in the window. */
   revenue: number;
+}
+
+/** Lightweight product record for the admin analytics product selector. */
+export interface AnalyticsProduct {
+  id: number;
+  title: string;
+  /** Whether the product is soft-deleted (hidden). */
+  hidden: boolean;
 }
 
 export interface AdminProductApiResponse {

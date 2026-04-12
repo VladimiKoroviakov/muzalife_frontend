@@ -61,6 +61,14 @@
         '@': path.resolve(__dirname, './src'),
       },
     },
+    optimizeDeps: {
+      include: [
+        'react-day-picker',
+        '@radix-ui/react-popover',
+        'date-fns',
+        'date-fns/locale',
+      ],
+    },
     build: {
       target: 'esnext',
       outDir: 'build',

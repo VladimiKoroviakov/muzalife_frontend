@@ -96,6 +96,7 @@ const config = {
     },
     analytics: {
       stats: (productId: number) => `/analytics/stats/${productId}`,
+      products: '/analytics/products',
     },
     facebookPost: '/admin/facebook/post',
   },

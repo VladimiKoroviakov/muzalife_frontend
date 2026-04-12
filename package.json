@@ -37,6 +37,7 @@
     "class-variance-authority": "^0.7.1",
     "clsx": "*",
     "cmdk": "^1.1.1",
+    "date-fns": "^4.1.0",
     "embla-carousel-react": "^8.6.0",
     "facebook-js-sdk": "^1.0.4",
     "hono": "*",
@@ -81,18 +82,15 @@
     "lint:fix": "eslint src/ --fix",
     "lint:docs": "eslint src/ --rule 'jsdoc/require-jsdoc: warn'",
     "type-check": "tsc --noEmit -p tsconfig.check.json",
-
     "test": "vitest run",
     "test:docs": "vitest run src/tests/docs/",
     "test:watch": "vitest",
     "test:coverage": "vitest run --coverage",
-
     "docs": "typedoc",
     "docs:clean": "rm -rf docs/typedoc && typedoc",
     "docs:archive": "zip -r /tmp/typedoc_out.zip docs/typedoc/ && cp /tmp/typedoc_out.zip docs/typedoc.zip && echo 'Archive: docs/typedoc.zip'",
     "docs:site": "vitepress dev docs-site",
     "docs:site:build": "vitepress build docs-site",
-
     "check": "npm run lint && npm run type-check && npm run test:docs",
     "prepare": "husky"
   },

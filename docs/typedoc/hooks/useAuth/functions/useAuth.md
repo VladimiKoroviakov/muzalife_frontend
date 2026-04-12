@@ -8,7 +8,7 @@
 
 > **useAuth**(): `object`
 
-Defined in: [hooks/useAuth.ts:44](https://github.com/VladimiKoroviakov/muzalife_frontend/blob/fcb811fb9eed7a0c69beee83ad65a9c52c5eec6b/src/hooks/useAuth.ts#L44)
+Defined in: [hooks/useAuth.ts:44](https://github.com/VladimiKoroviakov/muzalife_frontend/blob/2d822b275568b968380e0ec42bc501946a042429/src/hooks/useAuth.ts#L44)
 
 Core authentication hook.
 
