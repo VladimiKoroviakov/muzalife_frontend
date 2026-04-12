@@ -131,16 +131,17 @@ function Price({ price }: { price: number }) {
   );
 }
 
-function CartButton({ isInCart, onClick }: { isInCart?: boolean; onClick?: () => void }) {
-  const text = isInCart ? 'В кошику' : 'До кошика';
+function CartButton({ isInCart, isPurchased, onClick }: { isInCart?: boolean; isPurchased?: boolean; onClick?: () => void }) {
+  const text = isPurchased ? 'Придбано' : isInCart ? 'В кошику' : 'До кошика';
 
   return (
     <button
       onClick={(e) => {
         e.stopPropagation();
-        onClick?.();
+        if (!isPurchased) { onClick?.(); }
       }}
-      className={`bg-white box-border content-stretch flex gap-[8px] h-[44px] items-center justify-center px-[12px] py-[12px] relative rounded-[12px] shrink-0 w-[134px] cursor-pointer hover:bg-[#f9f9f9] transition-all border border-[#4d4d4d] ${isInCart ? 'opacity-60' : 'opacity-100'}`}
+      disabled={isPurchased}
+      className={`bg-white box-border content-stretch flex gap-[8px] h-[44px] items-center justify-center px-[12px] py-[12px] relative rounded-[12px] shrink-0 w-[134px] transition-all border ${isPurchased ? 'opacity-60 cursor-not-allowed border-[#4d4d4d]' : `cursor-pointer hover:bg-[#f9f9f9] border-[#4d4d4d] ${isInCart ? 'opacity-60' : 'opacity-100'}`}`}
       data-name="Button"
     >
       <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 20 20" fill="none">
@@ -158,11 +159,11 @@ function CartButton({ isInCart, onClick }: { isInCart?: boolean; onClick?: () =>
   );
 }
 
-function Footer({ price, isInCart, onCartClick }: { price: number; isInCart?: boolean; onCartClick?: () => void }) {
+function Footer({ price, isInCart, isPurchased, onCartClick }: { price: number; isInCart?: boolean; isPurchased?: boolean; onCartClick?: () => void }) {
   return (
     <div className="content-stretch flex items-center justify-between relative shrink-0 w-full" data-name="Bottom">
       <Price price={price} />
-      <CartButton isInCart={isInCart} onClick={onCartClick} />
+      <CartButton isInCart={isInCart} isPurchased={isPurchased} onClick={onCartClick} />
     </div>
   );
 }
@@ -176,6 +177,7 @@ export default function ProductCard({
   badgeText,
   isInCart = false,
   isBookmarked = false,
+  isPurchased = false,
   showBookmark = true,
   showDelete = false,
   onClick,
@@ -222,6 +224,7 @@ export default function ProductCard({
               <Footer
                 price={price}
                 isInCart={isInCart}
+                isPurchased={isPurchased}
                 onCartClick={onCartClick}
               />
             </div>

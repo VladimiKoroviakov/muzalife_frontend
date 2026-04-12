@@ -1,12 +1,39 @@
-import { Product } from '../../types';
+import { useState } from 'react';
+import { toast } from 'sonner';
+import { Product, ApiError } from '../../types';
 import { CartItem } from '@/components/common/CartItem';
 import { IconBag } from '../ui/icons/IconBag';
 import CloseButton from '../ui/icons/CloseIcon';
+import { useAuthContext } from '@/context/AuthContext';
+import { apiService } from '@/services/api';
+import { submitLiqPayForm } from '@/lib/liqpay';
 
 // Cart Component
 export function Cart({ cartItems, products, onClose, onRemoveItem }: { cartItems: number[]; products: Product[]; onClose: () => void; onRemoveItem: (id: number) => void }) {
+  const { isAuthenticated } = useAuthContext();
+  const [isLoading, setIsLoading] = useState(false);
+
   const cartProducts = products.filter((p) => cartItems.includes(p.id));
   const totalPrice = cartProducts.reduce((sum, product) => sum + product.price, 0);
+
+  const handleCheckout = async () => {
+    if (!isAuthenticated) {
+      toast.error('Увійдіть в акаунт, щоб продовжити');
+      return;
+    }
+    setIsLoading(true);
+    try {
+      const payment = await apiService.initiateCartPayment(cartItems);
+      submitLiqPayForm(payment.data, payment.signature);
+    } catch (err) {
+      if (err instanceof ApiError && err.status === 409) {
+        toast.error('Деякі товари вже придбані. Оновіть кошик і спробуйте знову.');
+      } else {
+        toast.error('Не вдалося розпочати оплату. Спробуйте пізніше.');
+      }
+      setIsLoading(false);
+    }
+  };
 
   return (
     <>
@@ -56,13 +83,20 @@ export function Cart({ cartItems, products, onClose, onRemoveItem }: { cartItems
 
           {/* Order Button */}
           {cartProducts.length > 0 && (
-            <button className="bg-[#5e89e8] h-[44px] relative rounded-[12px] shrink-0 w-full cursor-pointer hover:opacity-90 transition-opacity" data-name="Button">
+            <button
+              onClick={handleCheckout}
+              disabled={isLoading}
+              className="bg-[#5e89e8] h-[44px] relative rounded-[12px] shrink-0 w-full cursor-pointer hover:opacity-90 transition-opacity disabled:opacity-60 disabled:cursor-not-allowed"
+              data-name="Button"
+            >
               <div aria-hidden="true" className="absolute border border-[#5e89e8] border-solid inset-0 pointer-events-none rounded-[12px]" />
               <div className="flex flex-row items-center justify-center size-full">
                 <div className="box-border content-stretch flex gap-[8px] h-[44px] items-center justify-center px-[24px] py-[12px] relative w-full">
-                  <IconBag />
+                  {!isLoading && <IconBag />}
                   <div className="flex flex-col font-['Atkinson_Hyperlegible:Bold','Noto_Sans:Bold',sans-serif] justify-end leading-[0] relative shrink-0 text-[16px] text-nowrap text-white" style={{ fontVariationSettings: "'CTGR' 0, 'wdth' 100, 'wght' 700" }}>
-                    <p className="leading-[normal] whitespace-pre">Замовити {totalPrice} грн</p>
+                    <p className="leading-[normal] whitespace-pre">
+                      {isLoading ? 'Зачекайте...' : `Замовити ${totalPrice} грн`}
+                    </p>
                   </div>
                 </div>
               </div>

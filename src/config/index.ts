@@ -94,6 +94,12 @@ const config = {
       status: (pollId: number) => `/polls/${pollId}/status`,
       delete: (pollId: number) => `/polls/${pollId}`,
     },
+    payments: {
+      initiateProduct: (productId: number) => `/payments/product/${productId}/initiate`,
+      initiateOrder: (orderId: number) => `/payments/order/${orderId}/initiate`,
+      initiateCart: '/payments/cart/initiate',
+      verify: '/payments/verify',
+    },
     analytics: {
       stats: (productId: number) => `/analytics/stats/${productId}`,
       products: '/analytics/products',

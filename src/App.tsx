@@ -17,6 +17,7 @@ import SingleProductPage from './pages/SingleProductPage';
 import AdminPanel from './pages/AdminPanel';
 import AdminLoginPage from './pages/AdminLoginPage';
 import NotFoundPage from './pages/NotFoundPage';
+import PaymentResultPage from './pages/PaymentResultPage';
 
 function App() {
   return (
@@ -72,6 +73,8 @@ function App() {
                     </AdminRoute>
                   }
                 />
+                {/* Payment result — LiqPay redirects here after checkout */}
+                <Route path="/payment/result" element={<PaymentResultPage />} />
                 {/* 404 — custom page instead of silent redirect to home */}
                 <Route path="*" element={<NotFoundPage />} />
               </Routes>

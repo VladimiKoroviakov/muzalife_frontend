@@ -11,6 +11,7 @@ interface ProductInfoProps {
   isBookmarked: boolean;
   onToggleBookmark: () => void;
   isInCart: boolean;
+  isPurchased?: boolean;
   onAddToCart: () => void;
   onRemoveFromCart: () => void;
   canBookmark: boolean;
@@ -24,6 +25,7 @@ export function ProductInfo({
   isBookmarked,
   onToggleBookmark,
   isInCart,
+  isPurchased,
   onAddToCart,
   onRemoveFromCart,
   canBookmark
@@ -46,6 +48,7 @@ export function ProductInfo({
             isBookmarked={isBookmarked}
             onToggleBookmark={onToggleBookmark}
             isInCart={isInCart}
+            isPurchased={isPurchased}
             onAddToCart={onAddToCart}
             onRemoveFromCart={onRemoveFromCart}
             canBookmark={canBookmark}

@@ -17,6 +17,7 @@ export default function HomePage() {
   const [selectedEvents, setSelectedEvents] = useState<string[]>([]);
   const [activeTab, setActiveTab] = useState('all');
   const [bookmarkedProducts, setBookmarkedProducts] = useState<number[]>([]);
+  const [purchasedProductIds, setPurchasedProductIds] = useState<number[]>([]);
   const [cartItems, setCartItems] = useState<number[]>([]);
   const [showFilters, setShowFilters] = useState(true);
   const [showCart, setShowCart] = useState(false);
@@ -73,7 +74,7 @@ export default function HomePage() {
 
         if (user) {
           setIsAuthenticated(true);
-          await loadSavedProducts();
+          await Promise.all([loadSavedProducts(), loadPurchasedProducts()]);
         } else {
           setIsAuthenticated(false);
         }
@@ -115,6 +116,15 @@ export default function HomePage() {
       setBookmarkedProducts([]);
     }
   }, [isAuthenticated]);
+
+  const loadPurchasedProducts = useCallback(async () => {
+    try {
+      const bought = await apiService.getBoughtProducts();
+      setPurchasedProductIds(bought.map((p) => p.id));
+    } catch {
+      setPurchasedProductIds([]);
+    }
+  }, []);
 
   const toggleBookmark = async (productId: number) => {
     if (!isAuthenticated) {
@@ -175,8 +185,10 @@ export default function HomePage() {
   useEffect(() => {
     if (isAuthenticated) {
       loadSavedProducts();
+      loadPurchasedProducts();
     } else {
       setBookmarkedProducts([]);
+      setPurchasedProductIds([]);
     }
   }, [isAuthenticated]);
 
@@ -319,6 +331,7 @@ export default function HomePage() {
               addToCart={addToCart}
               onCardClick={handleCardClick}
               cartItems={cartItems}
+              purchasedProductIds={purchasedProductIds}
             />
           )}
 

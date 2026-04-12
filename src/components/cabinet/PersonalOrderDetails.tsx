@@ -12,6 +12,7 @@ import { useState, useEffect } from 'react';
 import { toast } from 'sonner';
 import { cn } from '@/lib/utils';
 import { apiService } from '@/services/api';
+import { submitLiqPayForm } from '@/lib/liqpay';
 import { CacheManager } from '@/utils/cache-manager';
 import config from '@/config';
 import { ORDER_STATUS_LABELS_USER, ORDER_STATUS_COLORS } from '@/constants/api';
@@ -181,15 +182,13 @@ export function PersonalOrderDetails({ orderId, onBack, onOrderUpdated }: Person
   };
 
   const handleConfirm = async () => {
-    if (!window.confirm(`Підтвердити замовлення та оплатити ${formatPrice(order?.order_price ?? null)}?`)) { return; }
     setIsSubmitting(true);
     try {
-      await apiService.updatePersonalOrder(orderId, { orderStatus: 'paid' });
-      clearOrdersCache();
-      toast.success('Замовлення підтверджено');
-      onOrderUpdated();
+      const payment = await apiService.initiateOrderPayment(orderId);
+      submitLiqPayForm(payment.data, payment.signature);
+      // Browser navigates away to LiqPay; no further cleanup needed here.
     } catch (err: unknown) {
-      const msg = err instanceof Error ? err.message : 'Не вдалося підтвердити замовлення';
+      const msg = err instanceof Error ? err.message : 'Не вдалося розпочати оплату';
       toast.error(msg);
       setIsSubmitting(false);
     }

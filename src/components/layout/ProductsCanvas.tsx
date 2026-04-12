@@ -19,6 +19,7 @@ interface CanvasProps {
   addToCart: (id: number) => void;
   onCardClick: (id: number) => void;
   cartItems: number[];
+  purchasedProductIds: number[];
 }
 
 export function ProductsCanvas({
@@ -36,7 +37,8 @@ export function ProductsCanvas({
   toggleBookmark,
   addToCart,
   onCardClick,
-  cartItems
+  cartItems,
+  purchasedProductIds,
 }: CanvasProps) {
   return (
     <div className="basis-0 content-stretch flex flex-col grow items-start max-w-[1280px] min-h-px min-w-px relative shrink-0 w-[1280px]" data-name="Canvas">
@@ -71,6 +73,7 @@ export function ProductsCanvas({
             ) : (
               products.map((product) => {
                 const isBookmarked = bookmarkedProducts.includes(product.id);
+                const isPurchased = purchasedProductIds.includes(product.id);
 
                 return (
                   <ProductCard
@@ -84,9 +87,10 @@ export function ProductsCanvas({
                     isBookmarked={isBookmarked}
                     showBookmark={true}
                     isInCart={cartItems.includes(product.id)}
+                    isPurchased={isPurchased}
                     onClick={() => onCardClick(product.id)}
                     onBookmarkClick={() => toggleBookmark(product.id)}
-                    onCartClick={() => addToCart(product.id)}
+                    onCartClick={isPurchased ? undefined : () => addToCart(product.id)}
                   />
                 );
               })

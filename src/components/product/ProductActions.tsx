@@ -47,12 +47,14 @@ function SaveButton({ isBookmarked, onClick, canBookmark }: SaveButtonProps) {
 
 interface BuyButtonProps {
   isInCart: boolean;
+  isPurchased?: boolean;
   onClick: () => void;
   onRemoveClick: () => void;
 }
 
-function BuyButton({ isInCart, onClick, onRemoveClick }: BuyButtonProps) {
+function BuyButton({ isInCart, isPurchased, onClick, onRemoveClick }: BuyButtonProps) {
   const handleClick = () => {
+    if (isPurchased) { return; }
     if (isInCart) {
       onRemoveClick();
     } else {
@@ -60,15 +62,18 @@ function BuyButton({ isInCart, onClick, onRemoveClick }: BuyButtonProps) {
     }
   };
 
-  const text = isInCart ? 'В кошику' : 'До Кошика';
+  const text = isPurchased ? 'Придбано' : isInCart ? 'В кошику' : 'До Кошика';
 
   return (
     <button
       onClick={handleClick}
-      className={`box-border content-stretch flex gap-[8px] h-[44px] items-center justify-center px-[24px] py-[12px] relative rounded-[12px] shrink-0 cursor-pointer transition-all border ${
-        isInCart
-          ? 'bg-[#f0f4ff] border-[#4a76d6] hover:bg-[#e6eeff] text-[#0d0d0d]'
-          : 'bg-[#5e89e8] border-transparent hover:bg-[#4a76d6] text-white'
+      disabled={isPurchased}
+      className={`box-border content-stretch flex gap-[8px] h-[44px] items-center justify-center px-[24px] py-[12px] relative rounded-[12px] shrink-0 transition-all border ${
+        isPurchased
+          ? 'bg-[#e6e6e6] border-[#b3b3b3] text-[#808080] cursor-not-allowed opacity-70'
+          : isInCart
+            ? 'bg-[#f0f4ff] border-[#4a76d6] hover:bg-[#e6eeff] text-[#0d0d0d] cursor-pointer'
+            : 'bg-[#5e89e8] border-transparent hover:bg-[#4a76d6] text-white cursor-pointer'
       }`}
       data-name="Button"
     >
@@ -76,12 +81,12 @@ function BuyButton({ isInCart, onClick, onRemoveClick }: BuyButtonProps) {
         <svg className="block size-full" fill="none" preserveAspectRatio="none" viewBox="0 0 20 20">
           <path
             d={iconPaths.bag}
-            fill={isInCart ? '#0D0D0D' : 'var(--fill-0, white)'}
+            fill={isPurchased ? '#808080' : isInCart ? '#0D0D0D' : 'var(--fill-0, white)'}
           />
         </svg>
       </div>
       <div className={`flex flex-col justify-end leading-[0] relative shrink-0 text-[16px] text-nowrap ${
-        isInCart ? 'text-[#0d0d0d]' : 'text-white'
+        isPurchased ? 'text-[#808080]' : isInCart ? 'text-[#0d0d0d]' : 'text-white'
       }`} style={{ fontVariationSettings: "'CTGR' 0, 'wdth' 100, 'wght' 400" }}>
         <p className="leading-[normal] whitespace-pre">{text}</p>
       </div>
@@ -94,6 +99,7 @@ interface ProductActionsProps {
   isBookmarked: boolean;
   onToggleBookmark: () => void;
   isInCart: boolean;
+  isPurchased?: boolean;
   onAddToCart: () => void;
   onRemoveFromCart: () => void;
   canBookmark: boolean;
@@ -104,6 +110,7 @@ export function ProductActions({
   isBookmarked,
   onToggleBookmark,
   isInCart,
+  isPurchased,
   onAddToCart,
   onRemoveFromCart,
   canBookmark
@@ -120,6 +127,7 @@ export function ProductActions({
       />
       <BuyButton
         isInCart={isInCart}
+        isPurchased={isPurchased}
         onClick={onAddToCart}
         onRemoveClick={onRemoveFromCart}
       />

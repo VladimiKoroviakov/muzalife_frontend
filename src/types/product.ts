@@ -29,6 +29,7 @@ export type ProductCardProps = {
   badgeColor?: string;
   isInCart?: boolean;
   isBookmarked?: boolean;
+  isPurchased?: boolean;
   showBookmark?: boolean;
   showDelete?: boolean;
 

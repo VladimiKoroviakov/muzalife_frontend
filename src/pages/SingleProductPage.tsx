@@ -28,6 +28,7 @@ export default function SingleProductPage() {
   const [mainImageIndex, setMainImageIndex] = useState(0);
   const [isAuthenticated, setIsAuthenticated] = useState<boolean>(false);
   const [bookmarkedProducts, setBookmarkedProducts] = useState<number[]>([]);
+  const [purchasedProductIds, setPurchasedProductIds] = useState<number[]>([]);
   const [cartItems, setCartItems] = useState<number[]>([]);
   const [showCart, setShowCart] = useState(false);
   const [showLoginRequiredModal, setShowLoginRequiredModal] = useState(false);
@@ -82,7 +83,12 @@ export default function SingleProductPage() {
         setIsAuthenticated(!!user);
 
         if (user) {
-          await loadSavedProducts();
+          await Promise.all([
+            loadSavedProducts(),
+            apiService.getBoughtProducts().then((bought) =>
+              setPurchasedProductIds(bought.map((p) => p.id))
+            ).catch(() => setPurchasedProductIds([])),
+          ]);
         } else {
           localStorage.removeItem('authToken');
           await loadSavedProducts();
@@ -349,6 +355,7 @@ export default function SingleProductPage() {
   const currentMainImage = galleryImages.length > 0 ? galleryImages[mainImageIndex] : '';
   const isProductBookmarked = product ? bookmarkedProducts.includes(product.id) : false;
   const isProductInCart = product ? cartItems.includes(product.id) : false;
+  const isProductPurchased = product ? purchasedProductIds.includes(product.id) : false;
 
   // Check if product can be bookmarked (not in cart)
   const canBookmark = !isProductInCart;
@@ -415,6 +422,7 @@ export default function SingleProductPage() {
               isBookmarked={isProductBookmarked}
               onToggleBookmark={() => product && toggleBookmark(product.id)}
               isInCart={isProductInCart}
+              isPurchased={isProductPurchased}
               onAddToCart={() => product && addToCart(product.id)}
               onRemoveFromCart={() => product && removeFromCart(product.id)}
               canBookmark={canBookmark}

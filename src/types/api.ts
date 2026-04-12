@@ -37,6 +37,25 @@ export class ApiError extends Error {
 }
 
 /**
+ * Signed LiqPay payload returned by all payment-initiation endpoints.
+ *
+ * Pass data and signature directly to submitLiqPayForm to redirect the user
+ * to the LiqPay hosted checkout page.
+ *
+ * @example
+ * ```ts
+ * const payment = await apiService.initiateCartPayment([1, 2]);
+ * submitLiqPayForm(payment.data, payment.signature);
+ * ```
+ */
+export interface PaymentInitiateResponse {
+  /** Base64-encoded JSON payload for LiqPay. */
+  data: string;
+  /** Base64-encoded HMAC-SHA1 signature. */
+  signature: string;
+}
+
+/**
  * Standard JSON envelope returned by every MuzaLife backend endpoint.
  *
  * @template T - Shape of the `data` payload. Defaults to `unknown` to force
