@@ -195,235 +195,229 @@ export function AdminOrderDetail({ orderId, onSectionChange }: AdminOrderDetailP
       className="basis-0 bg-[#f2f2f2] grow h-full min-h-px min-w-px relative rounded-[16px] shrink-0 overflow-auto"
       data-name="AdminOrderDetail"
     >
-      <div className="box-border flex flex-col gap-[20px] p-[24px] h-full">
-      {/* Header */}
-      <div className="flex items-start gap-[16px] shrink-0">
-        <h1
-          className="text-[28px] text-[#0d0d0d] m-0 flex-1 min-w-0"
-          style={fontBold}
-        >
-          {order.order_title}
-        </h1>
-        <span
-          className="shrink-0 text-[13px] px-[12px] py-[6px] rounded-[8px]"
-          style={{ color: statusColor, backgroundColor: `${statusColor}18`, ...fontBold }}
-        >
-          {statusLabel}
-        </span>
-      </div>
+      <div className="box-border flex flex-col gap-[24px] p-[24px] h-full">
 
-      {/* User info */}
-      {(order.user_name || order.user_email) && (
-        <div className="shrink-0">
-          <p className="text-[13px] text-[#4d4d4d] m-0" style={fontRegular}>
-            Замовник: <strong style={fontBold}>{order.user_name ?? order.user_email}</strong>
-            {order.user_name && order.user_email && (
-              <span className="text-[#4d4d4d]"> ({order.user_email})</span>
+        {/* Header */}
+        <div className="flex items-start gap-[16px] shrink-0">
+          <h1
+            className="text-[28px] text-[#0d0d0d] m-0 flex-1 min-w-0"
+            style={fontBold}
+          >
+            {order.order_title}
+          </h1>
+          <span
+            className="shrink-0 text-[13px] px-[12px] py-[6px] rounded-[8px]"
+            style={{ color: statusColor, backgroundColor: `${statusColor}18`, ...fontBold }}
+          >
+            {statusLabel}
+          </span>
+        </div>
+
+        {/* User info */}
+        {(order.user_name || order.user_email) && (
+          <div className="bg-white rounded-[16px] px-[20px] py-[12px] shrink-0">
+            <p className="text-[13px] text-[#4d4d4d] m-0" style={fontRegular}>
+              Замовник: <strong style={fontBold}>{order.user_name ?? order.user_email}</strong>
+              {order.user_name && order.user_email && (
+                <span className="text-[#4d4d4d]"> ({order.user_email})</span>
+              )}
+            </p>
+          </div>
+        )}
+
+        {/* Status alerts */}
+        {status === 'declined' && order.order_decline_reason && (
+          <div className="rounded-[12px] border border-[#cc0000] bg-[#cc000010] p-[16px] shrink-0">
+            <p className="text-[13px] text-[#cc0000] m-0 mb-[4px]" style={fontBold}>Причина відхилення</p>
+            <p className="text-[16px] text-[#0d0d0d] m-0" style={fontRegular}>{order.order_decline_reason}</p>
+          </div>
+        )}
+
+        {status === 'in_development' && (
+          <div className="rounded-[12px] border border-[#0066cc] bg-[#0066cc10] p-[16px] shrink-0">
+            <p className="text-[14px] text-[#0066cc] m-0" style={fontRegular}>
+              Замовлення в розробці. Завантаження файлів буде доступне у наступній версії.
+            </p>
+          </div>
+        )}
+
+        {status === 'accepted' && (
+          <div className="rounded-[12px] border border-[#ff7b00] bg-[#ff7b0010] p-[16px] shrink-0">
+            <p className="text-[14px] text-[#ff7b00] m-0" style={fontBold}>Очікує підтвердження від клієнта</p>
+            <p className="text-[13px] text-[#4d4d4d] m-0 mt-[4px]" style={fontRegular}>
+              Клієнт має 72 години для підтвердження. Після спливання терміну замовлення буде автоматично відхилено.
+            </p>
+          </div>
+        )}
+
+        {/* Details card — material type, age category, order date */}
+        <div className="bg-white rounded-[16px] p-[20px] grid grid-cols-3 gap-x-[16px] shrink-0">
+          <div>
+            <p className="text-[13px] text-[#4d4d4d] m-0 mb-[6px]" style={fontRegular}>Тип матеріалу</p>
+            <p className="text-[16px] text-[#0d0d0d] m-0" style={fontRegular}>
+              {order.order_material_type || '—'}
+            </p>
+          </div>
+          <div>
+            <p className="text-[13px] text-[#4d4d4d] m-0 mb-[6px]" style={fontRegular}>Вікова група</p>
+            <p className="text-[16px] text-[#0d0d0d] m-0" style={fontRegular}>
+              {order.order_material_age_category || '—'}
+            </p>
+          </div>
+          <div>
+            <p className="text-[13px] text-[#4d4d4d] m-0 mb-[6px]" style={fontRegular}>Дата замовлення</p>
+            <p className="text-[16px] text-[#0d0d0d] m-0" style={fontRegular}>
+              {formatDate(order.order_created_at)}
+            </p>
+          </div>
+        </div>
+
+        {/* Pricing card — price + deadline (editable when in_review) */}
+        <div className="bg-white rounded-[16px] p-[20px] grid grid-cols-2 gap-x-[24px] shrink-0">
+          <div>
+            <label className="block text-[13px] text-[#4d4d4d] mb-[6px]" style={fontRegular}>
+              Ціна {status === 'in_review' && <span className="text-[#cc0000]">*</span>}
+            </label>
+            {status === 'in_review' ? (
+              <input
+                type="number"
+                min="0"
+                step="0.01"
+                placeholder="Вкажіть ціну"
+                value={priceInput}
+                onChange={(e) => setPriceInput(e.target.value)}
+                className={inputClass}
+                style={fontRegular}
+                disabled={isSubmitting}
+              />
+            ) : (
+              <p className="text-[16px] text-[#0d0d0d] m-0" style={fontRegular}>
+                {formatPrice(order.order_price)}
+              </p>
             )}
-          </p>
-        </div>
-      )}
-
-      {/* Decline reason */}
-      {status === 'declined' && order.order_decline_reason && (
-        <div className="rounded-[12px] border border-[#cc0000] bg-[#cc000010] p-[16px] shrink-0">
-          <p className="text-[13px] text-[#cc0000] m-0 mb-[4px]" style={fontBold}>Причина відхилення</p>
-          <p className="text-[16px] text-[#0d0d0d] m-0" style={fontRegular}>{order.order_decline_reason}</p>
-        </div>
-      )}
-
-      {/* In-development info */}
-      {status === 'in_development' && (
-        <div className="rounded-[12px] border border-[#0066cc] bg-[#0066cc10] p-[16px] shrink-0">
-          <p className="text-[14px] text-[#0066cc] m-0" style={fontRegular}>
-            Замовлення в розробці. Завантаження файлів буде доступне у наступній версії.
-          </p>
-        </div>
-      )}
-
-      {/* Fields grid */}
-      <div className="grid grid-cols-2 gap-x-[24px] gap-y-[16px] shrink-0">
-
-        {/* Тип матеріалу — read-only plain text */}
-        <div>
-          <p className="text-[13px] text-[#4d4d4d] m-0 mb-[6px]" style={fontRegular}>Тип матеріалу</p>
-          <p className="text-[16px] text-[#0d0d0d] m-0" style={fontRegular}>
-            {order.order_material_type || '—'}
-          </p>
+          </div>
+          <div>
+            <label className="block text-[13px] text-[#4d4d4d] mb-[6px]" style={fontRegular}>
+              Дедлайн {status === 'in_review' && <span className="text-[#4d4d4d] text-[11px]">(необов&apos;язково — змінити)</span>}
+            </label>
+            {status === 'in_review' ? (
+              <input
+                type="date"
+                value={deadlineOverride}
+                onChange={(e) => setDeadlineOverride(e.target.value)}
+                className={inputClass}
+                style={fontRegular}
+                disabled={isSubmitting}
+              />
+            ) : (
+              <p className="text-[16px] text-[#0d0d0d] m-0" style={fontRegular}>
+                {formatDate(order.order_deadline)}
+              </p>
+            )}
+          </div>
         </div>
 
-        {/* Вікова група — read-only plain text */}
-        <div>
-          <p className="text-[13px] text-[#4d4d4d] m-0 mb-[6px]" style={fontRegular}>Вікова група</p>
-          <p className="text-[16px] text-[#0d0d0d] m-0" style={fontRegular}>
-            {order.order_material_age_category || '—'}
+        {/* Description card */}
+        <div className="bg-white rounded-[16px] p-[20px] flex flex-col flex-1 min-h-[120px]">
+          <p className="text-[13px] text-[#4d4d4d] m-0 mb-[6px]" style={fontRegular}>Опис замовлення</p>
+          <p className="text-[16px] text-[#0d0d0d] m-0 leading-[24px] whitespace-pre-wrap flex-1" style={fontRegular}>
+            {order.order_description}
           </p>
         </div>
 
-        {/* Price — editable when in_review, read-only otherwise */}
-        <div>
-          <label className="block text-[13px] text-[#4d4d4d] mb-[6px]" style={fontRegular}>
-            Ціна {status === 'in_review' && <span className="text-[#cc0000]">*</span>}
-          </label>
-          {status === 'in_review' ? (
-            <input
-              type="number"
-              min="0"
-              step="0.01"
-              placeholder="Вкажіть ціну"
-              value={priceInput}
-              onChange={(e) => setPriceInput(e.target.value)}
-              className={inputClass}
+        {/* Decline form card */}
+        {showDeclineForm && (
+          <div className="bg-white rounded-[16px] p-[20px] flex flex-col gap-[8px] shrink-0">
+            <label className="text-[13px] text-[#4d4d4d]" style={fontRegular}>
+              Причина відхилення <span className="text-[#cc0000]">*</span>
+            </label>
+            <textarea
+              value={declineReason}
+              onChange={(e) => setDeclineReason(e.target.value)}
+              placeholder="Поясніть причину відхилення замовлення..."
+              rows={3}
+              className={cn(
+                'w-full rounded-[12px] border border-[#b3b3b3] bg-[#f2f2f2] px-[16px] py-[12px]',
+                'text-[16px] text-[#0d0d0d] outline-none focus:border-[#cc0000] transition-colors resize-none'
+              )}
               style={fontRegular}
               disabled={isSubmitting}
             />
-          ) : (
-            <p className="text-[16px] text-[#0d0d0d] m-0" style={fontRegular}>
-              {formatPrice(order.order_price)}
-            </p>
+          </div>
+        )}
+
+        {/* Action buttons */}
+        <div className="flex gap-[12px] items-center justify-end shrink-0">
+
+          {/* in_review → accept or decline */}
+          {status === 'in_review' && !showDeclineForm && (
+            <>
+              <button
+                onClick={() => setShowDeclineForm(true)}
+                disabled={isSubmitting}
+                className="h-[44px] px-[24px] rounded-[12px] border-none bg-transparent text-[16px] text-[#cc0000] underline cursor-pointer hover:opacity-70 transition-opacity disabled:opacity-50"
+                style={fontRegular}
+              >
+                Відхилити замовлення
+              </button>
+              <button
+                onClick={handleAccept}
+                disabled={isSubmitting}
+                className="h-[44px] px-[24px] rounded-[12px] bg-[#5e89e8] text-[16px] text-white cursor-pointer hover:opacity-90 transition-opacity disabled:opacity-50"
+                style={fontBold}
+              >
+                {isSubmitting ? 'Обробка...' : 'Прийняти замовлення'}
+              </button>
+            </>
           )}
-        </div>
 
-        {/* Deadline — editable when in_review, read-only otherwise */}
-        <div>
-          <label className="block text-[13px] text-[#4d4d4d] mb-[6px]" style={fontRegular}>
-            Дедлайн {status === 'in_review' && <span className="text-[#4d4d4d] text-[11px]">(необов&apos;язково — змінити)</span>}
-          </label>
-          {status === 'in_review' ? (
-            <input
-              type="date"
-              value={deadlineOverride}
-              onChange={(e) => setDeadlineOverride(e.target.value)}
-              className={inputClass}
-              style={fontRegular}
-              disabled={isSubmitting}
-            />
-          ) : (
-            <p className="text-[16px] text-[#0d0d0d] m-0" style={fontRegular}>
-              {formatDate(order.order_deadline)}
-            </p>
+          {/* in_review decline confirmation */}
+          {status === 'in_review' && showDeclineForm && (
+            <>
+              <button
+                onClick={() => { setShowDeclineForm(false); setDeclineReason(''); }}
+                disabled={isSubmitting}
+                className="h-[44px] px-[24px] rounded-[12px] border border-[#4d4d4d] bg-white text-[16px] text-[#4d4d4d] cursor-pointer hover:bg-[#e6e6e6] transition-colors disabled:opacity-50"
+                style={fontRegular}
+              >
+                Скасувати
+              </button>
+              <button
+                onClick={handleDecline}
+                disabled={isSubmitting}
+                className="h-[44px] px-[24px] rounded-[12px] bg-[#cc0000] text-[16px] text-white cursor-pointer hover:opacity-90 transition-opacity disabled:opacity-50"
+                style={fontBold}
+              >
+                {isSubmitting ? 'Обробка...' : 'Підтвердити відхилення'}
+              </button>
+            </>
           )}
-        </div>
 
-        {/* Дата замовлення — read-only plain text */}
-        <div>
-          <p className="text-[13px] text-[#4d4d4d] m-0 mb-[6px]" style={fontRegular}>Дата замовлення</p>
-          <p className="text-[16px] text-[#0d0d0d] m-0" style={fontRegular}>
-            {formatDate(order.order_created_at)}
-          </p>
-        </div>
-      </div>
-
-      {/* Description — read-only plain text */}
-      <div className="flex-1 flex flex-col min-h-[120px]">
-        <p className="text-[13px] text-[#4d4d4d] m-0 mb-[6px]" style={fontRegular}>Опис замовлення</p>
-        <p className="text-[16px] text-[#0d0d0d] m-0 leading-[24px] whitespace-pre-wrap flex-1" style={fontRegular}>
-          {order.order_description}
-        </p>
-      </div>
-
-      {/* Decline form */}
-      {showDeclineForm && (
-        <div className="shrink-0 flex flex-col gap-[8px]">
-          <label className="text-[13px] text-[#4d4d4d]" style={fontRegular}>
-            Причина відхилення <span className="text-[#cc0000]">*</span>
-          </label>
-          <textarea
-            value={declineReason}
-            onChange={(e) => setDeclineReason(e.target.value)}
-            placeholder="Поясніть причину відхилення замовлення..."
-            rows={3}
-            className={cn(
-              'w-full rounded-[12px] border border-[#b3b3b3] bg-white px-[16px] py-[12px]',
-              'text-[16px] text-[#0d0d0d] outline-none focus:border-[#cc0000] transition-colors resize-none'
-            )}
-            style={fontRegular}
-            disabled={isSubmitting}
-          />
-        </div>
-      )}
-
-      {/* Accepted: waiting info */}
-      {status === 'accepted' && (
-        <div className="rounded-[12px] border border-[#ff7b00] bg-[#ff7b0010] p-[16px] shrink-0">
-          <p className="text-[14px] text-[#ff7b00] m-0" style={fontBold}>Очікує підтвердження від клієнта</p>
-          <p className="text-[13px] text-[#4d4d4d] m-0 mt-[4px]" style={fontRegular}>
-            Клієнт має 72 години для підтвердження. Після спливання терміну замовлення буде автоматично відхилено.
-          </p>
-        </div>
-      )}
-
-      {/* Action buttons */}
-      <div className="flex gap-[12px] items-center justify-end shrink-0">
-
-        {/* in_review → accept or decline */}
-        {status === 'in_review' && !showDeclineForm && (
-          <>
+          {/* paid → in_development */}
+          {status === 'paid' && (
             <button
-              onClick={() => setShowDeclineForm(true)}
-              disabled={isSubmitting}
-              className="h-[44px] px-[24px] rounded-[12px] border-none bg-transparent text-[16px] text-[#cc0000] underline cursor-pointer hover:opacity-70 transition-opacity disabled:opacity-50"
-              style={fontRegular}
-            >
-              Відхилити замовлення
-            </button>
-            <button
-              onClick={handleAccept}
+              onClick={handleStartWork}
               disabled={isSubmitting}
               className="h-[44px] px-[24px] rounded-[12px] bg-[#5e89e8] text-[16px] text-white cursor-pointer hover:opacity-90 transition-opacity disabled:opacity-50"
               style={fontBold}
             >
-              {isSubmitting ? 'Обробка...' : 'Прийняти замовлення'}
+              {isSubmitting ? 'Обробка...' : 'Розпочати роботу'}
             </button>
-          </>
-        )}
+          )}
 
-        {/* in_review decline confirmation */}
-        {status === 'in_review' && showDeclineForm && (
-          <>
+          {/* in_development → done (v1 workaround — no file upload yet) */}
+          {status === 'in_development' && (
             <button
-              onClick={() => { setShowDeclineForm(false); setDeclineReason(''); }}
+              onClick={handleFinish}
               disabled={isSubmitting}
-              className="h-[44px] px-[24px] rounded-[12px] border border-[#4d4d4d] bg-white text-[16px] text-[#4d4d4d] cursor-pointer hover:bg-[#e6e6e6] transition-colors disabled:opacity-50"
-              style={fontRegular}
-            >
-              Скасувати
-            </button>
-            <button
-              onClick={handleDecline}
-              disabled={isSubmitting}
-              className="h-[44px] px-[24px] rounded-[12px] bg-[#cc0000] text-[16px] text-white cursor-pointer hover:opacity-90 transition-opacity disabled:opacity-50"
+              className="h-[44px] px-[24px] rounded-[12px] bg-[#5e89e8] text-[16px] text-white cursor-pointer hover:opacity-90 transition-opacity disabled:opacity-50"
               style={fontBold}
             >
-              {isSubmitting ? 'Обробка...' : 'Підтвердити відхилення'}
+              {isSubmitting ? 'Обробка...' : 'Завершити замовлення'}
             </button>
-          </>
-        )}
+          )}
+        </div>
 
-        {/* paid → in_development */}
-        {status === 'paid' && (
-          <button
-            onClick={handleStartWork}
-            disabled={isSubmitting}
-            className="h-[44px] px-[24px] rounded-[12px] bg-[#5e89e8] text-[16px] text-white cursor-pointer hover:opacity-90 transition-opacity disabled:opacity-50"
-            style={fontBold}
-          >
-            {isSubmitting ? 'Обробка...' : 'Розпочати роботу'}
-          </button>
-        )}
-
-        {/* in_development → done (v1 workaround — no file upload yet) */}
-        {status === 'in_development' && (
-          <button
-            onClick={handleFinish}
-            disabled={isSubmitting}
-            className="h-[44px] px-[24px] rounded-[12px] bg-[#5e89e8] text-[16px] text-white cursor-pointer hover:opacity-90 transition-opacity disabled:opacity-50"
-            style={fontBold}
-          >
-            {isSubmitting ? 'Обробка...' : 'Завершити замовлення'}
-          </button>
-        )}
-      </div>
       </div>
     </div>
   );
