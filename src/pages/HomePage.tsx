@@ -270,6 +270,9 @@ export default function HomePage() {
   };
 
   const filteredProducts = allProducts.filter((product) => {
+    // Hide products the authenticated user has already purchased
+    if (isAuthenticated && purchasedProductIds.includes(product.id)) { return false; }
+
     if (searchQuery && !product.title.toLowerCase().includes(searchQuery.toLowerCase())) {
       return false;
     }

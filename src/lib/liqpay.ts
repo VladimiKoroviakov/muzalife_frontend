@@ -28,6 +28,37 @@
 /** localStorage key used to persist the LiqPay order_id across the payment redirect. */
 const PENDING_ORDER_KEY = 'liqpay_pending_order_id';
 
+/** localStorage key used to persist the guest JWT across the LiqPay payment redirect. */
+const GUEST_TOKEN_KEY = 'liqpay_guest_token';
+
+/**
+ * Stores the short-lived guest JWT so the payment result page can use it for
+ * the `/payments/verify` fallback call after LiqPay redirects back.
+ *
+ * @param token - The guest JWT returned by `POST /auth/guest/verify/confirm`.
+ */
+export function storeGuestPaymentToken(token: string): void {
+  localStorage.setItem(GUEST_TOKEN_KEY, token);
+}
+
+/**
+ * Reads the guest JWT stored by {@link storeGuestPaymentToken}.
+ * Returns `null` if no guest token is present (authenticated user flow).
+ *
+ * @returns The guest JWT string, or `null`.
+ */
+export function getGuestPaymentToken(): string | null {
+  return localStorage.getItem(GUEST_TOKEN_KEY);
+}
+
+/**
+ * Removes the guest JWT from localStorage after the payment result has been
+ * claimed.  Should be called alongside {@link clearPendingOrderId}.
+ */
+export function clearGuestPaymentToken(): void {
+  localStorage.removeItem(GUEST_TOKEN_KEY);
+}
+
 /**
  * Reads the order_id stored by the last {@link submitLiqPayForm} call.
  * Returns `null` if nothing is stored (user navigated directly or already claimed).

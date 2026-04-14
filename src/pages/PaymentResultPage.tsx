@@ -15,7 +15,13 @@ import { useEffect, useState } from 'react';
 import { Link, useSearchParams } from 'react-router-dom';
 import { CacheManager } from '@/utils/cache-manager';
 import { apiService } from '@/services/api';
-import { getPendingOrderId, clearPendingOrderId, removeOrderFromCart } from '@/lib/liqpay';
+import {
+  getPendingOrderId,
+  clearPendingOrderId,
+  removeOrderFromCart,
+  getGuestPaymentToken,
+  clearGuestPaymentToken,
+} from '@/lib/liqpay';
 import config from '@/config';
 
 const fontBold = { fontVariationSettings: "'CTGR' 0, 'wdth' 100, 'wght' 700" };
@@ -40,25 +46,38 @@ export default function PaymentResultPage() {
 
   const [isVerifying, setIsVerifying] = useState(true);
   const [verified, setVerified] = useState(false);
+  const [isGuestOrder, setIsGuestOrder] = useState(false);
 
   useEffect(() => {
     const claim = async () => {
       const orderId = getPendingOrderId();
+      const guestToken = getGuestPaymentToken();
+      const orderIsGuest = !!orderId && orderId.includes('_guest_');
+      setIsGuestOrder(orderIsGuest);
+
       if (orderId) {
         try {
-          await apiService.verifyPayment(orderId);
+          if (orderIsGuest && guestToken) {
+            await apiService.verifyGuestPayment(orderId, guestToken);
+          } else if (!orderIsGuest) {
+            await apiService.verifyPayment(orderId);
+          }
+          setVerified(true);
         } catch {
           // Webhook may have already recorded it — treat as verified.
+          setVerified(true);
         }
         removeOrderFromCart(orderId);
         clearPendingOrderId();
-        setVerified(true);
+        if (guestToken) { clearGuestPaymentToken(); }
       } else {
         // No pending order in storage (e.g. page refreshed) — skip claim.
         setVerified(true);
       }
-      // Always invalidate the cache so the cabinet fetches fresh data.
-      CacheManager.removeItem(config.cacheKeys.BOUGHT_PRODUCTS);
+      // Invalidate cache so the cabinet fetches fresh data for authenticated users.
+      if (!orderIsGuest) {
+        CacheManager.removeItem(config.cacheKeys.BOUGHT_PRODUCTS);
+      }
       setIsVerifying(false);
     };
 
@@ -130,7 +149,9 @@ export default function PaymentResultPage() {
         <p className="text-[15px] text-[#4d4d4d] text-center m-0 leading-[22px]" style={fontRegular}>
           {isFailure
             ? 'Щось пішло не так або ви скасували оплату. Спробуйте ще раз або зверніться до підтримки.'
-            : <>Придбані матеріали з&apos;являться у розділі <strong style={fontBold}>«Мої покупки»</strong> вашого кабінету. Якщо матеріали ще не відображаються, зачекайте кілька секунд і оновіть сторінку.</>
+            : isGuestOrder
+              ? 'Придбані матеріали будуть надіслані на вашу електронну пошту найближчим часом.'
+              : <>Придбані матеріали з&apos;являться у розділі <strong style={fontBold}>«Мої покупки»</strong> вашого кабінету. Якщо матеріали ще не відображаються, зачекайте кілька секунд і оновіть сторінку.</>
           }
         </p>
 
@@ -138,18 +159,20 @@ export default function PaymentResultPage() {
         <div className="flex gap-[12px] w-full mt-[8px]">
           <Link
             to="/"
-            className="flex-1 h-[44px] flex items-center justify-center rounded-[12px] border border-[#b3b3b3] bg-white text-[15px] text-[#4d4d4d] hover:bg-[#f2f2f2] transition-colors"
+            className={`${isGuestOrder || isFailure ? 'flex-1' : ''} h-[44px] flex items-center justify-center rounded-[12px] border border-[#b3b3b3] bg-white text-[15px] text-[#4d4d4d] hover:bg-[#f2f2f2] transition-colors px-[24px]`}
             style={fontRegular}
           >
             На головну
           </Link>
-          <Link
-            to="/cabinet"
-            className="flex-1 h-[44px] flex items-center justify-center rounded-[12px] bg-[#5e89e8] text-[15px] text-white hover:opacity-90 transition-opacity"
-            style={fontBold}
-          >
-            До кабінету
-          </Link>
+          {!isGuestOrder && !isFailure && (
+            <Link
+              to="/cabinet"
+              className="flex-1 h-[44px] flex items-center justify-center rounded-[12px] bg-[#5e89e8] text-[15px] text-white hover:opacity-90 transition-opacity"
+              style={fontBold}
+            >
+              До кабінету
+            </Link>
+          )}
         </div>
 
       </div>

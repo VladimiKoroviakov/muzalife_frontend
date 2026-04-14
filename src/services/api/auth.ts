@@ -62,5 +62,53 @@ export function createAuthMethods(client: ApiClient) {
     async logout(): Promise<void> {
       client.clearUserData();
     },
+
+    /**
+     * Sends a 6-digit OTP to the given email for guest checkout.
+     * No account is created.
+     *
+     * @param email - The guest's email address.
+     * @returns Resolves on success.
+     * @example
+     * ```ts
+     * await apiService.initiateGuestVerification('guest@example.com');
+     * ```
+     */
+    async initiateGuestVerification(email: string): Promise<void> {
+      await client.post<ApiResponse>(config.endpoints.auth.guest.verifyInitiate, { email });
+    },
+
+    /**
+     * Verifies the OTP and returns a short-lived guest JWT (valid 30 min).
+     *
+     * @param email - The guest's email address.
+     * @param code  - The 6-digit verification code.
+     * @returns `{ token }` — guest JWT to pass to `initiateCartPayment`.
+     * @throws {ApiError} 400 - Invalid or expired code.
+     * @example
+     * ```ts
+     * const { token } = await apiService.confirmGuestEmail('guest@example.com', '483920');
+     * ```
+     */
+    async confirmGuestEmail(email: string, code: string): Promise<{ token: string }> {
+      return client.post<{ success: true; token: string }>(
+        config.endpoints.auth.guest.verifyConfirm,
+        { email, code },
+      );
+    },
+
+    /**
+     * Re-sends a fresh OTP for guest checkout.  Previous code is invalidated.
+     *
+     * @param email - The guest's email address.
+     * @returns Resolves on success.
+     * @example
+     * ```ts
+     * await apiService.resendGuestVerification('guest@example.com');
+     * ```
+     */
+    async resendGuestVerification(email: string): Promise<void> {
+      await client.post<ApiResponse>(config.endpoints.auth.guest.verifyResend, { email });
+    },
   };
 }

@@ -49,6 +49,11 @@ const config = {
         verify: '/auth/register/verify',
         resendCode: '/auth/register/resend-code',
       },
+      guest: {
+        verifyInitiate: '/auth/guest/verify/initiate',
+        verifyConfirm: '/auth/guest/verify/confirm',
+        verifyResend: '/auth/guest/verify/resend',
+      },
       google: '/auth/google',
       facebook: '/auth/facebook',
     },

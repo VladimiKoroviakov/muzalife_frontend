@@ -116,12 +116,67 @@ export function createPaymentsMethods(client: ApiClient) {
       await client.post<ApiResponse<void>>(config.endpoints.payments.verify, { orderId });
     },
 
-    async initiateCartPayment(productIds: number[]): Promise<PaymentInitiateResponse> {
-      const response = await client.post<PaymentInitiateEnvelope>(
-        config.endpoints.payments.initiateCart,
-        { productIds },
-      );
+    /**
+     * Initiates a single LiqPay payment for all products currently in the cart.
+     *
+     * Pass `guestToken` when the buyer is an unregistered guest who has verified
+     * their email.  Omit it (or pass `undefined`) for authenticated users.
+     *
+     * @param productIds - Array of product IDs in the cart.
+     * @param guestToken - Optional short-lived guest JWT from `confirmGuestEmail`.
+     * @returns Signed LiqPay payload to submit to the checkout form.
+     * @throws {ApiError} 400 - `productIds` is empty or invalid.
+     * @throws {ApiError} 404 - One or more products not found or hidden.
+     * @throws {ApiError} 409 - One or more products already purchased (authenticated only).
+     * @example
+     * ```ts
+     * // Authenticated user
+     * const payment = await apiService.initiateCartPayment([1, 2, 3]);
+     *
+     * // Guest shopper
+     * const payment = await apiService.initiateCartPayment([1, 2, 3], guestToken);
+     *
+     * submitLiqPayForm(payment.data, payment.signature);
+     * ```
+     */
+    async initiateCartPayment(productIds: number[], guestToken?: string): Promise<PaymentInitiateResponse> {
+      const response = guestToken
+        ? await client.postWithCustomAuth<PaymentInitiateEnvelope>(
+            config.endpoints.payments.initiateCart,
+            { productIds },
+            guestToken,
+          )
+        : await client.post<PaymentInitiateEnvelope>(
+            config.endpoints.payments.initiateCart,
+            { productIds },
+          );
       return response.data;
+    },
+
+    /**
+     * Fallback payment verification for guest shoppers on localhost development.
+     *
+     * Called by `PaymentResultPage` when a guest order's `order_id` is present in
+     * localStorage.  Passes the guest JWT so the backend can verify ownership.
+     *
+     * @param orderId    - The LiqPay order_id stored before the redirect.
+     * @param guestToken - The guest JWT stored before the redirect.
+     * @returns Resolves on success; throws `ApiError` on auth or validation failure.
+     * @example
+     * ```ts
+     * const orderId = getPendingOrderId();
+     * const token   = getGuestPaymentToken();
+     * if (orderId && token) {
+     *   await apiService.verifyGuestPayment(orderId, token);
+     * }
+     * ```
+     */
+    async verifyGuestPayment(orderId: string, guestToken: string): Promise<void> {
+      await client.postWithCustomAuth<ApiResponse<void>>(
+        config.endpoints.payments.verify,
+        { orderId },
+        guestToken,
+      );
     },
   };
 }

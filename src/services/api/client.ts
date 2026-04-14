@@ -83,6 +83,20 @@ export class ApiClient {
     return this.request<T>(endpoint, 'POST', body);
   }
 
+  /**
+   * Like `post`, but overrides the Authorization header with a caller-supplied
+   * token.  Used by the guest checkout flow to pass a short-lived guest JWT
+   * instead of the stored user token.
+   *
+   * @param endpoint  - API endpoint path.
+   * @param body      - Request payload.
+   * @param authToken - Token to use as `Authorization: Bearer <token>`.
+   * @returns Typed response.
+   */
+  async postWithCustomAuth<T>(endpoint: string, body: object, authToken: string): Promise<T> {
+    return this.request<T>(endpoint, 'POST', body, { 'Authorization': `Bearer ${authToken}` });
+  }
+
   async put<T>(endpoint: string, body: object): Promise<T> {
     return this.request<T>(endpoint, 'PUT', body);
   }

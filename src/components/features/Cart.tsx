@@ -6,24 +6,25 @@ import { IconBag } from '../ui/icons/IconBag';
 import CloseButton from '../ui/icons/CloseIcon';
 import { useAuthContext } from '@/context/AuthContext';
 import { apiService } from '@/services/api';
-import { submitLiqPayForm } from '@/lib/liqpay';
+import { submitLiqPayForm, storeGuestPaymentToken } from '@/lib/liqpay';
+import { GuestCheckoutModal } from './GuestCheckoutModal';
 
 // Cart Component
 export function Cart({ cartItems, products, onClose, onRemoveItem }: { cartItems: number[]; products: Product[]; onClose: () => void; onRemoveItem: (id: number) => void }) {
   const { isAuthenticated } = useAuthContext();
   const [isLoading, setIsLoading] = useState(false);
+  const [showGuestModal, setShowGuestModal] = useState(false);
 
   const cartProducts = products.filter((p) => cartItems.includes(p.id));
   const totalPrice = cartProducts.reduce((sum, product) => sum + product.price, 0);
 
-  const handleCheckout = async () => {
-    if (!isAuthenticated) {
-      toast.error('Увійдіть в акаунт, щоб продовжити');
-      return;
-    }
+  const initiatePayment = async (guestToken?: string) => {
     setIsLoading(true);
     try {
-      const payment = await apiService.initiateCartPayment(cartItems);
+      const payment = await apiService.initiateCartPayment(cartItems, guestToken);
+      if (guestToken) {
+        storeGuestPaymentToken(guestToken);
+      }
       submitLiqPayForm(payment.data, payment.signature);
     } catch (err) {
       if (err instanceof ApiError && err.status === 409) {
@@ -35,8 +36,26 @@ export function Cart({ cartItems, products, onClose, onRemoveItem }: { cartItems
     }
   };
 
+  const handleCheckout = async () => {
+    if (!isAuthenticated) {
+      setShowGuestModal(true);
+      return;
+    }
+    await initiatePayment();
+  };
+
+  const handleGuestVerified = async (guestToken: string) => {
+    await initiatePayment(guestToken);
+  };
+
   return (
     <>
+      <GuestCheckoutModal
+        open={showGuestModal}
+        onClose={() => setShowGuestModal(false)}
+        onVerified={handleGuestVerified}
+      />
+
       {/* Blur overlay */}
       <div className="absolute inset-0 backdrop-blur-[10px] backdrop-filter bg-[rgba(0,0,0,0.4)] z-40" onClick={onClose} data-name="Blur layer" />
 
