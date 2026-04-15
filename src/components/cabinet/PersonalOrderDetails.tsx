@@ -198,7 +198,7 @@ export function PersonalOrderDetails({ orderId, onBack, onOrderUpdated }: Person
     if (!window.confirm('Відхилити це замовлення?')) { return; }
     setIsSubmitting(true);
     try {
-      await apiService.updatePersonalOrder(orderId, { orderStatus: 'declined' });
+      await apiService.updatePersonalOrder(orderId, { orderStatus: 'declined', orderDeclineReason: 'Відхилено клієнтом' });
       clearOrdersCache();
       toast.success('Замовлення відхилено');
       onOrderUpdated();

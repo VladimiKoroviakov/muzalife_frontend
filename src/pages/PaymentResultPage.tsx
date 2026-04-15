@@ -91,8 +91,8 @@ export default function PaymentResultPage() {
 
   if (isVerifying) {
     return (
-      <div className="min-h-screen bg-[#f2f2f2] flex items-center justify-center px-[24px]">
-        <div className="bg-white rounded-[24px] p-[48px] flex flex-col items-center gap-[16px] max-w-[480px] w-full shadow-sm">
+      <div className="min-h-screen bg-[#f2f2f2] flex items-center justify-center px-[24px] h-full">
+        <div className="bg-white rounded-[24px] p-[48px] flex flex-col items-center gap-[16px] max-w-[768px] w-full shadow-sm">
           <p className="text-[18px] text-[#4d4d4d] m-0" style={fontRegular}>Обробка оплати...</p>
         </div>
       </div>
@@ -100,8 +100,8 @@ export default function PaymentResultPage() {
   }
 
   return (
-    <div className="min-h-screen bg-[#f2f2f2] flex items-center justify-center px-[24px]">
-      <div className="bg-white rounded-[24px] p-[48px] flex flex-col items-center gap-[24px] max-w-[480px] w-full shadow-sm">
+    <div className="min-h-screen bg-[#f2f2f2] flex items-center justify-center px-[24px] h-full">
+      <div className="bg-white rounded-[24px] p-[48px] flex flex-col items-center gap-[24px] max-w-[768px] w-full shadow-sm">
 
         {/* Status icon */}
         {isFailure ? (
@@ -135,9 +135,6 @@ export default function PaymentResultPage() {
           <h1 className="text-[28px] text-[#0d0d0d] m-0" style={fontBold}>
             {isFailure ? 'Оплату не завершено' : 'Дякуємо за покупку!'}
           </h1>
-          <p className="text-[15px] text-[#4d4d4d] m-0" style={fontRegular}>
-            {isFailure ? 'Payment was not completed.' : 'Thank you for your purchase!'}
-          </p>
           {!isFailure && !verified && (
             <p className="text-[13px] text-[#ff9900] m-0" style={fontRegular}>
               Не вдалося підтвердити оплату автоматично
@@ -156,7 +153,7 @@ export default function PaymentResultPage() {
         </p>
 
         {/* Navigation buttons */}
-        <div className="flex gap-[12px] w-full mt-[8px]">
+        <div className="flex gap-[12px] w-full mt-[8px] justify-center">
           <Link
             to="/"
             className={`${isGuestOrder || isFailure ? 'flex-1' : ''} h-[44px] flex items-center justify-center rounded-[12px] border border-[#b3b3b3] bg-white text-[15px] text-[#4d4d4d] hover:bg-[#f2f2f2] transition-colors px-[24px]`}
@@ -167,7 +164,7 @@ export default function PaymentResultPage() {
           {!isGuestOrder && !isFailure && (
             <Link
               to="/cabinet"
-              className="flex-1 h-[44px] flex items-center justify-center rounded-[12px] bg-[#5e89e8] text-[15px] text-white hover:opacity-90 transition-opacity"
+              className="px-[24px] h-[44px] flex items-center justify-center rounded-[12px] bg-[#5e89e8] text-[15px] text-white hover:opacity-90 transition-opacity"
               style={fontBold}
             >
               До кабінету
