@@ -136,6 +136,27 @@ export function createProductsMethods(client: ApiClient) {
       CacheManager.removeItem(config.cacheKeys.BOUGHT_PRODUCTS);
     },
 
+    /**
+     * Sends (or resends) the download links for a purchased product to the
+     * authenticated user's registered email address.
+     *
+     * @param productId - ID of the product whose materials should be emailed.
+     * @example
+     * ```ts
+     * await apiService.resendProductMaterials(42);
+     * ```
+     */
+    async resendProductMaterials(productId: number): Promise<void> {
+      const response = await client.post<ApiResponse<void>>(
+        config.endpoints.boughtProducts.sendMaterials(productId),
+        {}
+      );
+
+      if (!response.success) {
+        throw new Error(response.error || 'Failed to resend materials');
+      }
+    },
+
     // ── Product metadata ────────────────────────────────────────────────────
 
     /**

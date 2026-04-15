@@ -338,6 +338,89 @@ export function createAdminMethods(client: ApiClient) {
       }
     },
 
+    /**
+     * Retrieves the files attached to a personal order (admin only).
+     *
+     * @param orderId - Order ID.
+     * @returns Array of file metadata objects.
+     */
+    async adminGetPersonalOrderFiles(orderId: number): Promise<ProductFile[]> {
+      const response = await client.get<{ success: boolean; files: ProductFile[]; error?: string }>(
+        config.endpoints.personalOrders.files(orderId),
+      );
+
+      if (!response.success) {
+        throw new ApiError(response.error ?? 'Failed to fetch order files', 500);
+      }
+
+      return response.files;
+    },
+
+    /**
+     * Uploads files to a personal order via `multipart/form-data` (admin only).
+     *
+     * @param orderId - Order ID.
+     * @param files   - Files to upload.
+     * @returns Array of newly created file metadata objects.
+     */
+    async adminUploadPersonalOrderFiles(orderId: number, files: File[]): Promise<ProductFile[]> {
+      const formData = new FormData();
+      for (const file of files) {
+        formData.append('files', file);
+      }
+
+      const response = await fetch(`${config.apiUrl}${config.endpoints.personalOrders.files(orderId)}`, {
+        method: 'POST',
+        headers: { Authorization: `Bearer ${client.token}` },
+        body: formData,
+      });
+
+      const json = await response.json() as { success: boolean; files?: ProductFile[]; error?: string };
+
+      if (!response.ok || !json.success) {
+        throw new ApiError(json.error ?? 'Failed to upload files', response.status);
+      }
+
+      return json.files ?? [];
+    },
+
+    /**
+     * Removes a file from a personal order and deletes it from disk (admin only).
+     *
+     * @param orderId - Order ID.
+     * @param fileId  - File ID to delete.
+     */
+    async adminDeletePersonalOrderFile(orderId: number, fileId: number): Promise<void> {
+      const response = await client.delete<{ success: boolean; error?: string }>(
+        config.endpoints.personalOrders.file(orderId, fileId),
+      );
+
+      if (!response.success) {
+        throw new ApiError(response.error ?? 'Failed to delete file', 500);
+      }
+    },
+
+    /**
+     * Sends (or resends) the completed order files to the customer's email
+     * address (admin only).
+     *
+     * @param orderId - ID of the personal order whose materials should be emailed.
+     * @example
+     * ```ts
+     * await apiService.adminSendPersonalOrderMaterials(7);
+     * ```
+     */
+    async adminSendPersonalOrderMaterials(orderId: number): Promise<void> {
+      const response = await client.post<{ success: boolean; error?: string }>(
+        config.endpoints.personalOrders.sendMaterials(orderId),
+        {}
+      );
+
+      if (!response.success) {
+        throw new ApiError(response.error ?? 'Failed to send order materials', 500);
+      }
+    },
+
     // ── Analytics ────────────────────────────────────────────────────────────
 
     /**

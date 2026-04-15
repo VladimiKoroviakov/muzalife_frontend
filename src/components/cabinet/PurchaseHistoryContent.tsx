@@ -161,16 +161,16 @@ export function PurchaseHistoryContent({
 	const emptyRowsCount = getEmptyRowsCount();
 
 	const handleResendMaterial = async (materialName: string, purchaseDate: string) => {
-		try {
 		const order = orders.find((o) => o.name === materialName && o.date === purchaseDate);
-		if (order) {
-			toast.success(`Матеріал "${materialName}" буде відправлено на вашу email адресу`);
-		} else {
+		if (!order) {
 			toast.error('Не вдалося знайти замовлення');
+			return;
 		}
-		} catch (error) {
-		console.error('Error resending material:', error);
-		toast.error('Помилка при відправці матеріалу');
+		try {
+			await apiService.resendProductMaterials(order.id);
+			toast.success(`Матеріал "${materialName}" надіслано на вашу email адресу`);
+		} catch {
+			toast.error('Помилка при відправці матеріалу');
 		}
 	};
 

@@ -83,11 +83,15 @@ const config = {
     boughtProducts: {
       base: '/bought-products',
       ids: '/bought-products/ids',
+      sendMaterials: (productId: number) => `/bought-products/${productId}/send-materials`,
     },
     personalOrders: {
       base: '/personal-orders',
       all: '/personal-orders/all',
       byId: (id: number) => `/personal-orders/${id}`,
+      files: (id: number) => `/personal-orders/${id}/files`,
+      file: (orderId: number, fileId: number) => `/personal-orders/${orderId}/files/${fileId}`,
+      sendMaterials: (orderId: number) => `/personal-orders/${orderId}/send-materials`,
     },
     reviews: '/reviews',
     faqs: '/faqs',
