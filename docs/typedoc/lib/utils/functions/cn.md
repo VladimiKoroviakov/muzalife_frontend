@@ -8,7 +8,7 @@
 
 > **cn**(...`inputs`): `string`
 
-Defined in: [lib/utils.ts:4](https://github.com/VladimiKoroviakov/muzalife_frontend/blob/abf5a6a66866b1954b4df05b4e48ddbaf35444d2/src/lib/utils.ts#L4)
+Defined in: [lib/utils.ts:4](https://github.com/VladimiKoroviakov/muzalife_frontend/blob/9132c6f38e60cc59590a5f3ade3be7eda2209c95/src/lib/utils.ts#L4)
 
 ## Parameters
 

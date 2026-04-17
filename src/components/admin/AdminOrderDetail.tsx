@@ -90,6 +90,11 @@ const inputClass = cn(
   'text-[16px] text-[#0d0d0d] outline-none focus:border-[#5e89e8] transition-colors'
 );
 
+const fieldClass = cn(
+  'bg-[#f2f2f2] h-[52px] relative rounded-[12px] flex items-center px-[16px]',
+  'text-[16px] text-[#0d0d0d] w-full'
+);
+
 function formatDate(iso: string | null | undefined): string {
   if (!iso) { return '—'; }
   const d = new Date(iso);
@@ -328,7 +333,7 @@ export function AdminOrderDetail({ orderId, onSectionChange }: AdminOrderDetailP
       className="basis-0 bg-[#f2f2f2] grow h-full min-h-px min-w-px relative rounded-[16px] shrink-0 overflow-auto"
       data-name="AdminOrderDetail"
     >
-      <div className="box-border flex flex-col gap-[24px] p-[24px] h-full">
+      <div className="box-border flex flex-col gap-[24px] px-[24px] pt-[24px] pb-[20px] min-h-full">
 
         {/* Header */}
         <div className="flex items-start gap-[16px] shrink-0">
@@ -383,178 +388,146 @@ export function AdminOrderDetail({ orderId, onSectionChange }: AdminOrderDetailP
           </div>
         )}
 
-         {/* Upload drop-zone — only when in_development */}
-            {status === 'in_development' && (
-              <>
-                <div
-                  className="relative rounded-[12px] shrink-0 w-full"
-                  onDragOver={handleFileDragOver}
-                  onDragLeave={handleFileDragLeave}
-                  onDrop={handleFileDrop}
+        {/* Upload drop-zone — only when in_development */}
+        {status === 'in_development' && (
+          <>
+            <div
+              className="relative rounded-[12px] shrink-0 w-full"
+              onDragOver={handleFileDragOver}
+              onDragLeave={handleFileDragLeave}
+              onDrop={handleFileDrop}
+            >
+              <DashedBorder active={isFileDragOver} />
+              <div className="flex flex-col items-center justify-center w-full px-[48px] py-[40px] gap-[16px]">
+                {pendingFiles.length === 0 && orderFiles.length === 0 && (
+                  <div className="relative shrink-0 w-[80px] h-[80px]">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="94" height="75" viewBox="0 0 94 75" fill="none">
+                      <path d="M9.33333 74.6667C6.76667 74.6667 4.56944 73.7528 2.74167 71.925C0.913889 70.0972 0 67.9 0 65.3333V9.33333C0 6.76667 0.913889 4.56944 2.74167 2.74167C4.56944 0.913889 6.76667 0 9.33333 0H37.3333L46.6667 9.33333H84C86.5667 9.33333 88.7639 10.2472 90.5917 12.075C92.4195 13.9028 93.3333 16.1 93.3333 18.6667V65.3333C93.3333 67.9 92.4195 70.0972 90.5917 71.925C88.7639 73.7528 86.5667 74.6667 84 74.6667H9.33333ZM42 60.6667H51.3333V41.0667L58.8 48.5333L65.3333 42L46.6667 23.3333L28 42L34.5333 48.5333L42 41.0667V60.6667Z" fill="#1C1B1F" />
+                    </svg>
+                  </div>
+                )}
+
+                <p className="text-[20px] text-[#0d0d0d] text-center m-0 leading-[28px]" style={fontBold}>
+                  Перетягніть готові файли сюди
+                </p>
+
+                <p className="text-[16px] text-[#4d4d4d] text-center m-0 leading-[24px]" style={fontRegular}>
+                  або
+                </p>
+
+                <button
+                  onClick={() => fileInputRef.current?.click()}
+                  disabled={isUploadingFiles}
+                  className="bg-white box-border flex items-center justify-center gap-[8px] h-[44px] px-[24px] py-[12px] rounded-[12px] border border-solid border-[#0d0d0d] cursor-pointer text-[16px] text-[#0d0d0d] hover:bg-gray-50 transition-colors disabled:opacity-50"
+                  style={fontRegular}
                 >
-                  <DashedBorder active={isFileDragOver} />
-                  <div className="flex flex-col items-center justify-center w-full px-[48px] py-[40px] gap-[16px]">
-                    {pendingFiles.length === 0 && orderFiles.length === 0 && (
-                      <div className="relative shrink-0 w-[80px] h-[80px]">
-                        <svg xmlns="http://www.w3.org/2000/svg" width="94" height="75" viewBox="0 0 94 75" fill="none">
-                          <path d="M9.33333 74.6667C6.76667 74.6667 4.56944 73.7528 2.74167 71.925C0.913889 70.0972 0 67.9 0 65.3333V9.33333C0 6.76667 0.913889 4.56944 2.74167 2.74167C4.56944 0.913889 6.76667 0 9.33333 0H37.3333L46.6667 9.33333H84C86.5667 9.33333 88.7639 10.2472 90.5917 12.075C92.4195 13.9028 93.3333 16.1 93.3333 18.6667V65.3333C93.3333 67.9 92.4195 70.0972 90.5917 71.925C88.7639 73.7528 86.5667 74.6667 84 74.6667H9.33333ZM42 60.6667H51.3333V41.0667L58.8 48.5333L65.3333 42L46.6667 23.3333L28 42L34.5333 48.5333L42 41.0667V60.6667Z" fill="#1C1B1F" />
-                        </svg>
-                      </div>
-                    )}
-
-                    <p className="text-[20px] text-[#0d0d0d] text-center m-0 leading-[28px]" style={fontBold}>
-                      Перетягніть готові файли сюди
-                    </p>
-
-                    <p className="text-[16px] text-[#4d4d4d] text-center m-0 leading-[24px]" style={fontRegular}>
-                      або
-                    </p>
-
-                    <button
-                      onClick={() => fileInputRef.current?.click()}
-                      disabled={isUploadingFiles}
-                      className="bg-white box-border flex items-center justify-center gap-[8px] h-[44px] px-[24px] py-[12px] rounded-[12px] border border-solid border-[#0d0d0d] cursor-pointer text-[16px] text-[#0d0d0d] hover:bg-gray-50 transition-colors disabled:opacity-50"
-                      style={fontRegular}
-                    >
-                      {pendingFiles.length > 0 ? 'Оберіть ще файли' : 'Оберіть файли'}
-                    </button>
-                    <input
-                      ref={fileInputRef}
-                      type="file"
-                      multiple
-                      accept=".rar,.zip,.docx,.pdf,.pptx,.png,.jpg"
-                      className="hidden"
-                      onChange={handleFileChange}
-                    />
-
-                    <p className="text-[14px] text-[#4d4d4d] text-center m-0 leading-[24px]" style={fontRegular}>
-                      Дозволені типи файлів: .rar .zip .docx .pdf .pptx .png .jpg
-                    </p>
-
-                    {(orderFiles.length > 0 || pendingFiles.length > 0) && (
-                      <div className="flex flex-wrap gap-[8px] justify-start w-full">
-                        {orderFiles.map((f) => (
-                          <FileChip key={`existing-${f.fileId}`} name={f.fileName} onRemove={() => handleDeleteOrderFile(f.fileId)} />
-                        ))}
-                        {pendingFiles.map((file, index) => (
-                          <FileChip key={`pending-${file.name}-${index}`} name={file.name} onRemove={() => removePendingFile(index)} />
-                        ))}
-                      </div>
-                    )}
-                  </div>
-                </div>
-
-                {/* Compact info + action strip — replaces the full info card and action button for in_development */}
-                <div className="bg-white rounded-[16px] px-[16px] py-[12px] flex items-center gap-[16px] shrink-0">
-                  <div className="shrink-0">
-                    <p className="text-[11px] text-[#4d4d4d] m-0 mb-[2px]" style={fontRegular}>Тип матеріалу</p>
-                    <p className="text-[13px] text-[#0d0d0d] m-0" style={fontRegular}>{order.order_material_type || '—'}</p>
-                  </div>
-                  <div className="w-px h-[36px] bg-[#f2f2f2] shrink-0" />
-                  <div className="shrink-0">
-                    <p className="text-[11px] text-[#4d4d4d] m-0 mb-[2px]" style={fontRegular}>Вікова група</p>
-                    <p className="text-[13px] text-[#0d0d0d] m-0" style={fontRegular}>{order.order_material_age_category || '—'}</p>
-                  </div>
-                  <div className="w-px h-[36px] bg-[#f2f2f2] shrink-0" />
-                  <div className="shrink-0">
-                    <p className="text-[11px] text-[#4d4d4d] m-0 mb-[2px]" style={fontRegular}>Ціна</p>
-                    <p className="text-[13px] text-[#0d0d0d] m-0" style={fontRegular}>{formatPrice(order.order_price)}</p>
-                  </div>
-                  <div className="w-px h-[36px] bg-[#f2f2f2] shrink-0" />
-                  <div className="shrink-0">
-                    <p className="text-[11px] text-[#4d4d4d] m-0 mb-[2px]" style={fontRegular}>Дедлайн</p>
-                    <p className="text-[13px] text-[#0d0d0d] m-0" style={fontRegular}>{formatDate(order.order_deadline)}</p>
-                  </div>
-                  <div className="w-px h-[36px] bg-[#f2f2f2] shrink-0" />
-                  <div className="flex-1 min-w-0">
-                    <p className="text-[11px] text-[#4d4d4d] m-0 mb-[2px]" style={fontRegular}>Опис замовлення</p>
-                    <p className="text-[13px] text-[#0d0d0d] m-0 truncate" style={fontRegular}>{order.order_description}</p>
-                  </div>
-                  <button
-                    onClick={handleFinish}
-                    disabled={isSubmitting || isUploadingFiles}
-                    className="h-[44px] px-[24px] rounded-[12px] bg-[#5e89e8] text-[16px] text-white cursor-pointer hover:opacity-90 transition-opacity disabled:opacity-50 shrink-0"
-                    style={fontBold}
-                  >
-                    {isUploadingFiles ? 'Завантаження...' : isSubmitting ? 'Обробка...' : 'Завершити замовлення'}
-                  </button>
-                </div>
-              </>
-            )}
-
-        {/* Compact info card — all order metadata + description in one block */}
-        {status !== 'in_development' && <div className="bg-white rounded-[16px] p-[16px] flex flex-col gap-[10px] shrink-0">
-
-          {/* Metadata row */}
-          <div className="grid grid-cols-5 gap-x-[12px]">
-            <div>
-              <p className="text-[11px] text-[#4d4d4d] m-0 mb-[4px]" style={fontRegular}>Тип матеріалу</p>
-              <p className="text-[14px] text-[#0d0d0d] m-0 leading-[20px]" style={fontRegular}>
-                {order.order_material_type || '—'}
-              </p>
-            </div>
-            <div className="col-span-2">
-              <p className="text-[11px] text-[#4d4d4d] m-0 mb-[4px]" style={fontRegular}>Вікова група</p>
-              <p className="text-[14px] text-[#0d0d0d] m-0 leading-[20px]" style={fontRegular}>
-                {order.order_material_age_category || '—'}
-              </p>
-            </div>
-            <div>
-              <p className="text-[11px] text-[#4d4d4d] m-0 mb-[4px]" style={fontRegular}>Ціна</p>
-              {status === 'in_review' ? (
+                  {pendingFiles.length > 0 ? 'Оберіть ще файли' : 'Оберіть файли'}
+                </button>
                 <input
-                  type="number"
-                  min="0"
-                  step="0.01"
-                  placeholder="Вкажіть ціну"
-                  value={priceInput}
-                  onChange={(e) => setPriceInput(e.target.value)}
-                  className={inputClass}
-                  style={fontRegular}
-                  disabled={isSubmitting}
+                  ref={fileInputRef}
+                  type="file"
+                  multiple
+                  accept=".rar,.zip,.docx,.pdf,.pptx,.png,.jpg"
+                  className="hidden"
+                  onChange={handleFileChange}
                 />
-              ) : (
-                <p className="text-[14px] text-[#0d0d0d] m-0 leading-[20px]" style={fontRegular}>
-                  {formatPrice(order.order_price)}
+
+                <p className="text-[14px] text-[#4d4d4d] text-center m-0 leading-[24px]" style={fontRegular}>
+                  Дозволені типи файлів: .rar .zip .docx .pdf .pptx .png .jpg
                 </p>
-              )}
+
+                {(orderFiles.length > 0 || pendingFiles.length > 0) && (
+                  <div className="flex flex-wrap gap-[8px] justify-start w-full">
+                    {orderFiles.map((f) => (
+                      <FileChip key={`existing-${f.fileId}`} name={f.fileName} onRemove={() => handleDeleteOrderFile(f.fileId)} />
+                    ))}
+                    {pendingFiles.map((file, index) => (
+                      <FileChip key={`pending-${file.name}-${index}`} name={file.name} onRemove={() => removePendingFile(index)} />
+                    ))}
+                  </div>
+                )}
+              </div>
             </div>
-            <div>
-              <p className="text-[11px] text-[#4d4d4d] m-0 mb-[4px]" style={fontRegular}>
-                Дедлайн{status === 'in_review' && <span className="text-[#4d4d4d]"> (необов&apos;язк.)</span>}
-              </p>
-              {status === 'in_review' ? (
-                <input
-                  type="date"
-                  value={deadlineOverride}
-                  onChange={(e) => setDeadlineOverride(e.target.value)}
-                  className={inputClass}
-                  style={fontRegular}
-                  disabled={isSubmitting}
-                />
-              ) : (
-                <p className="text-[14px] text-[#0d0d0d] m-0 leading-[20px]" style={fontRegular}>
-                  {formatDate(order.order_deadline)}
-                </p>
-              )}
+
+          </>
+        )}
+
+        {/* Fields grid */}
+        <div className="grid grid-cols-2 gap-[16px]">
+          <div>
+            <p className="text-[13px] text-[#4d4d4d] m-0 mb-[6px]" style={fontRegular}>Тип матеріалу</p>
+            <div className={fieldClass} style={fontRegular}>
+              <div aria-hidden="true" className="absolute border border-[#b3b3b3] border-solid inset-0 pointer-events-none rounded-[12px]" />
+              {order.order_material_type || '—'}
             </div>
           </div>
-
-          <div className="h-px bg-[#f2f2f2]" />
-
-          {/* Description */}
           <div>
-            <p className="text-[11px] text-[#4d4d4d] m-0 mb-[4px]" style={fontRegular}>Опис замовлення</p>
-            <p className="text-[14px] text-[#0d0d0d] m-0 leading-[22px] whitespace-pre-wrap" style={fontRegular}>
+            <p className="text-[13px] text-[#4d4d4d] m-0 mb-[6px]" style={fontRegular}>Вікова група</p>
+            <div className={fieldClass} style={fontRegular}>
+              <div aria-hidden="true" className="absolute border border-[#b3b3b3] border-solid inset-0 pointer-events-none rounded-[12px]" />
+              {order.order_material_age_category || '—'}
+            </div>
+          </div>
+          <div>
+            <p className="text-[13px] text-[#4d4d4d] m-0 mb-[6px]" style={fontRegular}>Ціна</p>
+            {status === 'in_review' ? (
+              <input
+                type="number"
+                min="0"
+                step="0.01"
+                placeholder="Вкажіть ціну"
+                value={priceInput}
+                onChange={(e) => setPriceInput(e.target.value)}
+                className={inputClass}
+                style={fontRegular}
+                disabled={isSubmitting}
+              />
+            ) : (
+              <div className={fieldClass} style={fontRegular}>
+                <div aria-hidden="true" className="absolute border border-[#b3b3b3] border-solid inset-0 pointer-events-none rounded-[12px]" />
+                {formatPrice(order.order_price)}
+              </div>
+            )}
+          </div>
+          <div>
+            <p className="text-[13px] text-[#4d4d4d] m-0 mb-[6px]" style={fontRegular}>
+              Дедлайн{status === 'in_review' && <span className="text-[#4d4d4d]"> (необов&apos;язк.)</span>}
+            </p>
+            {status === 'in_review' ? (
+              <input
+                type="date"
+                value={deadlineOverride}
+                onChange={(e) => setDeadlineOverride(e.target.value)}
+                className={inputClass}
+                style={fontRegular}
+                disabled={isSubmitting}
+              />
+            ) : (
+              <div className={fieldClass} style={fontRegular}>
+                <div aria-hidden="true" className="absolute border border-[#b3b3b3] border-solid inset-0 pointer-events-none rounded-[12px]" />
+                {formatDate(order.order_deadline)}
+              </div>
+            )}
+          </div>
+          <div>
+            <p className="text-[13px] text-[#4d4d4d] m-0 mb-[6px]" style={fontRegular}>Дата замовлення</p>
+            <div className={fieldClass} style={fontRegular}>
+              <div aria-hidden="true" className="absolute border border-[#b3b3b3] border-solid inset-0 pointer-events-none rounded-[12px]" />
+              {formatDate(order.order_created_at)}
+            </div>
+          </div>
+        </div>
+
+        {/* Description */}
+        <div className="flex-1 flex flex-col min-h-[120px]">
+          <p className="text-[13px] text-[#4d4d4d] m-0 mb-[6px]" style={fontRegular}>Опис замовлення</p>
+          <div className="flex-1 bg-[#f2f2f2] relative rounded-[12px] p-[16px]">
+            <div aria-hidden="true" className="absolute border border-[#b3b3b3] border-solid inset-0 pointer-events-none rounded-[12px]" />
+            <p className="text-[16px] text-[#0d0d0d] m-0 leading-[24px] whitespace-pre-wrap" style={fontRegular}>
               {order.order_description}
             </p>
           </div>
-
-          {/* Date — bottom right */}
-          <p className="text-[11px] text-[#4d4d4d] m-0 text-right" style={fontRegular}>
-            Замовлення від {formatDate(order.order_created_at)}
-          </p>
-        </div>}
+        </div>
 
         {/* Files section — done (read-only list) */}
         {status === 'done' && (
@@ -630,6 +603,18 @@ export function AdminOrderDetail({ orderId, onSectionChange }: AdminOrderDetailP
 
         {/* Action buttons */}
         <div className="flex gap-[12px] items-center justify-end shrink-0">
+
+          {/* in_development → finish */}
+          {status === 'in_development' && (
+            <button
+              onClick={handleFinish}
+              disabled={isSubmitting || isUploadingFiles}
+              className="h-[44px] px-[24px] rounded-[12px] bg-[#5e89e8] text-[16px] text-white cursor-pointer hover:opacity-90 transition-opacity disabled:opacity-50"
+              style={fontBold}
+            >
+              {isUploadingFiles ? 'Завантаження...' : isSubmitting ? 'Обробка...' : 'Завершити замовлення'}
+            </button>
+          )}
 
           {/* in_review → accept or decline */}
           {status === 'in_review' && !showDeclineForm && (

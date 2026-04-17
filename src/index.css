@@ -651,6 +651,10 @@
     margin-bottom: 0;
   }
 
+  .mb-\[20px\] {
+    margin-bottom: 20px;
+  }
+
   .ml-\[45px\] {
     margin-left: 45px;
   }
