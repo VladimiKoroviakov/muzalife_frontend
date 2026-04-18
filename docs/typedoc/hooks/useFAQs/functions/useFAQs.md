@@ -8,7 +8,7 @@
 
 > **useFAQs**(): `UseFAQsReturn`
 
-Defined in: [hooks/useFAQs.ts:31](https://github.com/VladimiKoroviakov/muzalife_frontend/blob/9132c6f38e60cc59590a5f3ade3be7eda2209c95/src/hooks/useFAQs.ts#L31)
+Defined in: [hooks/useFAQs.ts:31](https://github.com/VladimiKoroviakov/muzalife_frontend/blob/e06a02de0eb9069917fc5b24ec4931caae80470b/src/hooks/useFAQs.ts#L31)
 
 Fetches the list of FAQ items from the backend on mount.
 

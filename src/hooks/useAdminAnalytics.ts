@@ -137,7 +137,9 @@ export const useAdminAnalytics = (): UseAdminAnalyticsReturn => {
     if (timeFilter === 'custom') {
       if (!customRange.from || !customRange.to) {return;}
       timeFrom = customRange.from.toISOString();
-      timeTo   = customRange.to.toISOString();
+      const toEndOfDay = new Date(customRange.to);
+      toEndOfDay.setHours(23, 59, 59, 999);
+      timeTo = toEndOfDay.toISOString();
     } else {
       const range = PRESET_RANGES[timeFilter]();
       timeFrom = range.from.toISOString();

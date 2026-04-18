@@ -222,7 +222,7 @@ export function AdminAnalyticsContent({ onSectionChange: _onSectionChange }: Adm
   const customRangeLabel =
     customRange.from && customRange.to
       ? `${formatDate(customRange.from)} – ${formatDate(customRange.to)}`
-      : 'Обрати діапазон / Select range';
+      : 'Обрати діапазон';
 
   return (
     <div
