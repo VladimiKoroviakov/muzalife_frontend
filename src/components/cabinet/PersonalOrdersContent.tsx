@@ -9,6 +9,7 @@
  */
 
 import { useState, useEffect, useCallback, useRef } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { toast } from 'sonner';
 import { iconPaths } from '../ui/icons/iconPaths';
 import { Table, TextCell, EmptyCell, TableCell } from '../layout/dashboard/TableComponents';
@@ -52,6 +53,7 @@ interface PersonalOrdersContentProps {
  * ```
  */
 export function PersonalOrdersContent({ onCreateOrder, onViewOrder, refreshKey = 0 }: PersonalOrdersContentProps) {
+  const navigate = useNavigate();
   const [orders, setOrders] = useState<PersonalOrder[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
@@ -319,6 +321,7 @@ export function PersonalOrdersContent({ onCreateOrder, onViewOrder, refreshKey =
       <p
         className="[text-underline-position:from-font] [white-space-collapse:collapse] basis-0 decoration-solid font-['Atkinson_Hyperlegible:Regular','Noto_Sans:Regular',sans-serif] grow leading-[normal] min-h-px min-w-px overflow-ellipsis overflow-hidden relative shrink-0 text-[#4d4d4d] text-[16px] text-nowrap underline cursor-pointer hover:text-[#5e89e8] transition-colors"
         style={{ fontVariationSettings: "'CTGR' 0, 'wdth' 100, 'wght' 400" }}
+        onClick={() => navigate('/terms')}
       >
         Умови та Політика Використання
       </p>

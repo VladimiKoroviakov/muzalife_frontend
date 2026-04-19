@@ -18,6 +18,7 @@ import AdminPanel from './pages/AdminPanel';
 import AdminLoginPage from './pages/AdminLoginPage';
 import NotFoundPage from './pages/NotFoundPage';
 import PaymentResultPage from './pages/PaymentResultPage';
+import TermsPage from './pages/TermsPage';
 
 function App() {
   return (
@@ -32,6 +33,7 @@ function App() {
               <Routes>
                 <Route path="/" element={<HomePage />} />
                 <Route path="/faqs" element={<FAQsPage />} />
+                <Route path="/terms" element={<TermsPage />} />
                 <Route path="/product/:id" element={<SingleProductPage/>} />
                 <Route
                     path="/adminlogin"
