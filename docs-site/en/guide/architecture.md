@@ -13,13 +13,29 @@
 
 ## Routing
 
-All routes are defined in `src/App.tsx` via `BrowserRouter`. Access is controlled by three guard components:
+All routes are defined in `src/App.tsx`. Access is controlled by three guard components:
 
 | Component | Access condition | Redirect |
 |-----------|-----------------|----------|
 | `ProtectedRoute` | User is authenticated | `/login` |
 | `PublicRoute` | User is **not** authenticated | `/` |
 | `AdminRoute` | `user.is_admin === true` | `/` |
+
+### Route Table
+
+| Path | Component | Guard |
+|------|-----------|-------|
+| `/` | `HomePage` | — |
+| `/faqs` | `FAQsPage` | — |
+| `/terms` | `TermsPage` | — |
+| `/product/:id` | `SingleProductPage` | — |
+| `/login` | `LoginPage` | `PublicRoute` |
+| `/signup` | `SignUpPage` | `PublicRoute` |
+| `/adminlogin` | `AdminLoginPage` | `PublicRoute` |
+| `/cabinet` | `UserCabinet` | `ProtectedRoute` |
+| `/admin` | `AdminPanel` | `AdminRoute` |
+| `/payment/result` | `PaymentResultPage` | — |
+| `*` | `NotFoundPage` | — (catch-all 404) |
 
 ## State Management
 
@@ -33,30 +49,45 @@ Consumed via the `useAuth()` hook (`src/hooks/useAuth.ts`).
 
 ## API Layer
 
-`ApiService` (`src/services/api.ts`) is a singleton class with a private `http<T>()` method that:
-- automatically attaches `Authorization: Bearer` from `localStorage['authToken']`
-- eagerly parses responses as JSON
-- throws an `Error` with the server's `error` field on non-OK status codes
+The HTTP client is split into domain modules under `src/services/api/`:
 
-All endpoints are defined in `src/config/index.ts`. Use the exported `apiService` instance — never instantiate the class directly.
+| Module | Purpose |
+|--------|---------|
+| `client.ts` | Base `ApiClient` — JWT lifecycle, auto-headers, error handling |
+| `auth.ts` | Login, registration, OAuth, guest verification |
+| `profile.ts` | User profile CRUD, avatar upload |
+| `products.ts` | Product catalog, search, saved products |
+| `orders.ts` | Personal orders lifecycle |
+| `payments.ts` | LiqPay checkout integration |
+| `polls.ts` | Poll voting and results |
+| `reviews.ts` | Product review CRUD |
+| `faqs.ts` | FAQ retrieval |
+| `admin.ts` | Admin: orders, materials, analytics |
+| `index.ts` | Merges all modules into the `apiService` singleton |
+
+All endpoints are defined in `src/config/index.ts`. Use only the exported `apiService` — never instantiate `ApiClient` directly.
 
 ## Component Structure
 
 ```
 src/
-├── pages/          — page-level route components
+├── pages/              — page-level route components
 ├── components/
-│   ├── layout/     — shared layout (DashboardHeader, DashboardRightSide)
-│   ├── auth/       — route guards, OAuth buttons
-│   ├── cabinet/    — user dashboard components
-│   ├── admin/      — admin panel components
-│   ├── ui/         — Radix UI primitives (69 components)
-│   └── ...
-├── context/        — React Context providers
-├── hooks/          — custom React hooks
-├── services/       — HTTP client
-├── utils/          — CacheManager and utilities
-└── types.ts        — shared TypeScript types
+│   ├── admin/          — admin panel (analytics, orders, materials, polls)
+│   ├── auth/           — route guards, OAuth buttons
+│   ├── cabinet/        — user dashboard (saved, purchases, orders, settings)
+│   ├── common/         — shared components (ProductCard, SearchBar, Logo, ...)
+│   ├── errors/         — ErrorBoundary
+│   ├── faqs/           — FAQ components
+│   ├── features/       — Cart, FiltersSidebar, GuestCheckoutModal
+│   ├── layout/         — Header, ProductsCanvas, DashboardCanvas, SidebarTabs
+│   ├── product/        — product detail (gallery, actions, info, reviews)
+│   └── ui/             — Radix UI primitives + custom SVG icons
+├── context/            — React Context providers
+├── hooks/              — custom React hooks
+├── services/api/       — HTTP client (multi-module)
+├── utils/              — CacheManager and logger
+└── types/              — shared TypeScript types (multi-module barrel-export)
 ```
 
 ## Path Alias

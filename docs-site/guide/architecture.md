@@ -13,13 +13,29 @@
 
 ## Маршрутизація
 
-Усі маршрути визначені в `src/App.tsx` через `BrowserRouter`. Доступ до маршрутів контролюється трьома компонентами-охоронцями:
+Усі маршрути визначені в `src/App.tsx`. Доступ контролюється трьома компонентами-охоронцями:
 
 | Компонент | Умова доступу | Редірект |
 |-----------|--------------|----------|
 | `ProtectedRoute` | Користувач авторизований | `/login` |
 | `PublicRoute` | Користувач **не** авторизований | `/` |
 | `AdminRoute` | `user.is_admin === true` | `/` |
+
+### Таблиця маршрутів
+
+| Шлях | Компонент | Охоронець |
+|------|-----------|-----------|
+| `/` | `HomePage` | — |
+| `/faqs` | `FAQsPage` | — |
+| `/terms` | `TermsPage` | — |
+| `/product/:id` | `SingleProductPage` | — |
+| `/login` | `LoginPage` | `PublicRoute` |
+| `/signup` | `SignUpPage` | `PublicRoute` |
+| `/adminlogin` | `AdminLoginPage` | `PublicRoute` |
+| `/cabinet` | `UserCabinet` | `ProtectedRoute` |
+| `/admin` | `AdminPanel` | `AdminRoute` |
+| `/payment/result` | `PaymentResultPage` | — |
+| `*` | `NotFoundPage` | — (catch-all 404) |
 
 ## Управління станом
 
@@ -33,30 +49,45 @@
 
 ## API-шар
 
-`ApiService` (`src/services/api.ts`) — клас-синглтон з приватним методом `http<T>()`, який:
-- автоматично додає заголовок `Authorization: Bearer` з `localStorage['authToken']`
-- парсить відповіді як JSON
-- кидає `Error` з полем `error` від сервера при не-OK статусах
+HTTP-клієнт розбитий на окремі модулі у `src/services/api/`:
 
-Усі ендпоінти визначені в `src/config/index.ts`. Використовуйте експортований екземпляр `apiService` — не створюйте новий.
+| Модуль | Призначення |
+|--------|------------|
+| `client.ts` | Базовий `ApiClient` — JWT, авто-заголовки, обробка помилок |
+| `auth.ts` | Логін, реєстрація, OAuth, гостьова верифікація |
+| `profile.ts` | Профіль користувача, завантаження аватара |
+| `products.ts` | Каталог, пошук, збережені продукти |
+| `orders.ts` | Персональні замовлення |
+| `payments.ts` | Інтеграція з LiqPay |
+| `polls.ts` | Голосування, результати опитувань |
+| `reviews.ts` | Відгуки до продуктів |
+| `faqs.ts` | Список FAQ |
+| `admin.ts` | Адмін: замовлення, матеріали, аналітика |
+| `index.ts` | Збирає всі модулі в єдиний `apiService` синглтон |
+
+Усі ендпоінти визначені в `src/config/index.ts`. Використовуйте лише `apiService` — не створюйте `ApiClient` напряму.
 
 ## Структура компонентів
 
 ```
 src/
-├── pages/          — компоненти-сторінки (рівень маршрутів)
+├── pages/              — компоненти-сторінки (рівень маршрутів)
 ├── components/
-│   ├── layout/     — спільні компоненти розмітки (DashboardHeader, DashboardRightSide)
-│   ├── auth/       — охоронці маршрутів, кнопки OAuth
-│   ├── cabinet/    — кабінет користувача
-│   ├── admin/      — панель адміністратора
-│   ├── ui/         — примітиви Radix UI (69 компонентів)
-│   └── ...
-├── context/        — React Context провайдери
-├── hooks/          — кастомні React хуки
-├── services/       — HTTP-клієнт
-├── utils/          — CacheManager та утиліти
-└── types.ts        — спільні TypeScript типи
+│   ├── admin/          — панель адміністратора (аналітика, замовлення, матеріали, опитування)
+│   ├── auth/           — охоронці маршрутів, кнопки OAuth
+│   ├── cabinet/        — кабінет користувача (збережені, покупки, замовлення, налаштування)
+│   ├── common/         — спільні компоненти (ProductCard, SearchBar, Logo, ...)
+│   ├── errors/         — ErrorBoundary
+│   ├── faqs/           — компоненти FAQ
+│   ├── features/       — Cart, FiltersSidebar, GuestCheckoutModal
+│   ├── layout/         — Header, ProductsCanvas, DashboardCanvas, SidebarTabs
+│   ├── product/        — деталі продукту (галерея, дії, інформація, відгуки)
+│   └── ui/             — примітиви Radix UI + кастомні SVG-іконки
+├── context/            — React Context провайдери
+├── hooks/              — кастомні React хуки
+├── services/api/       — HTTP-клієнт (модульна структура)
+├── utils/              — CacheManager та logger
+└── types/              — спільні TypeScript типи (мульти-модульний barrel-export)
 ```
 
 ## Аліаси шляхів

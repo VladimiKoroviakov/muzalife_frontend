@@ -33,16 +33,20 @@ features:
 ```
 MuzaLife Frontend/
 ├── src/
-│   ├── context/        — React Context (Auth)
-│   ├── hooks/          — кастомні React хуки
-│   ├── services/       — HTTP-клієнт (api.ts)
-│   ├── utils/          — CacheManager та інше
-│   ├── types.ts        — спільні TypeScript типи
-│   └── tests/docs/     — living documentation тести
+│   ├── components/     — UI компоненти (admin, auth, cabinet, layout, product, ui, ...)
+│   ├── config/         — runtime конфіг та всі API ендпоінти
+│   ├── constants/      — HTTP-коди, статуси замовлень, ключі кешу
+│   ├── context/        — React Context (AuthContext)
+│   ├── hooks/          — кастомні React хуки (7 хуків)
+│   ├── pages/          — компоненти маршрутів (11 сторінок + 404)
+│   ├── services/api/   — HTTP-клієнт (мульти-модульний, синглтон apiService)
+│   ├── utils/          — CacheManager, logger
+│   ├── types/          — спільні TypeScript типи (мульти-модульний barrel-export)
+│   └── tests/docs/     — living documentation тести (Vitest)
 ├── docs/
 │   ├── typedoc/        — згенерована TypeDoc документація
-│   ├── typedoc.zip     — архів документації
-│   └── i18n/           — документація двома мовами
+│   ├── i18n/           — документація двома мовами
+│   └── scripts/        — shell-скрипти для розгортання та бекапу
 ├── docs-site/          — цей VitePress сайт
 └── vitest.config.ts    — конфігурація тестів
 ```

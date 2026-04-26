@@ -62,4 +62,68 @@ const {
 import { useVerificationCode } from '@/hooks/useVerificationCode';
 ```
 
-Керує станом OTP-коду під час двокрокової реєстрації (відправка коду → верифікація).
+Керує станом OTP-коду під час двокрокової реєстрації або гостьової верифікації (відправка коду → підтвердження).
+
+```ts
+const {
+  code,          // string — поточне значення поля вводу
+  isLoading,     // boolean
+  error,         // string | null
+  sendCode,      // (email: string) => Promise<void>
+  verifyCode,    // (email: string, code: string) => Promise<void>
+} = useVerificationCode();
+```
+
+## useProductMetadata
+
+```ts
+import { useProductMetadata } from '@/hooks/useProductMetadata';
+```
+
+Завантажує довідникові дані для фільтрів: типи продуктів, вікові категорії та події. Використовується у `FiltersSidebar` та адмін-формах.
+
+```ts
+const {
+  productTypes,    // ProductType[]
+  ageCategories,   // AgeCategory[]
+  events,          // Event[]
+  isLoading,       // boolean
+  error,           // string | null
+} = useProductMetadata();
+```
+
+## useAdminPolls
+
+```ts
+import { useAdminPolls } from '@/hooks/useAdminPolls';
+```
+
+Адмін-хук для керування опитуваннями: завантаження списку, створення та видалення.
+
+```ts
+const {
+  polls,          // Poll[]
+  isLoading,      // boolean
+  error,          // string | null
+  createPoll,     // (data: CreatePollData) => Promise<void>
+  deletePoll,     // (id: number) => Promise<void>
+  refetch,        // () => void
+} = useAdminPolls();
+```
+
+## useAdminAnalytics
+
+```ts
+import { useAdminAnalytics } from '@/hooks/useAdminAnalytics';
+```
+
+Адмін-хук для статистики продуктів: кількість продажів, доходи, фільтрація за датою.
+
+```ts
+const {
+  analytics,      // AnalyticsData | null
+  isLoading,      // boolean
+  error,          // string | null
+  fetchAnalytics, // (params: AnalyticsParams) => Promise<void>
+} = useAdminAnalytics();
+```
