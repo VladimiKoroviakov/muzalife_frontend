@@ -8,7 +8,7 @@
 
 > **AuthProvider**(`props`): `Element`
 
-Defined in: [context/AuthContext.tsx:106](https://github.com/VladimiKoroviakov/muzalife_frontend/blob/553dfb005f2e3d149e4532cdddb70c65ab40ec0f/src/context/AuthContext.tsx#L106)
+Defined in: [context/AuthContext.tsx:106](https://github.com/VladimiKoroviakov/muzalife_frontend/blob/ebc5dcc10ae675342b7b38b238452dc400f4852b/src/context/AuthContext.tsx#L106)
 
 Provides authentication state to the entire component tree.
 

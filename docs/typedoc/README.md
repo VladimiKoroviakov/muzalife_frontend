@@ -6,7 +6,7 @@
 ![TypeScript](https://img.shields.io/badge/TypeScript-5.x-blue)
 ![License](https://img.shields.io/badge/License-MIT-green)
 ![Vite](https://img.shields.io/badge/Vite-6.x-purple)
-![Tailwind](https://img.shields.io/badge/Tailwind-3.x-38B2AC)
+![Tailwind](https://img.shields.io/badge/Tailwind-4.x-38B2AC)
 
 # MuzaLife Front End
 
@@ -19,12 +19,14 @@ This repository contains the source code for the client-side of the MuzaLife pro
 - React 18 (component-based UI)
 - Vite 6 development server with HMR
 - TypeScript 5 for full type safety
-- Tailwind CSS + CSS modules for styling
+- Tailwind CSS v4 (utility-first, no CSS modules)
 - Radix UI primitives for accessible components
 - React Router v7 for client-side routing
 - React Hook Form for form management
 - OAuth integration (Google, Facebook)
-- Modular, scalable frontend architecture
+- LiqPay payment integration
+- Admin panel (orders, materials, analytics, polls)
+- Bilingual UI — Ukrainian and English
 
 ## Getting Started
 
@@ -145,22 +147,53 @@ npx vite preview
 
 ```
 src/
-├── assets/          # Static assets (images, icons, fonts)
-├── components/      # Reusable UI components (buttons, modals, inputs, layouts)
-├── config/          # Application configuration (env mapping, app settings)
-├── constants/       # Global constants and enums (routes, roles, labels)
-├── context/         # React Context providers (AuthContext)
-├── hooks/           # Custom React hooks (useAuth, useFAQs, useSingleProduct, ...)
-├── lib/             # Shared libraries and wrappers (API client, helpers)
-├── pages/           # Page-level components mapped to routes
-├── services/        # Business logic and API integrations
-├── styles/          # Global styles, Tailwind config, theme definitions
-├── utils/           # Pure utility functions (formatters, validators)
-├── App.tsx          # Application root (Router + Context setup)
-├── index.css        # Global CSS entry point
-├── main.tsx         # Application entry point (ReactDOM.createRoot)
-└── types.ts         # Global TypeScript types and interfaces
+├── assets/             # Static assets (images, icons, fonts)
+├── components/
+│   ├── admin/          # Admin panel (analytics, orders, materials, polls)
+│   ├── auth/           # Route guards (ProtectedRoute, PublicRoute, AdminRoute) + OAuth buttons
+│   ├── cabinet/        # User dashboard panels (saved, purchases, orders, settings)
+│   ├── common/         # Shared components (ProductCard, SearchBar, etc.)
+│   ├── errors/         # Error boundary
+│   ├── faqs/           # FAQ components
+│   ├── features/       # Cart, FiltersSidebar, GuestCheckoutModal
+│   ├── layout/         # Header, ProductsCanvas, DashboardCanvas, SidebarTabs
+│   ├── product/        # Product detail components (gallery, actions, info, reviews)
+│   └── ui/             # Radix UI primitive wrappers + custom SVG icons
+├── config/             # Runtime config + all API endpoint strings
+├── constants/          # Cache keys/TTLs, HTTP codes, order statuses & colours
+├── context/            # AuthContext — single provider at app root
+├── hooks/              # Custom React hooks (useAuth, useFAQs, useSingleProduct, ...)
+├── lib/                # cn() class-merge helper
+├── pages/              # Route-level components
+├── services/
+│   └── api/            # HTTP client modules (client, auth, products, orders, payments, ...)
+├── styles/             # globals.css
+├── tests/
+│   └── docs/           # Living-documentation tests (Vitest)
+├── types/              # All shared TypeScript types (multi-module, barrel-exported)
+├── utils/              # CacheManager (localStorage + TTL), logger
+├── App.tsx             # All route definitions
+├── main.tsx            # Application entry point (ReactDOM.createRoot)
+└── index.css           # Global CSS entry point
 ```
+
+## Routes
+
+All routes are defined in `src/App.tsx`.
+
+| Path | Component | Guard |
+|------|-----------|-------|
+| `/` | `HomePage` | — |
+| `/faqs` | `FAQsPage` | — |
+| `/terms` | `TermsPage` | — |
+| `/product/:id` | `SingleProductPage` | — |
+| `/login` | `LoginPage` | `PublicRoute` |
+| `/signup` | `SignUpPage` | `PublicRoute` |
+| `/adminlogin` | `AdminLoginPage` | `PublicRoute` |
+| `/cabinet` | `UserCabinet` | `ProtectedRoute` |
+| `/admin` | `AdminPanel` | `AdminRoute` |
+| `/payment/result` | `PaymentResultPage` | — |
+| `*` | `NotFoundPage` | — (404 catch-all) |
 
 ## NPM Scripts Reference
 
@@ -169,13 +202,15 @@ src/
 | `npm run dev` | Start development server with HMR |
 | `npm run build` | Build production bundle to `build/` |
 | `npm test` | Run all tests (Vitest) |
-| `npm run test:coverage` | Run tests with coverage report |
+| `npm run test:docs` | Run living-documentation tests only |
+| `npm run test:coverage` | Run tests with v8 coverage report |
 | `npm run lint` | Run ESLint on `src/` |
 | `npm run lint:fix` | Run ESLint and auto-fix |
+| `npm run lint:docs` | Check TSDoc coverage on all exports |
 | `npm run type-check` | TypeScript type-check without emitting |
 | `npm run docs` | Generate TypeDoc Markdown → `docs/typedoc/` |
 | `npm run docs:clean` | Clean and regenerate TypeDoc |
-| `npm run check` | Lint + type-check + doc tests (used by CI) |
+| `npm run check` | Lint + type-check + test:docs (full CI gate) |
 
 ## Configuration
 
