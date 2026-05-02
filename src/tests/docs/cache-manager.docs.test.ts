@@ -8,7 +8,7 @@
  * @module tests/docs/cache-manager.docs
  */
 
-import { describe, it, expect, beforeEach } from 'vitest';
+import { describe, it, expect, beforeEach, vi } from 'vitest';
 import { CacheManager } from '../../utils/cache-manager';
 
 // ── Minimal localStorage mock ─────────────────────────────────────────────
@@ -66,8 +66,11 @@ describe('CacheManager.setItem / getItem', () => {
 
   it('returns null and does not throw when stored JSON is corrupt', () => {
     store['bad'] = '{not: valid json}'; // inject corrupt data manually
+    const spy = vi.spyOn(console, 'error').mockImplementation(() => {});
     expect(() => CacheManager.getItem('bad')).not.toThrow();
     expect(CacheManager.getItem('bad')).toBeNull();
+    expect(spy).toHaveBeenCalledTimes(2); // once per getItem call
+    vi.restoreAllMocks();
   });
 });
 
