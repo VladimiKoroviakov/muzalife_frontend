@@ -8,7 +8,7 @@
 
 > **useAuthContext**(): `AuthContextType`
 
-Defined in: [context/AuthContext.tsx:131](https://github.com/VladimiKoroviakov/muzalife_frontend/blob/5e54c11f479e536daa8d07b2afe349bf242e7ae6/src/context/AuthContext.tsx#L131)
+Defined in: [context/AuthContext.tsx:131](https://github.com/VladimiKoroviakov/muzalife_frontend/blob/7deb224a237e84dd1411d8a6f6ac927379a358f8/src/context/AuthContext.tsx#L131)
 
 Custom hook that returns the current AuthContextType value.
 

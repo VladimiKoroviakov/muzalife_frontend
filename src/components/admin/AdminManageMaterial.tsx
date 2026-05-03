@@ -311,6 +311,7 @@ export function AdminManageMaterial({ onSectionChange, onFbPost, mode = 'add', p
   };
 
   const handleContinue = () => {
+    if (files.length === 0 && existingFiles.length === 0) { toast.error('Додайте хоча б один файл матеріалу'); return; }
     if (!scenarioName.trim()) { toast.error('Введіть назву матеріалу'); return; }
     if (!contentType) { toast.error('Оберіть тип контенту'); return; }
     if (!price.trim() || isNaN(parseFloat(price))) { toast.error('Введіть коректну ціну'); return; }
