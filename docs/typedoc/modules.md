@@ -7,6 +7,8 @@
 ## Modules
 
 - [context/AuthContext](context/AuthContext/README.md)
+- [hooks/useAdminAnalytics](hooks/useAdminAnalytics/README.md)
+- [hooks/useAdminPolls](hooks/useAdminPolls/README.md)
 - [hooks/useAuth](hooks/useAuth/README.md)
 - [hooks/useFAQs](hooks/useFAQs/README.md)
 - [hooks/useSingleProduct](hooks/useSingleProduct/README.md)

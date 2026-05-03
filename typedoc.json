@@ -5,6 +5,8 @@
     "src/hooks/useAuth.ts",
     "src/hooks/useFAQs.ts",
     "src/hooks/useSingleProduct.ts",
+    "src/hooks/useAdminAnalytics.ts",
+    "src/hooks/useAdminPolls.ts",
     "src/hooks/useVerificationCode.ts",
     "src/services/api.ts",
     "src/utils/cache-manager.ts",
