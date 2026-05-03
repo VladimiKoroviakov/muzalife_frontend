@@ -8,7 +8,7 @@
 
 > **useAdminAnalytics**(): [`UseAdminAnalyticsReturn`](../interfaces/UseAdminAnalyticsReturn.md)
 
-Defined in: [hooks/useAdminAnalytics.ts:100](https://github.com/VladimiKoroviakov/muzalife_frontend/blob/473b5cc393299be2d87c5560a31d0ceaa8ca9fd7/src/hooks/useAdminAnalytics.ts#L100)
+Defined in: [hooks/useAdminAnalytics.ts:100](https://github.com/VladimiKoroviakov/muzalife_frontend/blob/a6505c2e66b196756068c4aef787d788857c5209/src/hooks/useAdminAnalytics.ts#L100)
 
 Provides all data and actions for the admin analytics panel.
 
