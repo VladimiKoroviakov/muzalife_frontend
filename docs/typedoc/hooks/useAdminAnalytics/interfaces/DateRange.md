@@ -6,7 +6,7 @@
 
 # Interface: DateRange
 
-Defined in: [hooks/useAdminAnalytics.ts:20](https://github.com/VladimiKoroviakov/muzalife_frontend/blob/e4b003310f8b13e4799042d43084af0b4fee8d0d/src/hooks/useAdminAnalytics.ts#L20)
+Defined in: [hooks/useAdminAnalytics.ts:20](https://github.com/VladimiKoroviakov/muzalife_frontend/blob/473b5cc393299be2d87c5560a31d0ceaa8ca9fd7/src/hooks/useAdminAnalytics.ts#L20)
 
 A date range used with the custom calendar picker.
 
@@ -16,7 +16,7 @@ A date range used with the custom calendar picker.
 
 > **from**: `Date` \| `undefined`
 
-Defined in: [hooks/useAdminAnalytics.ts:21](https://github.com/VladimiKoroviakov/muzalife_frontend/blob/e4b003310f8b13e4799042d43084af0b4fee8d0d/src/hooks/useAdminAnalytics.ts#L21)
+Defined in: [hooks/useAdminAnalytics.ts:21](https://github.com/VladimiKoroviakov/muzalife_frontend/blob/473b5cc393299be2d87c5560a31d0ceaa8ca9fd7/src/hooks/useAdminAnalytics.ts#L21)
 
 ***
 
@@ -24,4 +24,4 @@ Defined in: [hooks/useAdminAnalytics.ts:21](https://github.com/VladimiKoroviakov
 
 > **to**: `Date` \| `undefined`
 
-Defined in: [hooks/useAdminAnalytics.ts:22](https://github.com/VladimiKoroviakov/muzalife_frontend/blob/e4b003310f8b13e4799042d43084af0b4fee8d0d/src/hooks/useAdminAnalytics.ts#L22)
+Defined in: [hooks/useAdminAnalytics.ts:22](https://github.com/VladimiKoroviakov/muzalife_frontend/blob/473b5cc393299be2d87c5560a31d0ceaa8ca9fd7/src/hooks/useAdminAnalytics.ts#L22)
