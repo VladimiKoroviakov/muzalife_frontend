@@ -23,7 +23,6 @@ export default defineConfig({
   },
   test: {
     environment: 'node',
-    environmentMatchGlobs: [['src/tests/unit/**', 'happy-dom']],
 
     include: ['src/tests/**/*.test.{ts,tsx}'],
 
