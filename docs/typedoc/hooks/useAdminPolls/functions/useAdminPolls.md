@@ -8,7 +8,7 @@
 
 > **useAdminPolls**(): [`UseAdminPollsReturn`](../interfaces/UseAdminPollsReturn.md)
 
-Defined in: [hooks/useAdminPolls.ts:58](https://github.com/VladimiKoroviakov/muzalife_frontend/blob/a6505c2e66b196756068c4aef787d788857c5209/src/hooks/useAdminPolls.ts#L58)
+Defined in: [hooks/useAdminPolls.ts:58](https://github.com/VladimiKoroviakov/muzalife_frontend/blob/e36b1522ae7a73fe398af900d83490e15192c8c8/src/hooks/useAdminPolls.ts#L58)
 
 Fetches all poll results for the admin panel and provides a close action.
 

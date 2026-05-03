@@ -144,6 +144,7 @@ describe('PersonalOrder interface', () => {
       order_material_age_category: '18+',
       order_deadline: null,
       order_created_at: '2026-01-10T10:00:00.000Z',
+      order_decline_reason: null,
     };
     expect(order.order_status).toBe('pending');
     expect(order.order_deadline).toBeNull(); // deadline is optional
