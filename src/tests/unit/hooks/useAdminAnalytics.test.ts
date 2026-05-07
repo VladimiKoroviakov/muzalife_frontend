@@ -150,7 +150,7 @@ describe('useAdminAnalytics — analytics and reviews', () => {
     mockGetReviews.mockResolvedValue(sampleReviews);
 
     const { result } = renderHook(() => useAdminAnalytics());
-    await waitFor(() => expect(result.current.reviewsLoading).toBe(false));
+    await waitFor(() => expect(result.current.reviews).toEqual(sampleReviews));
 
     expect(mockGetReviews).toHaveBeenCalledWith(1);
     expect(result.current.reviews).toEqual(sampleReviews);

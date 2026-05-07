@@ -38,6 +38,12 @@ export default defineConfig({
       reportsDirectory: './docs/coverage',
       include: ['src/utils/**', 'src/services/**', 'src/hooks/**'],
       exclude: ['node_modules/**', 'src/tests/**', 'docs/**'],
+      thresholds: {
+        statements: 90,
+        functions: 90,
+        lines: 90,
+        branches: 80,
+      },
     },
   },
 });
