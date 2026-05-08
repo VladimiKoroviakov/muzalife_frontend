@@ -8,6 +8,6 @@
 
 > **TimeFilter** = `"week"` \| `"month"` \| `"year"` \| `"custom"`
 
-Defined in: [hooks/useAdminAnalytics.ts:17](https://github.com/VladimiKoroviakov/muzalife_frontend/blob/1e05f3934f91c5198d0a56555d76ae4ef688041a/src/hooks/useAdminAnalytics.ts#L17)
+Defined in: [hooks/useAdminAnalytics.ts:17](https://github.com/VladimiKoroviakov/muzalife_frontend/blob/77fab1a1619a51e650e664ea2023e1e5eeaa153a/src/hooks/useAdminAnalytics.ts#L17)
 
 The four time-window presets available in the analytics filter bar.
