@@ -6,7 +6,7 @@
 
 # Interface: UseAdminPollsReturn
 
-Defined in: [hooks/useAdminPolls.ts:17](https://github.com/VladimiKoroviakov/muzalife_frontend/blob/77fab1a1619a51e650e664ea2023e1e5eeaa153a/src/hooks/useAdminPolls.ts#L17)
+Defined in: [hooks/useAdminPolls.ts:17](https://github.com/VladimiKoroviakov/muzalife_frontend/blob/e67fb3d86b5d467b046ecab2f869b8a6a7719192/src/hooks/useAdminPolls.ts#L17)
 
 Return shape of [useAdminPolls](../functions/useAdminPolls.md).
 
@@ -16,7 +16,7 @@ Return shape of [useAdminPolls](../functions/useAdminPolls.md).
 
 > **closePoll**: (`pollId`) => `Promise`\<`void`\>
 
-Defined in: [hooks/useAdminPolls.ts:30](https://github.com/VladimiKoroviakov/muzalife_frontend/blob/77fab1a1619a51e650e664ea2023e1e5eeaa153a/src/hooks/useAdminPolls.ts#L30)
+Defined in: [hooks/useAdminPolls.ts:30](https://github.com/VladimiKoroviakov/muzalife_frontend/blob/e67fb3d86b5d467b046ecab2f869b8a6a7719192/src/hooks/useAdminPolls.ts#L30)
 
 Closes the poll with the given ID by setting `is_active` to `false`.
 Optimistically updates local state on success.
@@ -39,7 +39,7 @@ ID of the poll to close.
 
 > **deletePoll**: (`pollId`) => `Promise`\<`void`\>
 
-Defined in: [hooks/useAdminPolls.ts:37](https://github.com/VladimiKoroviakov/muzalife_frontend/blob/77fab1a1619a51e650e664ea2023e1e5eeaa153a/src/hooks/useAdminPolls.ts#L37)
+Defined in: [hooks/useAdminPolls.ts:37](https://github.com/VladimiKoroviakov/muzalife_frontend/blob/e67fb3d86b5d467b046ecab2f869b8a6a7719192/src/hooks/useAdminPolls.ts#L37)
 
 Permanently deletes the poll with the given ID.
 Removes it from local state on success.
@@ -62,7 +62,7 @@ ID of the poll to delete.
 
 > **error**: `string` \| `null`
 
-Defined in: [hooks/useAdminPolls.ts:23](https://github.com/VladimiKoroviakov/muzalife_frontend/blob/77fab1a1619a51e650e664ea2023e1e5eeaa153a/src/hooks/useAdminPolls.ts#L23)
+Defined in: [hooks/useAdminPolls.ts:23](https://github.com/VladimiKoroviakov/muzalife_frontend/blob/e67fb3d86b5d467b046ecab2f869b8a6a7719192/src/hooks/useAdminPolls.ts#L23)
 
 Non-null when the fetch failed; contains a user-readable Ukrainian message.
 
@@ -72,7 +72,7 @@ Non-null when the fetch failed; contains a user-readable Ukrainian message.
 
 > **loading**: `boolean`
 
-Defined in: [hooks/useAdminPolls.ts:21](https://github.com/VladimiKoroviakov/muzalife_frontend/blob/77fab1a1619a51e650e664ea2023e1e5eeaa153a/src/hooks/useAdminPolls.ts#L21)
+Defined in: [hooks/useAdminPolls.ts:21](https://github.com/VladimiKoroviakov/muzalife_frontend/blob/e67fb3d86b5d467b046ecab2f869b8a6a7719192/src/hooks/useAdminPolls.ts#L21)
 
 `true` while the initial fetch is in flight.
 
@@ -82,6 +82,6 @@ Defined in: [hooks/useAdminPolls.ts:21](https://github.com/VladimiKoroviakov/muz
 
 > **polls**: `PollResult`[]
 
-Defined in: [hooks/useAdminPolls.ts:19](https://github.com/VladimiKoroviakov/muzalife_frontend/blob/77fab1a1619a51e650e664ea2023e1e5eeaa153a/src/hooks/useAdminPolls.ts#L19)
+Defined in: [hooks/useAdminPolls.ts:19](https://github.com/VladimiKoroviakov/muzalife_frontend/blob/e67fb3d86b5d467b046ecab2f869b8a6a7719192/src/hooks/useAdminPolls.ts#L19)
 
 All polls with per-option vote counts, including inactive ones.

@@ -6,7 +6,7 @@
 
 # Interface: UseAdminAnalyticsReturn
 
-Defined in: [hooks/useAdminAnalytics.ts:26](https://github.com/VladimiKoroviakov/muzalife_frontend/blob/77fab1a1619a51e650e664ea2023e1e5eeaa153a/src/hooks/useAdminAnalytics.ts#L26)
+Defined in: [hooks/useAdminAnalytics.ts:26](https://github.com/VladimiKoroviakov/muzalife_frontend/blob/e67fb3d86b5d467b046ecab2f869b8a6a7719192/src/hooks/useAdminAnalytics.ts#L26)
 
 Return shape of [useAdminAnalytics](../functions/useAdminAnalytics.md).
 
@@ -16,7 +16,7 @@ Return shape of [useAdminAnalytics](../functions/useAdminAnalytics.md).
 
 > **analytics**: `ProductAnalytics` \| `null`
 
-Defined in: [hooks/useAdminAnalytics.ts:57](https://github.com/VladimiKoroviakov/muzalife_frontend/blob/77fab1a1619a51e650e664ea2023e1e5eeaa153a/src/hooks/useAdminAnalytics.ts#L57)
+Defined in: [hooks/useAdminAnalytics.ts:57](https://github.com/VladimiKoroviakov/muzalife_frontend/blob/e67fb3d86b5d467b046ecab2f869b8a6a7719192/src/hooks/useAdminAnalytics.ts#L57)
 
 Engagement stats for the selected product in the current window.
 
@@ -26,7 +26,7 @@ Engagement stats for the selected product in the current window.
 
 > **analyticsLoading**: `boolean`
 
-Defined in: [hooks/useAdminAnalytics.ts:59](https://github.com/VladimiKoroviakov/muzalife_frontend/blob/77fab1a1619a51e650e664ea2023e1e5eeaa153a/src/hooks/useAdminAnalytics.ts#L59)
+Defined in: [hooks/useAdminAnalytics.ts:59](https://github.com/VladimiKoroviakov/muzalife_frontend/blob/e67fb3d86b5d467b046ecab2f869b8a6a7719192/src/hooks/useAdminAnalytics.ts#L59)
 
 `true` while stats are loading.
 
@@ -36,7 +36,7 @@ Defined in: [hooks/useAdminAnalytics.ts:59](https://github.com/VladimiKoroviakov
 
 > **customRange**: [`DateRange`](DateRange.md)
 
-Defined in: [hooks/useAdminAnalytics.ts:48](https://github.com/VladimiKoroviakov/muzalife_frontend/blob/77fab1a1619a51e650e664ea2023e1e5eeaa153a/src/hooks/useAdminAnalytics.ts#L48)
+Defined in: [hooks/useAdminAnalytics.ts:48](https://github.com/VladimiKoroviakov/muzalife_frontend/blob/e67fb3d86b5d467b046ecab2f869b8a6a7719192/src/hooks/useAdminAnalytics.ts#L48)
 
 Custom date range; only used when `timeFilter === 'custom'`.
 
@@ -46,7 +46,7 @@ Custom date range; only used when `timeFilter === 'custom'`.
 
 > **products**: `AnalyticsProduct`[]
 
-Defined in: [hooks/useAdminAnalytics.ts:28](https://github.com/VladimiKoroviakov/muzalife_frontend/blob/77fab1a1619a51e650e664ea2023e1e5eeaa153a/src/hooks/useAdminAnalytics.ts#L28)
+Defined in: [hooks/useAdminAnalytics.ts:28](https://github.com/VladimiKoroviakov/muzalife_frontend/blob/e67fb3d86b5d467b046ecab2f869b8a6a7719192/src/hooks/useAdminAnalytics.ts#L28)
 
 Full product list including hidden/soft-deleted products.
 
@@ -56,7 +56,7 @@ Full product list including hidden/soft-deleted products.
 
 > **productsLoading**: `boolean`
 
-Defined in: [hooks/useAdminAnalytics.ts:30](https://github.com/VladimiKoroviakov/muzalife_frontend/blob/77fab1a1619a51e650e664ea2023e1e5eeaa153a/src/hooks/useAdminAnalytics.ts#L30)
+Defined in: [hooks/useAdminAnalytics.ts:30](https://github.com/VladimiKoroviakov/muzalife_frontend/blob/e67fb3d86b5d467b046ecab2f869b8a6a7719192/src/hooks/useAdminAnalytics.ts#L30)
 
 `true` while the product list is loading.
 
@@ -66,7 +66,7 @@ Defined in: [hooks/useAdminAnalytics.ts:30](https://github.com/VladimiKoroviakov
 
 > **reviews**: `Review`[]
 
-Defined in: [hooks/useAdminAnalytics.ts:61](https://github.com/VladimiKoroviakov/muzalife_frontend/blob/77fab1a1619a51e650e664ea2023e1e5eeaa153a/src/hooks/useAdminAnalytics.ts#L61)
+Defined in: [hooks/useAdminAnalytics.ts:61](https://github.com/VladimiKoroviakov/muzalife_frontend/blob/e67fb3d86b5d467b046ecab2f869b8a6a7719192/src/hooks/useAdminAnalytics.ts#L61)
 
 Reviews for the selected product (not date-filtered).
 
@@ -76,7 +76,7 @@ Reviews for the selected product (not date-filtered).
 
 > **reviewsLoading**: `boolean`
 
-Defined in: [hooks/useAdminAnalytics.ts:63](https://github.com/VladimiKoroviakov/muzalife_frontend/blob/77fab1a1619a51e650e664ea2023e1e5eeaa153a/src/hooks/useAdminAnalytics.ts#L63)
+Defined in: [hooks/useAdminAnalytics.ts:63](https://github.com/VladimiKoroviakov/muzalife_frontend/blob/e67fb3d86b5d467b046ecab2f869b8a6a7719192/src/hooks/useAdminAnalytics.ts#L63)
 
 `true` while reviews are loading.
 
@@ -86,7 +86,7 @@ Defined in: [hooks/useAdminAnalytics.ts:63](https://github.com/VladimiKoroviakov
 
 > **selectedProductId**: `number` \| `null`
 
-Defined in: [hooks/useAdminAnalytics.ts:32](https://github.com/VladimiKoroviakov/muzalife_frontend/blob/77fab1a1619a51e650e664ea2023e1e5eeaa153a/src/hooks/useAdminAnalytics.ts#L32)
+Defined in: [hooks/useAdminAnalytics.ts:32](https://github.com/VladimiKoroviakov/muzalife_frontend/blob/e67fb3d86b5d467b046ecab2f869b8a6a7719192/src/hooks/useAdminAnalytics.ts#L32)
 
 ID of the currently selected product, or `null` before the list loads.
 
@@ -96,7 +96,7 @@ ID of the currently selected product, or `null` before the list loads.
 
 > **selectProduct**: (`id`) => `void`
 
-Defined in: [hooks/useAdminAnalytics.ts:38](https://github.com/VladimiKoroviakov/muzalife_frontend/blob/77fab1a1619a51e650e664ea2023e1e5eeaa153a/src/hooks/useAdminAnalytics.ts#L38)
+Defined in: [hooks/useAdminAnalytics.ts:38](https://github.com/VladimiKoroviakov/muzalife_frontend/blob/e67fb3d86b5d467b046ecab2f869b8a6a7719192/src/hooks/useAdminAnalytics.ts#L38)
 
 Sets the active product and triggers a stats + reviews reload.
 
@@ -118,7 +118,7 @@ Product ID to select.
 
 > **setCustomRange**: (`range`) => `void`
 
-Defined in: [hooks/useAdminAnalytics.ts:55](https://github.com/VladimiKoroviakov/muzalife_frontend/blob/77fab1a1619a51e650e664ea2023e1e5eeaa153a/src/hooks/useAdminAnalytics.ts#L55)
+Defined in: [hooks/useAdminAnalytics.ts:55](https://github.com/VladimiKoroviakov/muzalife_frontend/blob/e67fb3d86b5d467b046ecab2f869b8a6a7719192/src/hooks/useAdminAnalytics.ts#L55)
 
 Updates the custom date range. Automatically switches `timeFilter` to
 `'custom'` so the stats reload picks up the new bounds.
@@ -141,7 +141,7 @@ New date range.
 
 > **setTimeFilter**: (`f`) => `void`
 
-Defined in: [hooks/useAdminAnalytics.ts:46](https://github.com/VladimiKoroviakov/muzalife_frontend/blob/77fab1a1619a51e650e664ea2023e1e5eeaa153a/src/hooks/useAdminAnalytics.ts#L46)
+Defined in: [hooks/useAdminAnalytics.ts:46](https://github.com/VladimiKoroviakov/muzalife_frontend/blob/e67fb3d86b5d467b046ecab2f869b8a6a7719192/src/hooks/useAdminAnalytics.ts#L46)
 
 Switches the active preset and triggers a stats reload.
 
@@ -163,6 +163,6 @@ New preset to activate.
 
 > **timeFilter**: [`TimeFilter`](../type-aliases/TimeFilter.md)
 
-Defined in: [hooks/useAdminAnalytics.ts:40](https://github.com/VladimiKoroviakov/muzalife_frontend/blob/77fab1a1619a51e650e664ea2023e1e5eeaa153a/src/hooks/useAdminAnalytics.ts#L40)
+Defined in: [hooks/useAdminAnalytics.ts:40](https://github.com/VladimiKoroviakov/muzalife_frontend/blob/e67fb3d86b5d467b046ecab2f869b8a6a7719192/src/hooks/useAdminAnalytics.ts#L40)
 
 Active time-window preset.
